@@ -27,7 +27,7 @@ world_physics_physics.bin
 ## Внутренний Source 2 engine
 
 Скачайте `cs2mb-source2-win-x64.zip` со
-[страницы релизов CS2MB](https://github.com/Shtoblam/cs2mb-tool/releases/latest)
+[страницы релизов CS2MB](https://github.com/Shtoblam/cs2mb-tool/releases/tag/source2-v1.0.0)
 и распакуйте self-contained exe:
 
 ```text

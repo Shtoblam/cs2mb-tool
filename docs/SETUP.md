@@ -62,7 +62,7 @@ repository. It links the MIT-licensed ValveResourceFormat library in-process and
 does not wrap or launch a third-party CLI.
 
 1. Open the CS2MB release page:
-   <https://github.com/Shtoblam/cs2mb-tool/releases/latest>.
+   <https://github.com/Shtoblam/cs2mb-tool/releases/tag/source2-v1.0.0>.
 2. Download `cs2mb-source2-win-x64.zip`.
 3. Verify the archive against `SHA256SUMS.txt` from the same release.
 4. Extract `cs2mb-source2.exe` to:

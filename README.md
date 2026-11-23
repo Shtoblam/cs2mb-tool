@@ -27,7 +27,7 @@
 
 <p align="center">
   <a href="https://shtoblam.github.io/cs2mb-tool/"><strong>Project website ↗</strong></a> ·
-  <a href="https://github.com/Shtoblam/cs2mb-tool/releases/latest"><strong>Engine release ↗</strong></a> ·
+  <a href="https://github.com/Shtoblam/cs2mb-tool/releases/tag/source2-v1.0.0"><strong>Engine release ↗</strong></a> ·
   <a href="https://github.com/Shtoblam/cs2mb-tool">GitHub repository ↗</a> ·
   <a href="README.ru.md">Русская версия</a>
 </p>

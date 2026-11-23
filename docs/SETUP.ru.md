@@ -61,7 +61,7 @@ cd cs2mb-tool
 непосредственно в процессе и не запускает сторонний CLI.
 
 1. Откройте страницу релизов CS2MB:
-   <https://github.com/Shtoblam/cs2mb-tool/releases/latest>.
+   <https://github.com/Shtoblam/cs2mb-tool/releases/tag/source2-v1.0.0>.
 2. Скачайте `cs2mb-source2-win-x64.zip`.
 3. Сверьте архив с `SHA256SUMS.txt` из того же релиза.
 4. Распакуйте `cs2mb-source2.exe` в:

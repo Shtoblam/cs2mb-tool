@@ -27,7 +27,7 @@ fallback and for debugging.
 ## Internal Source 2 engine setup
 
 Download `cs2mb-source2-win-x64.zip` from the
-[CS2MB release page](https://github.com/Shtoblam/cs2mb-tool/releases/latest) and
+[CS2MB release page](https://github.com/Shtoblam/cs2mb-tool/releases/tag/source2-v1.0.0) and
 extract the self-contained executable:
 
 ```text
