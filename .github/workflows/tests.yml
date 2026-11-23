@@ -69,7 +69,8 @@ jobs:
           $zip = Get-ChildItem dist/CS2MB-*-win-x64.zip | Select-Object -First 1
           $target = Join-Path $env:RUNNER_TEMP "cs2mb-package"
           Expand-Archive $zip.FullName -DestinationPath $target -Force
-          & "$target\tools\bin\sri\cs2mb-sri.exe" --version
-          & "$target\runtime\python.exe" -c "import app.server; import tools.sri; print('package imports ok')"
-          if (-not (Test-Path "$target\SHA256SUMS.txt")) { throw "missing SHA256SUMS.txt" }
-          if (-not (Test-Path "$target\SBOM.spdx.json")) { throw "missing SBOM.spdx.json" }
+          $package = Join-Path $target "CS2MB"
+          & "$package\tools\bin\sri\cs2mb-sri.exe" --version
+          & "$package\runtime\python.exe" -c "import app.server; import tools.sri; print('package imports ok')"
+          if (-not (Test-Path "$package\SHA256SUMS.txt")) { throw "missing SHA256SUMS.txt" }
+          if (-not (Test-Path "$package\SBOM.spdx.json")) { throw "missing SBOM.spdx.json" }
