@@ -5,560 +5,414 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' data:; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
 <meta name="referrer" content="no-referrer">
-<title>CS2 Map Balance — Map analysis v1.0.0-pre.1</title>
-<link rel="icon" type="image/png" href="logo.png">
+<title>CS2 Map Balance — Map analysis v1.1.0</title>
+<link rel="icon" type="image/png" href="/logo.png">
 <style>
 :root {
-  --bg: #181a1d;
-  --bg-deep: #121417;
-  --panel: #222529;
-  --panel-2: #292d32;
-  --panel-3: #30353b;
-  --line: #3b4148;
-  --line-soft: #2d3238;
-  --text: #e8eaec;
-  --muted: #a0a7ae;
-  --faint: #727a82;
-  --accent: #ff6b35;
-  --accent-soft: #ff9a6b;
-  --green: #76c98b;
-  --red: #ef7d7d;
-  --cyan: #62c6dd;
-  --mono: "Cascadia Code", "Consolas", "SFMono-Regular", monospace;
-  --sans: "Segoe UI", system-ui, sans-serif;
-  --shadow: 0 18px 50px rgba(0,0,0,.32);
+  --bg: #0a1015;
+  --bg-deep: #070c10;
+  --panel: #0e171e;
+  --panel-2: #121d25;
+  --surface: #16232b;
+  --line: #22333d;
+  --line-strong: #304955;
+  --text: #e3edf3;
+  --muted: #93a6b1;
+  --faint: #637783;
+  --accent: #43b7c9;
+  --accent-2: #7ad7e2;
+  --accent-dim: rgba(67, 183, 201, .13);
+  --good: #61c58c;
+  --warn: #dca552;
+  --bad: #df6a6a;
+  --mono: "Cascadia Mono", Consolas, "Liberation Mono", monospace;
+  --sans: Inter, "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
 }
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body { margin: 0; background: var(--bg); color: var(--text); font: 13px/1.45 var(--sans); }
-a { color: var(--accent-soft); }
-button, input { font: inherit; }
-button { cursor: pointer; }
-code, pre { font-family: var(--mono); }
-.topbar {
-  position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 14px;
-  padding: 11px 20px; border-bottom: 1px solid var(--line); background: rgba(25,28,31,.96);
-  backdrop-filter: blur(12px);
-}
-.logo {
-  width: 34px; height: 34px; display: block; flex: 0 0 auto;
-  object-fit: cover; border: 1px solid rgba(255,255,255,.12);
-}
-.brand { display: flex; align-items: baseline; gap: 10px; white-space: nowrap; }
-.brand strong { font-size: 14px; letter-spacing: .01em; }
-.brand span { color: var(--muted); font: 9px var(--mono); text-transform: uppercase; letter-spacing: .13em; }
-.topnav { display: flex; align-items: center; gap: 4px; margin-left: 22px; }
-.topnav a {
-  color: var(--muted); text-decoration: none; padding: 5px 8px; border-radius: 2px;
-  font: 10px var(--mono); text-transform: uppercase; letter-spacing: .07em;
-}
-.topnav a:hover { color: var(--accent-soft); background: var(--panel-2); }
-.top-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
-.pill {
-  display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line);
-  border-radius: 2px; padding: 3px 7px; color: var(--muted); font: 9px var(--mono);
-  text-transform: uppercase; letter-spacing: .06em;
-}
-.pill i { width: 5px; height: 5px; border-radius: 50%; background: var(--green); display: block; }
-.ghost { background: transparent; color: var(--muted); border: 1px solid var(--line); border-radius: 2px; padding: 6px 9px; font: 10px var(--mono); }
-.ghost:hover { color: var(--accent-soft); border-color: var(--accent); }
-.shell { display: grid; grid-template-columns: minmax(390px, 465px) minmax(0, 1fr); min-height: calc(100vh - 57px); }
-aside { border-right: 1px solid var(--line); padding: 16px; overflow: auto; background: linear-gradient(180deg, rgba(255,255,255,.012), transparent 320px); }
-main { min-width: 0; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
-.card {
-  background: var(--panel); border: 1px solid var(--line); border-radius: 3px;
-  padding: 14px; margin-bottom: 12px; box-shadow: 0 1px 0 rgba(255,255,255,.02) inset;
-}
-.card:last-child { margin-bottom: 0; }
-.section-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
-h1 { margin: 2px 0 7px; font-size: 21px; line-height: 1.15; letter-spacing: -.01em; }
-h2 { margin: 0 0 9px; font-size: 10px; line-height: 1.2; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; font-family: var(--mono); }
-h3 { margin: 14px 0 6px; font-size: 11px; font-family: var(--mono); }
-p { margin: 0 0 10px; color: var(--muted); }
-.eyebrow { color: var(--accent-soft); font: 9px var(--mono); text-transform: uppercase; letter-spacing: .14em; }
-.lead { color: #b9c0c6; font-size: 12px; }
-.help { color: var(--faint); font-size: 10.5px; }
-.mono { font-family: var(--mono); }
-.row { display: flex; gap: 8px; }
-.row > * { flex: 1; min-width: 0; }
-label { display: block; color: var(--muted); font: 9px var(--mono); text-transform: uppercase; letter-spacing: .09em; margin: 11px 0 4px; }
-input[type="text"], input[type="search"] {
-  width: 100%; background: #1a1d20; border: 1px solid var(--line); color: var(--text);
-  padding: 8px 9px; border-radius: 2px; font: 11px var(--mono);
-}
-input[type="text"]:focus, input[type="search"]:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 1px rgba(255,107,53,.18); }
-.check { display: flex; align-items: center; gap: 7px; margin: 9px 0; color: var(--muted); font-size: 11px; }
-.check input { accent-color: var(--accent); }
-button.primary {
-  width: 100%; margin-top: 8px; padding: 10px 13px; border: 1px solid var(--accent);
-  border-radius: 2px; background: var(--accent); color: #181a1d; font: 800 11px var(--mono);
-  letter-spacing: .04em; text-transform: uppercase;
-}
-button.primary:hover { background: var(--accent-soft); border-color: var(--accent-soft); }
-button.primary:disabled { opacity: .45; cursor: wait; }
-button.secondary {
-  padding: 7px 10px; border: 1px solid var(--line); border-radius: 2px;
-  background: var(--panel-2); color: var(--muted); font: 10px var(--mono);
-}
-button.secondary:hover { color: var(--accent-soft); border-color: var(--accent); }
-button.link { background: none; border: 0; color: var(--accent-soft); padding: 0; font: inherit; }
-.auto-box { border: 1px solid var(--line-soft); background: #1c2024; padding: 10px; border-radius: 3px; margin-top: 11px; }
-.auto-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; color: var(--text); font: 10px var(--mono); text-transform: uppercase; letter-spacing: .06em; }
-.sri-state { color: var(--faint); font: 9px var(--mono); text-transform: none; letter-spacing: 0; }
-.sri-state.ready { color: var(--green); }
-.sri-state.missing { color: var(--accent-soft); }
-.divider { display: flex; align-items: center; gap: 8px; margin: 12px 0 4px; color: var(--faint); font: 9px var(--mono); text-transform: uppercase; letter-spacing: .06em; }
-.divider::before, .divider::after { content: ""; height: 1px; background: var(--line-soft); flex: 1; }
-.drop {
-  position: relative; margin: 10px 0 6px; border: 1px dashed #4a5158; border-radius: 3px;
-  padding: 17px 14px; text-align: center; background: linear-gradient(180deg, #1c2024, #191c20);
-  transition: border-color .15s, background .15s, transform .15s;
-}
-.drop:hover, .drop.drag { border-color: var(--accent); background: #202328; transform: translateY(-1px); }
-.drop .drop-icon { font: 22px/1 var(--mono); color: var(--accent-soft); margin-bottom: 7px; }
-.drop b { color: var(--text); font-size: 12px; }
-.drop .small { color: var(--faint); font-size: 10.5px; margin-top: 4px; }
-.drop input { display: none; }
-.file-list { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; text-align: left; }
-.file-chip {
-  display: inline-flex; align-items: center; gap: 5px; max-width: 100%;
-  border: 1px solid var(--line); border-radius: 2px; background: var(--panel-3);
-  padding: 3px 5px; color: var(--accent-soft); font: 9.5px var(--mono);
-}
-.file-chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.file-chip button { border: 0; background: none; color: var(--muted); padding: 0 1px; font: 11px var(--mono); }
-.file-chip button:hover { color: var(--red); }
-.file-meta { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 6px; color: var(--faint); font: 9px var(--mono); }
-.advanced { border-top: 1px solid var(--line-soft); margin-top: 11px; padding-top: 8px; }
-.advanced summary { color: var(--muted); cursor: pointer; font: 10px var(--mono); }
-.advanced summary:hover { color: var(--accent-soft); }
-.stepper { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin: 8px 0 13px; }
-.step { border: 1px solid var(--line); background: #1c1f23; padding: 6px; border-radius: 2px; color: var(--faint); font: 9px var(--mono); text-transform: uppercase; }
-.step b { display: block; color: var(--muted); font-size: 10px; margin-bottom: 2px; }
-.step.active { border-color: var(--accent); background: rgba(255,107,53,.08); color: var(--accent-soft); }
-.step.done { border-color: rgba(118,201,139,.45); color: var(--green); }
-.step.done b { color: var(--green); }
-.status { display: flex; align-items: center; gap: 8px; margin: 5px 0 7px; font: 10px var(--mono); text-transform: uppercase; }
-.status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--faint); flex: 0 0 auto; }
-.status.running .status-dot { background: var(--accent); animation: pulse 1s infinite; }
-.status.ok .status-dot { background: var(--green); }
-.status.failed .status-dot { background: var(--red); }
-.status.dry-run .status-dot { background: var(--accent-soft); }
-@keyframes pulse { 50% { opacity: .2; } }
-.viewer-link { display: none; margin: 5px 0 8px; font: 10px var(--mono); }
-.manifest { color: var(--faint); font: 9px var(--mono); word-break: break-all; margin-top: 7px; }
-.log {
-  margin: 0; padding: 10px; min-height: 190px; max-height: 48vh; overflow: auto;
-  background: #14171a; border: 1px solid var(--line-soft); border-radius: 2px;
-  color: #bfc6cc; font: 9.5px/1.45 var(--mono); white-space: pre-wrap;
-}
-.viewer-wrap { flex: 1; min-height: 480px; border: 1px solid var(--line); background: var(--bg-deep); position: relative; }
-.viewer-wrap::before {
-  content: "VIEWER"; position: absolute; top: 7px; left: 9px; z-index: 2;
-  color: var(--faint); font: 8px var(--mono); letter-spacing: .12em;
-}
-iframe { width: 100%; height: 100%; min-height: 480px; border: 0; display: block; }
-.library { overflow-x: auto; }
-.library table { width: 100%; border-collapse: collapse; font: 9.5px var(--mono); margin-top: 8px; }
-.library th, .library td { padding: 4px 3px; border-bottom: 1px solid var(--line-soft); text-align: right; white-space: nowrap; }
-.library th:first-child, .library td:first-child { text-align: left; }
-.library tr:hover td { background: rgba(255,255,255,.025); }
-.library th { color: var(--faint); font-weight: 400; text-transform: uppercase; letter-spacing: .04em; }
-.library a { text-decoration: none; }
-.library a:hover { text-decoration: underline; }
-.library-search { margin-top: 8px; }
-.verdict { display: inline-block; padding: 1px 5px; border-radius: 2px; font: 9px var(--mono); border: 1px solid var(--line); white-space: nowrap; }
-.verdict.balanced { color: var(--green); border-color: rgba(118,201,139,.45); }
-.verdict.ct { color: var(--cyan); border-color: rgba(98,198,221,.45); }
-.verdict.t { color: var(--accent-soft); border-color: rgba(255,154,107,.5); }
-.compare-bar { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
-.compare-bar button { flex: 0 0 auto; }
-.compare-panel { margin-top: 9px; overflow-x: auto; }
-.compare-panel table { width: 100%; border-collapse: collapse; font: 9px var(--mono); }
-.compare-panel th, .compare-panel td { border-bottom: 1px solid var(--line-soft); padding: 4px 3px; text-align: right; white-space: nowrap; }
-.compare-panel th:first-child, .compare-panel td:first-child { text-align: left; }
-.compare-panel .help { margin: 4px 0 0; }
-.footnote { color: var(--faint); font: 9px/1.5 var(--mono); padding: 8px 2px 0; }
-/* Onboarding */
-.modal-backdrop {
-  position: fixed; inset: 0; z-index: 50; display: none; align-items: center; justify-content: center;
-  padding: 22px; background: rgba(8,10,12,.72); backdrop-filter: blur(5px);
-}
-.modal-backdrop.open { display: flex; }
-.modal {
-  width: min(900px, 96vw); max-height: 88vh; overflow: auto; background: #202327;
-  border: 1px solid var(--line); border-radius: 4px; box-shadow: var(--shadow);
-}
-.modal-top { display: flex; align-items: flex-start; gap: 12px; padding: 18px 20px 12px; border-bottom: 1px solid var(--line); }
-.modal-top h2 { margin: 0 0 5px; color: var(--text); font-size: 21px; text-transform: none; letter-spacing: -.01em; font-family: var(--sans); }
-.modal-top p { margin: 0; max-width: 700px; }
-.modal-close { margin-left: auto; background: var(--panel-2); color: var(--muted); border: 1px solid var(--line); border-radius: 2px; width: 28px; height: 28px; font: 14px var(--mono); }
-.modal-body { padding: 8px 20px 18px; }
-.tutorial-step { border-top: 1px solid var(--line-soft); padding: 13px 0 2px; }
-.tutorial-step:first-child { border-top: 0; }
-.tutorial-step h3 { margin: 0 0 6px; color: var(--accent-soft); font-size: 12px; }
-.tutorial-step h3 span { color: var(--faint); font: 9px var(--mono); margin-right: 7px; }
-.tutorial-step p { margin: 0 0 8px; color: #b8bfc5; }
-.tutorial-step a, .modal-body a { color: var(--accent-soft); }
-.setup-list { margin: 4px 0 8px 18px; padding: 0; color: #b8bfc5; }
-.setup-list li { margin: 0 0 8px; }
-.setup-list pre.code { margin: 6px 0 0; }
-.tutorial-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.tutorial-grid .mini { background: #1a1d21; border: 1px solid var(--line-soft); padding: 9px; border-radius: 2px; }
-.tutorial-grid .mini b { color: var(--text); font: 10px var(--mono); display: block; margin-bottom: 3px; }
-.tutorial-grid .mini span { color: var(--muted); font-size: 10.5px; }
-pre.code {
-  position: relative; margin: 7px 0; padding: 9px 34px 9px 10px; background: #14171a;
-  border: 1px solid var(--line-soft); border-radius: 2px; color: #c8d0d6;
-  font: 9.5px/1.5 var(--mono); overflow-x: auto; white-space: pre;
-}
-.copy {
-  position: absolute; right: 5px; top: 5px; border: 1px solid var(--line); background: var(--panel-2);
-  color: var(--muted); border-radius: 2px; padding: 2px 4px; font: 8px var(--mono);
-}
-.copy:hover { color: var(--accent-soft); border-color: var(--accent); }
-.modal-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding-top: 12px; }
-.modal-actions .grow { flex: 1; }
-.modal-actions .primary { width: auto; margin: 0; padding: 8px 14px; }
-.modal-actions label { margin: 0 4px 0 6px; text-transform: none; letter-spacing: 0; color: var(--faint); font: 9.5px var(--sans); }
-@media (max-width: 980px) {
-  .shell { grid-template-columns: 1fr; }
-  aside { border-right: 0; border-bottom: 1px solid var(--line); }
-  .topnav { display: none; }
-  .tutorial-grid { grid-template-columns: 1fr; }
-  .viewer-wrap { min-height: 420px; }
-}
-
-/* v1.0.0-pre.1 — calmer hierarchy, compact intake and optional viewer preview. */
-body { background: radial-gradient(900px 500px at 100% 0%, rgba(98,198,221,.055), transparent 65%), var(--bg); }
-.topbar { padding: 12px max(18px, calc((100vw - 1540px)/2)); border-color: rgba(255,255,255,.08); }
-.shell { width: min(1540px, calc(100% - 40px)); margin: 0 auto; padding: 18px 0 34px; grid-template-columns: minmax(300px, 370px) minmax(0,1fr); gap: 18px; min-height: calc(100vh - 60px); }
-aside { padding: 0; border: 0; overflow: visible; background: transparent; display: flex; flex-direction: column; gap: 14px; }
-main { padding: 0; gap: 14px; }
-.card { border: 1px solid rgba(255,255,255,.09); border-radius: 12px; padding: 18px; margin: 0; background: linear-gradient(155deg, rgba(255,255,255,.025), transparent 55%), var(--panel); box-shadow: 0 10px 28px rgba(0,0,0,.16); }
-h1 { font-size: 24px; letter-spacing: -.035em; }
-h2 { letter-spacing: .12em; }
-.lead { font-size: 13px; line-height: 1.65; }
-.alpha-note { margin: 10px 0 13px; border-left: 2px solid var(--accent-soft); padding: 8px 10px; background: rgba(255,154,107,.055); color: #c4b9b1; border-radius: 0 7px 7px 0; font-size: 10.5px; line-height: 1.6; }
-.alpha-note b { color: #f2c0a5; }
-.stepper { gap: 6px; margin: 12px 0 16px; }
-.step { border-radius: 7px; padding: 8px; }
-input[type="text"], input[type="search"] { border-radius: 7px; padding: 10px 11px; font-size: 12px; }
-button.primary, button.secondary, .ghost { border-radius: 7px; transition: transform .16s ease, border-color .16s ease, background .16s ease; }
-button.primary { padding: 11px 13px; }
-button.primary:hover:not(:disabled), button.secondary:hover, .ghost:hover { transform: translateY(-1px); }
-.auto-box { margin: 0; border: 0; padding: 0; background: transparent; }
-.auto-head { font-size: 10px; }
-.mode-panel { border: 1px solid var(--line-soft); border-radius: 9px; margin-top: 10px; overflow: hidden; background: rgba(12,15,18,.24); }
-.mode-panel > summary { display: flex; align-items: center; justify-content: space-between; gap: 10px; cursor: pointer; padding: 12px 13px; color: var(--text); list-style: none; font-size: 11px; font-weight: 650; }
-.mode-panel > summary::-webkit-details-marker { display: none; }
-.mode-panel > summary::after { content: "+"; color: var(--accent-soft); font: 16px var(--mono); }
-.mode-panel[open] > summary::after { content: "−"; }
-.mode-panel > summary small { color: var(--faint); font: 9px var(--mono); text-transform: uppercase; letter-spacing: .04em; margin-left: auto; }
-.mode-content { padding: 0 12px 13px; }
-.mode-panel[open] > summary { color: var(--accent-soft); }
-.mode-panel .drop { border-radius: 8px; }
-.options-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 13px; }
-.options-row .check { align-items: flex-start; padding: 8px 9px; margin: 0; border: 1px solid var(--line-soft); border-radius: 7px; font-size: 10px; line-height: 1.45; }
-.options-row .check input { margin: 2px 0 0; flex: 0 0 auto; }
-.advanced { margin-top: 13px; }
-.advanced summary { padding: 7px 0; }
-.footnote { line-height: 1.7; }
-.status { padding: 4px 0; }
-.viewer-link { display: none; align-items: center; justify-content: center; gap: 8px; margin: 0; padding: 11px 15px; border: 1px solid var(--accent); border-radius: 8px; background: var(--accent); color: #171a1c; font: 700 11px var(--mono); text-decoration: none; }
-.viewer-link:hover { background: var(--accent-soft); color: #171a1c; }
-.output-card { min-height: 170px; }
-.output-help { margin: 16px 0 12px; font-size: 11px; line-height: 1.65; }
-.log-panel { border-top: 1px solid var(--line-soft); padding-top: 10px; }
-.log-panel > summary { display: flex; justify-content: space-between; align-items: center; gap: 8px; cursor: pointer; color: var(--muted); font: 10px var(--mono); list-style: none; }
-.log-panel > summary::-webkit-details-marker { display: none; }
-.log-panel > summary::after { content: "+"; color: var(--accent-soft); }
-.log-panel[open] > summary::after { content: "−"; }
-.log-panel > summary span { color: var(--faint); font-size: 9px; }
-.log { min-height: 90px; max-height: 300px; margin-top: 10px; border-radius: 8px; padding: 12px; font-size: 10px; }
-.viewer-launch { display: block; }
-.viewer-launch-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 18px; }
-.viewer-launch-head h2 { margin: 6px 0; color: var(--text); font: 650 20px var(--sans); text-transform: none; letter-spacing: -.03em; }
-.viewer-launch-head p { max-width: 620px; }
-.viewer-ready { color: var(--green); font: 9px var(--mono); letter-spacing: .1em; border: 1px solid rgba(118,201,139,.3); background: rgba(118,201,139,.07); border-radius: 20px; padding: 5px 9px; }
-.viewer-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; margin-top: 12px; }
-.viewer-actions .viewer-link { display: inline-flex; }
-.viewer-wrap { min-height: 540px; height: min(82vh, 1000px); border: 1px solid rgba(255,255,255,.1); border-radius: 12px; overflow: hidden; background: var(--bg-deep); }
-.viewer-wrap::before { top: 10px; left: 12px; }
-.viewer-wrap iframe { width: 100%; height: 100%; min-height: 540px; }
-.library { max-height: 420px; overflow: auto; border-radius: 7px; }
-.library table { min-width: 900px; }
-.library th { position: sticky; top: 0; background: var(--panel); }
-.library td, .library th { padding: 7px 6px; }
-.library input[type="checkbox"] { accent-color: var(--accent); }
-.compare-panel { padding-top: 6px; }
-#manifest { overflow-wrap: anywhere; line-height: 1.6; }
-:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
 [hidden] { display: none !important; }
-@media (max-width: 980px) {
-  .shell { width: min(760px, calc(100% - 32px)); grid-template-columns: 1fr; }
-  aside { display: grid; grid-template-columns: 1fr; }
-  main { min-height: 420px; }
-  .viewer-wrap { min-height: 480px; height: 72vh; }
-  .viewer-wrap iframe { min-height: 480px; }
+html, body { min-height: 100%; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 12px/1.55 var(--sans); -webkit-font-smoothing: antialiased; }
+button, input, select, textarea { font: inherit; }
+a { color: var(--accent-2); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+.icon { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.app-bar { height: 47px; display: flex; align-items: center; gap: 18px; padding: 0 14px; border-bottom: 1px solid var(--line); background: var(--panel); position: sticky; top: 0; z-index: 10; }
+.app-brand { display: flex; align-items: center; gap: 9px; min-width: 220px; }
+.app-brand img { width: 27px; height: 27px; object-fit: contain; }
+.app-brand div { display: grid; line-height: 1.15; }
+.app-brand strong { font-size: 12px; letter-spacing: .01em; }
+.app-brand span { color: var(--faint); font: 9px var(--mono); }
+.app-nav { display: flex; align-items: stretch; gap: 2px; height: 100%; }
+.app-nav button { display: inline-flex; align-items: center; gap: 6px; padding: 0 11px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--muted); cursor: pointer; font-size: 11px; }
+.app-nav button:hover { color: var(--text); background: rgba(255,255,255,.025); }
+.app-nav button.active { color: var(--accent-2); border-bottom-color: var(--accent); }
+.app-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.pill { display: inline-flex; align-items: center; gap: 5px; min-height: 23px; padding: 0 8px; border: 1px solid var(--line); border-radius: 3px; background: var(--panel-2); color: var(--muted); font: 9px var(--mono); }
+.pill.ready { border-color: #2a5744; color: var(--good); }
+.pill.missing { border-color: #6b3535; color: var(--bad); }
+.icon-button { width: 29px; height: 29px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 3px; background: var(--panel-2); color: var(--muted); cursor: pointer; }
+.icon-button:hover { color: var(--text); border-color: var(--line-strong); }
+.app-main { max-width: 1440px; margin: 0 auto; padding: 18px 22px 32px; }
+.view { display: none; }
+.view.is-active { display: block; }
+.page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; margin: 4px 0 16px; }
+.eyebrow { color: var(--faint); font: 9px var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+.page-head h1 { margin: 3px 0 0; font-size: 23px; line-height: 1.15; letter-spacing: -.02em; font-weight: 650; }
+.page-head p { margin: 5px 0 0; max-width: 660px; color: var(--muted); font-size: 11px; }
+.page-head .head-actions { display: flex; align-items: center; gap: 6px; }
+.panel { border: 1px solid var(--line); border-radius: 3px; background: var(--panel); }
+.panel h2 { margin: 0; font-size: 12px; font-weight: 650; }
+.panel-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 11px 12px; border-bottom: 1px solid var(--line); }
+.panel-body { padding: 12px; }
+.button { min-height: 29px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 0 10px; border: 1px solid var(--line-strong); border-radius: 3px; background: var(--panel-2); color: var(--text); cursor: pointer; font-size: 10px; }
+.button:hover { border-color: var(--accent); background: var(--surface); }
+.button.primary { border-color: #2b7480; background: #12333a; color: var(--accent-2); }
+.button.primary:hover { background: #17424b; }
+.button:disabled { opacity: .45; cursor: not-allowed; }
+.button.link { border-color: transparent; background: transparent; color: var(--muted); padding: 0 4px; }
+.button.link:hover { color: var(--text); background: transparent; }
+.button.icon-only { width: 29px; padding: 0; }
+.overview-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.overview-card { min-height: 128px; display: grid; align-content: start; gap: 7px; padding: 13px; border: 1px solid var(--line); border-radius: 3px; background: var(--panel); cursor: pointer; text-align: left; color: inherit; }
+.overview-card:hover { border-color: var(--line-strong); background: var(--panel-2); }
+.overview-card .icon { color: var(--accent); width: 17px; height: 17px; }
+.overview-card b { font-size: 12px; }
+.overview-card span { color: var(--faint); font-size: 10px; line-height: 1.5; }
+.overview-card .card-meta { margin-top: auto; color: var(--accent); font: 9px var(--mono); }
+.overview-lower { display: grid; grid-template-columns: 1.5fr 1fr; gap: 10px; margin-top: 10px; }
+#overview-recent { display: grid; gap: 2px; }
+.recent-row { display: grid; grid-template-columns: minmax(0, 1fr) 70px 120px; gap: 8px; align-items: center; padding: 6px 0; border-bottom: 1px solid rgba(34,51,61,.6); font-size: 10px; }
+.recent-row:last-child { border-bottom: 0; }
+.recent-row b { font-family: var(--mono); font-size: 10px; }
+.recent-row span { color: var(--faint); }
+.quick-list { display: grid; gap: 5px; }
+.quick-list a { display: flex; align-items: center; gap: 7px; padding: 5px 0; color: var(--muted); font-size: 10px; border-bottom: 1px solid rgba(34,51,61,.6); }
+.quick-list a:hover { color: var(--text); text-decoration: none; }
+.process-grid { display: grid; grid-template-columns: 390px minmax(0, 1fr); gap: 10px; align-items: start; }
+.form-grid { display: grid; gap: 9px; }
+.field { display: grid; gap: 3px; }
+.field > span, .field > label { color: var(--faint); font: 9px var(--mono); text-transform: uppercase; letter-spacing: .06em; }
+.field input, .field select { height: 30px; padding: 0 8px; border: 1px solid var(--line); border-radius: 3px; background: var(--bg-deep); color: var(--text); font-size: 11px; }
+.field input:focus, .field select:focus { outline: none; border-color: var(--accent); }
+.field input::placeholder { color: #465862; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.source-block { padding: 10px; border: 1px solid var(--line); border-radius: 3px; background: var(--panel-2); }
+.source-title { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 7px; }
+.source-title b { font-size: 11px; }
+.source-title .sri-state { color: var(--faint); font: 9px var(--mono); }
+.source-title .sri-state.ready { color: var(--good); }
+.source-title .sri-state.missing { color: var(--bad); }
+.check { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 10px; }
+.check input { width: 12px; height: 12px; margin: 0; accent-color: var(--accent); }
+details { border-top: 1px solid var(--line); padding-top: 9px; }
+details summary { color: var(--muted); font-size: 10px; cursor: pointer; }
+details[open] summary { color: var(--text); }
+.drop { margin-top: 8px; min-height: 82px; display: grid; place-items: center; gap: 3px; border: 1px dashed var(--line-strong); border-radius: 3px; background: var(--bg-deep); color: var(--faint); text-align: center; cursor: pointer; padding: 10px; }
+.drop.drag { border-color: var(--accent); background: var(--accent-dim); }
+.drop b { color: var(--muted); font-size: 10px; }
+.drop small { font-size: 9px; }
+.drop input { display: none; }
+.file-list { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 7px; }
+.file-chip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 5px; border: 1px solid var(--line); border-radius: 2px; color: var(--muted); font: 9px var(--mono); }
+.file-chip button { border: 0; background: transparent; color: var(--faint); cursor: pointer; padding: 0; }
+.file-chip button:hover { color: var(--bad); }
+.file-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 5px; color: var(--faint); font: 9px var(--mono); }
+.job-panel { min-height: 500px; }
+.status { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font: 9px var(--mono); }
+.status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--faint); }
+.status.running .status-dot { background: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim); }
+.status.ok .status-dot { background: var(--good); }
+.status.failed .status-dot { background: var(--bad); }
+.status.dry-run .status-dot { background: var(--warn); }
+.manifest { margin-top: 6px; color: var(--faint); font: 9px var(--mono); overflow-wrap: anywhere; }
+.log { margin: 9px 0 0; height: 360px; overflow: auto; padding: 9px; border: 1px solid var(--line); border-radius: 3px; background: var(--bg-deep); color: #b9cbd4; font: 10px/1.55 var(--mono); white-space: pre-wrap; }
+.steps { display: flex; gap: 4px; margin-bottom: 10px; }
+.step { flex: 1; padding: 4px 5px; border: 1px solid var(--line); border-radius: 2px; color: var(--faint); font: 8px var(--mono); text-transform: uppercase; letter-spacing: .05em; }
+.step b { margin-right: 4px; color: var(--line-strong); }
+.step.active { border-color: #2b7480; color: var(--accent-2); background: var(--accent-dim); }
+.step.done { color: var(--good); border-color: #2a5744; }
+.library-tools { display: flex; align-items: center; gap: 8px; }
+.library-search { width: 230px; height: 28px; padding: 0 8px; border: 1px solid var(--line); border-radius: 3px; background: var(--bg-deep); color: var(--text); font-size: 10px; }
+.library-search::placeholder { color: #465862; }
+.library { overflow: auto; }
+.library table { width: 100%; min-width: 900px; border-collapse: collapse; font: 10px var(--mono); }
+.library th, .library td { padding: 6px 5px; border-bottom: 1px solid rgba(34,51,61,.65); text-align: right; white-space: nowrap; }
+.library th:first-child, .library td:first-child { text-align: left; }
+.library th { color: var(--faint); font-weight: 500; text-transform: uppercase; font-size: 8px; letter-spacing: .05em; }
+.library tr:hover td { background: rgba(255,255,255,.02); }
+.library a { color: var(--accent-2); }
+.compare-bar { display: flex; align-items: center; gap: 8px; margin-top: 9px; }
+.compare-panel { margin-top: 10px; }
+.compare-panel h3 { margin: 0 0 6px; font-size: 11px; }
+.compare-panel table { width: 100%; border-collapse: collapse; font: 10px var(--mono); }
+.compare-panel th, .compare-panel td { padding: 5px; border-bottom: 1px solid var(--line); text-align: right; }
+.compare-panel th:first-child, .compare-panel td:first-child { text-align: left; }
+.verdict { padding: 1px 4px; border: 1px solid var(--line); border-radius: 2px; font: 9px var(--mono); }
+.verdict.ct { color: #6db6ff; border-color: #2c5475; }
+.verdict.t { color: var(--warn); border-color: #6a512b; }
+.verdict.balanced { color: var(--good); border-color: #2a5744; }
+.viewer-launch { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 13px; margin-bottom: 10px; }
+.viewer-launch h2 { margin: 0 0 4px; font-size: 13px; }
+.viewer-launch p { margin: 0; color: var(--faint); font-size: 10px; }
+.viewer-actions { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
+.viewer-tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--line); padding: 0 10px; }
+.viewer-tab { padding: 8px 10px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--muted); cursor: pointer; font-size: 10px; }
+.viewer-tab.active { color: var(--accent-2); border-bottom-color: var(--accent); }
+.viewer-frame { width: 100%; height: min(72vh, 760px); border: 0; background: var(--bg-deep); display: block; }
+.viewer-empty { min-height: 360px; display: grid; place-content: center; justify-items: center; gap: 6px; color: var(--faint); text-align: center; padding: 24px; }
+.viewer-empty b { color: var(--muted); font-size: 12px; }
+.settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.settings-section { padding: 13px; border: 1px solid var(--line); border-radius: 3px; background: var(--panel); }
+.settings-section h2 { margin: 0 0 9px; color: var(--faint); font: 9px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+.settings-section .field { margin-bottom: 9px; }
+.layers-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 12px; }
+.settings-actions { display: flex; align-items: center; gap: 9px; margin-top: 10px; }
+.settings-note { color: var(--faint); font-size: 9px; }
+.modal-backdrop { position: fixed; inset: 0; z-index: 50; display: none; place-items: center; padding: 20px; background: rgba(4, 8, 11, .72); }
+.modal-backdrop.open { display: grid; }
+.modal { width: min(760px, 100%); max-height: min(88vh, 760px); overflow: auto; border: 1px solid var(--line-strong); border-radius: 3px; background: var(--panel); }
+.modal-top { display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px 11px; border-bottom: 1px solid var(--line); }
+.modal-top h2 { margin: 0 0 3px; font-size: 16px; }
+.modal-top p { margin: 0; color: var(--muted); font-size: 10px; }
+.modal-close { margin-left: auto; }
+.modal-body { padding: 12px 16px 16px; }
+.tutorial-steps { display: grid; gap: 8px; }
+.tutorial-step { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 9px; padding: 8px 0; border-bottom: 1px solid rgba(34,51,61,.65); }
+.tutorial-step:last-child { border-bottom: 0; }
+.tutorial-step .num { color: var(--accent); font: 10px var(--mono); padding-top: 1px; }
+.tutorial-step h3 { margin: 0 0 2px; font-size: 11px; }
+.tutorial-step p { margin: 0; color: var(--faint); font-size: 10px; line-height: 1.55; }
+.modal-foot { display: flex; align-items: center; gap: 10px; padding-top: 10px; border-top: 1px solid var(--line); }
+.modal-foot .grow { flex: 1; }
+.app-status { display: flex; align-items: center; gap: 12px; padding: 6px 14px; border-top: 1px solid var(--line); background: var(--panel); color: var(--faint); font: 9px var(--mono); }
+.app-status .grow { flex: 1; }
+.app-status b { color: var(--muted); font-weight: 500; }
+@media (max-width: 1050px) {
+  .overview-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .overview-lower, .process-grid, .settings-grid { grid-template-columns: 1fr; }
 }
-@media (max-width: 600px) {
-  .topbar { padding: 10px 12px; gap: 8px; flex-wrap: wrap; }
-  .brand strong { font-size: 12px; }
-  .brand span { font-size: 8px; }
-  .top-actions { gap: 6px; }
-  .pill { font-size: 8px; }
-  .shell { width: calc(100% - 20px); padding-top: 10px; gap: 10px; }
-  .card { border-radius: 10px; padding: 14px; }
-  .options-row { grid-template-columns: 1fr; }
-  .viewer-launch-head { flex-direction: column; gap: 8px; }
-  .viewer-actions { align-items: stretch; }
-  .viewer-actions .viewer-link, .viewer-actions button { flex: 1 1 100%; }
-  .viewer-wrap { min-height: 400px; height: 68vh; }
-  .viewer-wrap iframe { min-height: 400px; }
+@media (max-width: 720px) {
+  .app-bar { height: auto; flex-wrap: wrap; padding: 8px 10px; gap: 8px; }
+  .app-brand { min-width: 0; }
+  .app-nav { order: 3; width: 100%; overflow-x: auto; height: 34px; }
+  .app-nav button { padding: 0 8px; white-space: nowrap; }
+  .app-actions { margin-left: auto; }
+  .app-main { padding: 12px 10px 22px; }
+  .page-head { align-items: flex-start; flex-direction: column; gap: 8px; }
+  .page-head h1 { font-size: 20px; }
+  .overview-grid { grid-template-columns: 1fr; }
+  .viewer-frame { height: 65vh; }
+  .recent-row { grid-template-columns: 1fr 80px; }
+  .recent-row span:last-child { display: none; }
 }
 </style>
 </head>
 <body>
-<header class="topbar">
-  <img class="logo" src="logo.png" alt="" width="34" height="34">
-  <div class="brand"><strong>CS2 Map Balance</strong><span>map analysis · v1.0.0-pre.1</span></div>
-  <nav class="topnav">
-    <a href="#generate">Generate</a>
-    <a href="#library">Library</a>
-    <a href="#output">Output</a>
+<svg class="sprite" aria-hidden="true">
+  <symbol id="i-overview" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></symbol>
+  <symbol id="i-process" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/><circle cx="8" cy="7" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="10" cy="17" r="1.5"/></symbol>
+  <symbol id="i-library" viewBox="0 0 24 24"><path d="M4 5h5v14H4zM10 5h5v14h-5zM16 6l4 1-3 12-4-1z"/></symbol>
+  <symbol id="i-cube" viewBox="0 0 24 24"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-1.8 1.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V20h-2.6v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1-1.8-1.8.1-.1A1.7 1.7 0 0 0 8 15a1.7 1.7 0 0 0-1.6-1H6v-2.6h.4A1.7 1.7 0 0 0 8 10a1.7 1.7 0 0 0-.3-1.9l-.1-.1 1.8-1.8.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6V4h2.6v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1 1.8 1.8-.1.1A1.7 1.7 0 0 0 19 10a1.7 1.7 0 0 0 1.6 1H21v2.6h-.4a1.7 1.7 0 0 0-1.2 1.4Z"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7V5Z"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4m0 0L7 9m5-5 5 5M5 20h14"/></symbol>
+  <symbol id="i-external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.6 2.6 0 1 1 3.7 2.3c-.8.4-1.2 1-1.2 1.9v.3M12 17h.01"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></symbol>
+</svg>
+
+<header class="app-bar">
+  <div class="app-brand">
+    <img src="/logo.png" alt="CS2 Map Balance" width="34" height="34">
+    <div><strong>CS2 Map Balance</strong><span>v1.1.0 · local analysis</span></div>
+  </div>
+  <nav class="app-nav" aria-label="Main navigation">
+    <button type="button" class="active" data-view="overview"><svg class="icon"><use href="#i-overview"/></svg><span>Обзор</span></button>
+    <button type="button" data-view="process"><svg class="icon"><use href="#i-process"/></svg><span>Обработка</span></button>
+    <button type="button" data-view="library"><svg class="icon"><use href="#i-library"/></svg><span>Библиотека</span></button>
+    <button type="button" data-view="viewer"><svg class="icon"><use href="#i-cube"/></svg><span>Viewer</span></button>
+    <button type="button" data-view="settings"><svg class="icon"><use href="#i-settings"/></svg><span>Настройки</span></button>
   </nav>
-  <div class="top-actions">
-    <span class="pill"><i></i>local · read-only · no game process</span>
-    <button id="guide" class="ghost" type="button">? Установка</button>
+  <div class="app-actions">
+    <span id="output-pill" class="pill">idle</span>
+    <button type="button" class="icon-button" id="help-button" title="Справка и обучение" aria-label="Справка и обучение"><svg class="icon"><use href="#i-help"/></svg></button>
   </div>
 </header>
 
-<div class="shell">
-  <aside>
-    <section class="card" id="generate">
-      <div class="eyebrow">Map intake</div>
-      <h1>Собрать карту</h1>
-      <p class="lead">Подготовь карту из установленной CS2 или загрузи уже извлечённые файлы.</p>
-      <p class="alpha-note"><b>Предварительный анализ.</b> Сейчас считаются упрощённые маршруты от спавна к цели — без встреч с противниками и симуляции боя. Проверяй выводы в самой CS2.</p>
-
-      <div class="stepper" aria-label="pipeline steps">
-        <div class="step active" id="step-files"><b>01</b>files</div>
-        <div class="step" id="step-generate"><b>02</b>generate</div>
-        <div class="step" id="step-viewer"><b>03</b>viewer</div>
-      </div>
-
-      <label for="map">Map name</label>
-      <input id="map" type="text" value="de_dust2" spellcheck="false" autocomplete="off">
-
-      <details class="mode-panel" open>
-        <summary><span>Автоматически из установленной CS2</span><small>рекомендуется</small></summary>
-        <div class="mode-content">
-      <div class="auto-box">
-        <div class="auto-head"><b>From installed CS2</b><span id="sri-state" class="sri-state">checking…</span></div>
-        <label for="game">CS2 game folder</label>
-        <input id="game" type="text" placeholder="<CS2_GAME>" spellcheck="false" autocomplete="off">
-        <button id="generate-from-game" class="primary" type="button" style="margin-top:8px">Prepare + Generate</button>
-        <p class="help" style="margin:5px 0 0">Nav, entities и collision извлекаются внутри программы. CS2 можно не запускать: доступ к папке только read-only. PHYS и EntityLump читает компонент <span class="mono">SRI</span>; внешние CLI не нужны.</p>
-      </div>
-        </div>
-      </details>
-
-      <details class="mode-panel" id="upload-mode">
-        <summary><span>Загрузить готовые файлы</span><small>.nav · .txt · .gltf · .bin</small></summary>
-        <div class="mode-content">
-      <div id="drop" class="drop" role="button" tabindex="0" aria-label="Upload map files">
-        <input id="files" type="file" multiple accept=".nav,.txt,.gltf,.bin">
-        <div class="drop-icon">↓</div>
-        <b>Перетащите файлы сюда</b>
-        <div class="small">.nav · entity .txt · .gltf · .bin sidecar</div>
-        <div id="filelist" class="file-list"></div>
-      </div>
-      <div class="file-meta">
-        <span id="file-summary">файлы не выбраны</span>
-        <button id="clear-files" class="link" type="button">Очистить</button>
-      </div>
-
-      <button id="generate-upload" class="primary" type="button">Generate map</button>
-        </div>
-      </details>
-
-      <div class="options-row">
-        <label class="check"><input id="dry" type="checkbox"> Dry run — только manifest</label>
-        <label class="check"><input id="skip" type="checkbox"> Skip clearance — быстрее</label>
-      </div>
-
-      <details class="advanced">
-        <summary>Локальные пути (fallback, большие файлы)</summary>
-        <label for="nav">Nav file</label>
-        <input id="nav" type="text" placeholder="inputs/de_dust2/de_dust2.nav">
-        <label for="entities">Entity dump</label>
-        <input id="entities" type="text" placeholder="inputs/de_dust2/entities.txt">
-        <label for="collision">Physics glTF</label>
-        <input id="collision" type="text" placeholder="inputs/de_dust2/world_physics_physics.gltf">
-        <button id="discover" class="secondary" type="button" style="margin-top:8px">Scan inputs folder</button>
-      </details>
-      <p class="help" style="margin-top:9px">Файлы читаются только локально. Upload сохраняется в ignored <span class="mono">artifacts/uploads/</span>.</p>
-    </section>
-
-    <section class="card">
-      <div class="section-head"><h2 style="margin:0">Job</h2><span id="job-map" class="pill">—</span></div>
-      <div id="status" class="status"><span class="status-dot"></span><span id="status-text">idle</span></div>
-      <div id="manifest" class="manifest"></div>
-    </section>
-
-    <div class="footnote">Локальная обработка · read-only · без доступа к процессу игры. Оценка маршрутов предварительная: encounters и combat не моделируются.</div>
-  </aside>
-
-  <main id="output">
-    <section class="card output-card">
-      <div class="section-head">
-        <div><div class="eyebrow">Analysis pipeline</div><h2 style="margin:5px 0 0;color:var(--text);font:600 17px var(--sans);text-transform:none;letter-spacing:-.02em">Результат обработки</h2></div>
-        <span class="pill" id="output-pill">idle</span>
-      </div>
-      <p class="help output-help">Проверки геометрии и навигации выполняются локально. Подробный журнал можно развернуть при необходимости.</p>
-      <details class="log-panel">
-        <summary>Журнал обработки <span>показать / скрыть</span></summary>
-        <pre id="log" class="log">idle</pre>
-      </details>
-    </section>
-    <section class="card" id="library">
-      <div class="section-head">
-        <h2 style="margin:0">Map library</h2>
-        <button id="refresh-library" class="secondary" type="button">Refresh</button>
-      </div>
-      <input id="library-search" class="library-search" type="search" placeholder="Фильтр по карте…" autocomplete="off">
-      <div id="library-content" class="library"><p class="help" style="margin:8px 0 0">Пока нет сгенерированных карт.</p></div>
-      <div class="compare-bar">
-        <button id="compare-selected" class="secondary" type="button" disabled>Compare selected (0)</button>
-        <button id="clear-compare" class="link" type="button">Clear</button>
-      </div>
-      <div id="compare-panel" class="compare-panel"></div>
-    </section>
-    <section class="card viewer-launch" id="viewer-launch" hidden>
-      <div class="viewer-launch-head">
-        <div><div class="eyebrow">Map viewer</div><h2 id="viewer-title">Viewer готов</h2><p class="help">Открой интерактивную карту отдельно — так ей будет доступно всё пространство экрана. Встроенный preview необязателен.</p></div>
-        <span class="viewer-ready">READY</span>
-      </div>
-      <div class="viewer-actions">
-        <a id="viewer-link" class="viewer-link" href="#" target="_blank" rel="noopener noreferrer">Открыть viewer отдельно ↗</a>
-        <button id="viewer-toggle" class="secondary" type="button" aria-expanded="false">Показать здесь</button>
-      </div>
-    </section>
-    <div class="viewer-wrap" id="viewer-wrap" hidden>
-      <iframe id="viewer" title="Generated CS2 map viewer" loading="lazy"></iframe>
+<main class="app-main">
+  <section class="view is-active" data-view-panel="overview">
+    <div class="page-head">
+      <div><div class="eyebrow">CS2MB / workspace</div><h1>Анализ карты без лишних шагов.</h1><p>Подготовьте карту, проверьте NAV и collision, откройте 3D-представление и сравните результаты.</p></div>
+      <div class="head-actions"><a class="button" href="/docs/USER_GUIDE.md" target="_blank" rel="noopener">Руководство <svg class="icon"><use href="#i-external"/></svg></a></div>
     </div>
-  </main>
-</div>
+    <div class="overview-grid">
+      <button type="button" class="overview-card" data-goto="process"><svg class="icon"><use href="#i-play"/></svg><b>Подготовить карту</b><span>CS2 VPK через SRI или загрузка готовых файлов.</span><span class="card-meta">PROCESS →</span></button>
+      <button type="button" class="overview-card" data-goto="library"><svg class="icon"><use href="#i-library"/></svg><b>Библиотека</b><span>Метрики, версии и сравнение подготовленных карт.</span><span class="card-meta" id="overview-count">LIBRARY →</span></button>
+      <button type="button" class="overview-card" data-goto="viewer"><svg class="icon"><use href="#i-cube"/></svg><b>3DsVW</b><span>Collision, NAV, entities и маршруты в одном 3D-виде.</span><span class="card-meta">VIEWER →</span></button>
+      <button type="button" class="overview-card" data-goto="settings"><svg class="icon"><use href="#i-settings"/></svg><b>Настройки</b><span>Качество 3D, слои и поведение viewer по умолчанию.</span><span class="card-meta">SETTINGS →</span></button>
+    </div>
+    <div class="overview-lower">
+      <section class="panel">
+        <div class="panel-head"><h2>Последние карты</h2><button class="button link" type="button" data-goto="library">Все карты</button></div>
+        <div class="panel-body" id="overview-recent"><p class="settings-note">Пока нет подготовленных карт.</p></div>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><h2>Документация</h2></div>
+        <div class="panel-body quick-list">
+          <a href="/docs/USER_GUIDE.md" target="_blank" rel="noopener">Руководство пользователя <svg class="icon"><use href="#i-external"/></svg></a>
+          <a href="/docs/SECURITY.md" target="_blank" rel="noopener">Модель безопасности <svg class="icon"><use href="#i-external"/></svg></a>
+          <a href="https://shtoblam.github.io/cs2mb-tool/" target="_blank" rel="noopener">Сайт проекта <svg class="icon"><use href="#i-external"/></svg></a>
+          <a href="https://github.com/Shtoblam/cs2mb-tool/releases/tag/v1.1.0" target="_blank" rel="noopener">Релиз v1.1.0 <svg class="icon"><use href="#i-external"/></svg></a>
+        </div>
+      </section>
+    </div>
+  </section>
 
-<!-- First-run tutorial -->
-<div id="tutorial" class="modal-backdrop" aria-hidden="true">
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="tutorial-title">
-    <div class="modal-top">
-      <div>
-        <div class="eyebrow">Start here · full setup</div>
-        <h2 id="tutorial-title">Установка и запуск</h2>
-        <p>Пошагово: Python → проект → внутренний Source 2 engine → запуск → карта. Внешние CLI не нужны; останется upload fallback.</p>
+  <section class="view" data-view-panel="process">
+    <div class="page-head">
+      <div><div class="eyebrow">Инструменты / подготовка</div><h1>Обработка карты</h1><p>Один pipeline: VPK → SRI EntityLump/PHYS → NAV, collision и 3DsVW.</p></div>
+      <span id="sri-state" class="pill">SRI checking</span>
+    </div>
+    <div class="process-grid">
+      <section class="panel" id="generate">
+        <div class="panel-head"><h2>Новая карта</h2><span class="settings-note">read-only</span></div>
+        <div class="panel-body">
+          <div class="steps"><div class="step active" id="step-files"><b>01</b>files</div><div class="step" id="step-generate"><b>02</b>generate</div><div class="step" id="step-viewer"><b>03</b>viewer</div></div>
+          <div class="form-grid">
+            <label class="field"><span>Map name</span><input id="map" type="text" value="de_dust2" spellcheck="false" autocomplete="off"></label>
+            <div class="source-block">
+              <div class="source-title"><b>Установленная CS2</b><span id="sri-note" class="sri-state">SRI</span></div>
+              <label class="field"><span>CS2 game folder</span><input id="game" type="text" placeholder="<CS2_GAME>" spellcheck="false" autocomplete="off"></label>
+              <button id="generate-from-game" class="button primary" type="button" style="margin-top:7px;width:100%"><svg class="icon"><use href="#i-play"/></svg>Prepare + Generate</button>
+            </div>
+            <div class="options-row">
+              <label class="check"><input id="dry" type="checkbox"> Dry run</label>
+              <label class="check"><input id="skip" type="checkbox"> Skip clearance</label>
+            </div>
+            <details id="upload-mode">
+              <summary>Загрузить готовые файлы</summary>
+              <div id="drop" class="drop" role="button" tabindex="0" aria-label="Upload map files">
+                <b>Перетащите .nav, .txt, .gltf и .bin</b>
+                <small>или нажмите, чтобы выбрать</small>
+                <input id="files" type="file" multiple accept=".nav,.txt,.gltf,.bin">
+              </div>
+              <div id="filelist" class="file-list"></div>
+              <div class="file-foot"><span id="file-summary">файлы не выбраны</span><button id="clear-files" class="button link" type="button">Очистить</button></div>
+              <button id="generate-upload" class="button primary" type="button" style="width:100%;margin-top:6px"><svg class="icon"><use href="#i-upload"/></svg>Generate map</button>
+            </details>
+            <details>
+              <summary>Пути к файлам (fallback)</summary>
+              <div class="form-grid" style="margin-top:8px">
+                <label class="field"><span>NAV</span><input id="nav" type="text" placeholder="inputs/de_dust2/de_dust2.nav"></label>
+                <label class="field"><span>Entities</span><input id="entities" type="text" placeholder="inputs/de_dust2/entities.txt"></label>
+                <label class="field"><span>Collision glTF</span><input id="collision" type="text" placeholder="inputs/de_dust2/world_physics_physics.gltf"></label>
+                <button id="discover" class="button" type="button">Scan inputs folder</button>
+              </div>
+            </details>
+          </div>
+        </div>
+      </section>
+      <section class="panel job-panel">
+        <div class="panel-head"><h2>Задача</h2><div class="status" id="status"><span class="status-dot"></span><span id="status-text">idle</span></div><span id="job-map" class="pill">—</span></div>
+        <div class="panel-body">
+          <div class="manifest" id="manifest"></div>
+          <pre id="log" class="log">idle</pre>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <section class="view" data-view-panel="library">
+    <div class="page-head">
+      <div><div class="eyebrow">Результаты / сравнение</div><h1>Библиотека карт</h1><p>Сводные метрики подготовленных карт. Route time — предварительный сигнал, не вердикт баланса.</p></div>
+      <div class="head-actions"><button id="refresh-library" class="button" type="button"><svg class="icon"><use href="#i-refresh"/></svg>Обновить</button></div>
+    </div>
+    <section class="panel">
+      <div class="panel-head"><div class="library-tools"><input id="library-search" class="library-search" type="search" placeholder="Фильтр по карте" autocomplete="off"><span class="settings-note">Сравнение: выберите две или больше карт</span></div></div>
+      <div class="panel-body">
+        <div id="library-content" class="library"><p class="settings-note">Пока нет сгенерированных карт.</p></div>
+        <div class="compare-bar"><button id="compare-selected" class="button" type="button" disabled>Compare selected (0)</button><button id="clear-compare" class="button link" type="button">Clear</button></div>
+        <div id="compare-panel" class="compare-panel"></div>
       </div>
-      <button id="tutorial-close" class="modal-close" type="button" aria-label="Закрыть">×</button>
+    </section>
+  </section>
+
+  <section class="view" data-view-panel="viewer">
+    <div class="page-head">
+      <div><div class="eyebrow">3DsVW / spatial view</div><h1>Просмотр карты</h1><p>SRI collision geometry, NAV, entities и representative routes. Это не render world и не симуляция.</p></div>
+      <div class="head-actions"><a id="viewer3d-tab" class="button" href="#" target="_blank" rel="noopener noreferrer"><svg class="icon"><use href="#i-external"/></svg>Открыть в новой вкладке</a></div>
+    </div>
+    <section id="viewer-launch" class="panel viewer-launch" hidden>
+      <div><h2 id="viewer-title">Viewer готов</h2><p id="viewer3d-status">3DsVW и 2D viewer доступны для этой карты.</p></div>
+      <div class="viewer-actions"><a id="viewer3d-link" class="button primary" href="#" target="_blank" rel="noopener noreferrer">Открыть 3DsVW</a><a id="viewer-link" class="button" href="#" target="_blank" rel="noopener noreferrer">2D viewer</a><button id="viewer-toggle" class="button" type="button" aria-expanded="false">Показать 2D здесь</button></div>
+    </section>
+    <section class="panel">
+      <div class="viewer-tabs"><button class="viewer-tab active" type="button" data-viewer-tab="3d">3DsVW</button><button class="viewer-tab" type="button" data-viewer-tab="2d">2D viewer</button></div>
+      <div id="viewer3d-wrap"><div id="viewer3d-empty" class="viewer-empty"><b>3D-вид появится после подготовки карты</b><span>Сначала выполните Prepare + Generate в разделе «Обработка».</span></div><iframe id="viewer3d-frame" class="viewer-frame" title="3DsVW 3D map viewer" hidden></iframe></div>
+      <div id="viewer-wrap" hidden><div id="viewer2d-empty" class="viewer-empty" hidden><b>2D viewer недоступен</b><span>Для этой карты сгенерирован только 3DsVW.</span></div><iframe id="viewer" class="viewer-frame" title="Generated CS2 map viewer" loading="lazy"></iframe></div>
+    </section>
+  </section>
+
+  <section class="view" data-view-panel="settings">
+    <div class="page-head"><div><div class="eyebrow">Конфигурация / локально</div><h1>Настройки</h1><p>Параметры сохраняются в браузере. Облако и аккаунты не используются.</p></div></div>
+    <div class="settings-grid">
+      <section class="settings-section">
+        <h2>Viewer по умолчанию</h2>
+        <label class="field"><span>Режим после генерации</span><select id="setting-viewer-mode"><option value="3d">3DsVW</option><option value="2d">2D viewer</option></select></label>
+        <label class="field"><span>Качество 3D</span><select id="setting-quality"><option value="performance">Performance</option><option value="balanced">Balanced</option><option value="quality">Quality</option></select></label>
+        <label class="check"><input id="setting-remember" type="checkbox"> Запоминать настройки viewer</label>
+        <p class="settings-note">Качество влияет на pixel ratio. Слои применяются к 3DsVW и сохраняются для отдельной вкладки.</p>
+      </section>
+      <section class="settings-section">
+        <h2>Слои 3DsVW</h2>
+        <div class="layers-grid">
+          <label class="check"><input id="setting-layer-collision" type="checkbox"> Collision</label>
+          <label class="check"><input id="setting-layer-floors" type="checkbox"> Floors</label>
+          <label class="check"><input id="setting-layer-walls" type="checkbox"> Walls</label>
+          <label class="check"><input id="setting-layer-clips" type="checkbox"> Clips / sky</label>
+          <label class="check"><input id="setting-layer-nav" type="checkbox"> NAV mesh</label>
+          <label class="check"><input id="setting-layer-connections" type="checkbox"> NAV links</label>
+          <label class="check"><input id="setting-layer-entities" type="checkbox"> Entities</label>
+          <label class="check"><input id="setting-layer-places" type="checkbox"> Site labels</label>
+          <label class="check"><input id="setting-layer-routes" type="checkbox"> Routes</label>
+        </div>
+        <div class="settings-actions"><button id="settings-reset" class="button" type="button">Сбросить настройки</button><span class="settings-note" id="settings-saved">Сохранено локально</span></div>
+      </section>
+    </div>
+  </section>
+</main>
+
+<footer class="app-status"><span id="footer-status">idle</span><span class="grow"></span><span id="footer-map">—</span><span>local · read-only · loopback</span><span>CS2MB v1.1.0</span></footer>
+
+<div id="tutorial" class="modal-backdrop" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="tutorial-title">
+  <div class="modal">
+    <div class="modal-top">
+      <div><h2 id="tutorial-title">Быстрый старт</h2><p>Пять шагов от установленной CS2 до 3D-карты.</p></div>
+      <button id="tutorial-close" class="icon-button modal-close" type="button" aria-label="Закрыть"><svg class="icon"><use href="#i-close"/></svg></button>
     </div>
     <div class="modal-body">
-      <div class="tutorial-step">
-        <h3><span>00</span>Установка: Python и проект</h3>
-        <ol class="setup-list">
-          <li>Установите <b>Python 3.13 x64</b> с
-            <a href="https://www.python.org/downloads/windows/" target="_blank" rel="noopener noreferrer">python.org</a>.
-            Включите <b>Add python.exe to PATH</b>.</li>
-          <li>Скачайте <a href="https://github.com/Shtoblam/cs2mb-tool/archive/refs/heads/main.zip" target="_blank" rel="noopener noreferrer">Source code (zip)</a> или клонируйте репозиторий.
-            Репозиторий публичный: можно скачать архив или клонировать его без приглашения.
-            Распакуйте в обычную папку, например
-            <span class="mono">%USERPROFILE%\Documents\cs2mb-tool</span>.
-            Не распаковывайте в папку CS2/Steam.</li>
-          <li>Откройте PowerShell в корне проекта и проверьте Python:
-            <pre class="code"><button class="copy" type="button">copy</button>py -3.13 --version</pre></li>
-          <li>Запустите приложение:
-            <pre class="code"><button class="copy" type="button">copy</button>py -3.13 app\server.py --port 8765</pre>
-            и откройте <a href="http://127.0.0.1:8765/" target="_blank" rel="noopener noreferrer">http://127.0.0.1:8765/</a>.
-            PowerShell не закрывайте; <span class="mono">Ctrl+C</span> останавливает сервер.</li>
-        </ol>
-        <p class="help"><span class="mono">pip install</span> не нужен. Если <span class="mono">python</span> не найден, используйте <span class="mono">py -3.13</span>. Порт можно сменить: <span class="mono">--port 8766</span>.</p>
+      <div class="tutorial-steps">
+        <div class="tutorial-step"><span class="num">01</span><div><h3>Выберите источник</h3><p>Укажите папку установленной CS2 или загрузите готовые .nav, entity .txt, .gltf и .bin.</p></div></div>
+        <div class="tutorial-step"><span class="num">02</span><div><h3>Подготовьте карту</h3><p>SRI читает PHYS и EntityLump. Source2Viewer-CLI, resourceinfo и .NET runtime не нужны.</p></div></div>
+        <div class="tutorial-step"><span class="num">03</span><div><h3>Откройте 3DsVW</h3><p>После генерации откройте 3D-вид, включите NAV, entities и routes, выберите объект для метаданных.</p></div></div>
+        <div class="tutorial-step"><span class="num">04</span><div><h3>Сравните результаты</h3><p>Библиотека хранит метрики и версии карт. Route time — предварительная оценка времени, не баланс.</p></div></div>
+        <div class="tutorial-step"><span class="num">05</span><div><h3>Настройте viewer</h3><p>Качество и слои 3DsVW сохраняются локально и доступны в «Настройках».</p></div></div>
       </div>
-
-      <div class="tutorial-step">
-        <h3><span>01</span>SRI — Source Resource Inspector</h3>
-        <p><b>SRI</b> входит в полный пакет CS2MB. Отдельный zip конвертера больше не нужен: распакуйте пакет и запустите <span class="mono">Start-CS2MB.ps1</span>. SRI читает PHYS и EntityLump напрямую; Source2Viewer-CLI и resourceinfo не требуются.</p>
-        <pre class="code">CS2MB\
-  Start-CS2MB.ps1
-  tools\
-    bin\
-      sri\
-        cs2mb-sri.exe</pre>
-        <p>Для source checkout положите <span class="mono">cs2mb-sri.exe</span> в <span class="mono">tools\bin\sri</span> или задайте <span class="mono">CS2MB_SRI</span>. Статус показывается как <b>SRI ready</b> с версией.</p>
-        <pre class="code"><button class="copy" type="button">copy</button>&amp; ".\tools\bin\sri\cs2mb-sri.exe" --version
-py -3.13 tools\sri.py --status
-Get-FileHash ".\tools\bin\sri\cs2mb-sri.exe" -Algorithm SHA256</pre>
-        <p class="help">SHA-256 сверяйте с <span class="mono">SHA256SUMS.txt</span> из релиза. SRI — локальный self-contained Windows x64 компонент; .NET runtime не требуется.</p>
-      </div>
-
-      <div class="tutorial-step">
-        <h3><span>02</span>Карта из установленной CS2</h3>
-        <p>В Steam: <b>Библиотека → Counter-Strike 2 → Управление → Просмотреть локальные файлы</b>.
-          Укажите этот корень в <span class="mono">CS2 game folder</span>. В нём должны быть
-          <span class="mono">game\csgo\maps</span> и <span class="mono">game\csgo\gameinfo.gi</span>.</p>
-        <p>Укажите map name, например <span class="mono">de_mirage</span>, и нажмите
-          <b>Prepare + Generate</b>. CS2 лучше закрыть, чтобы VPK не был заблокирован.</p>
-        <div class="tutorial-grid">
-          <div class="mini"><b>Skip clearance</b><span>Быстрый режим ~20 s; без clearance-проверки.</span></div>
-          <div class="mini"><b>Full job</b><span>Все проверки; на Dust2 около 2.5 мин.</span></div>
-        </div>
-        <p class="help">Приложение читает папку игры только read-only и пишет результаты в <span class="mono">artifacts/</span>.</p>
-      </div>
-
-      <div class="tutorial-step">
-        <h3><span>03</span>Upload-режим (если папка CS2 недоступна)</h3>
-        <p>Укажите map name, перетащите четыре файла в drop zone и нажмите <b>Generate map</b>.</p>
-        <div class="tutorial-grid">
-          <div class="mini"><b>.nav</b><span>Навигационный граф карты: области, связи, спавны.</span></div>
-          <div class="mini"><b>entity .txt</b><span>Dump сущностей: spawn points, callouts, bomb sites.</span></div>
-          <div class="mini"><b>.gltf</b><span>Physics collision: стены, полы, клипсы. Из world_physics.</span></div>
-          <div class="mini"><b>.bin</b><span>Бинарный buffer к glTF. Без него collision не прочитается.</span></div>
-        </div>
-        <p class="help">Команды извлечения: <a href="https://github.com/Shtoblam/cs2mb-tool/blob/main/docs/GETTING_FILES.ru.md" target="_blank" rel="noopener noreferrer">docs/GETTING_FILES.ru.md</a>. Нужны все четыре файла; <span class="mono">.bin</span> обязателен.</p>
-      </div>
-
-      <div class="tutorial-step">
-        <h3><span>04</span>Что появится после Generate</h3>
-        <p>После генерации открой viewer в отдельной вкладке или включи встроенный preview. В library доступны area/edge/floor/wall/clearance, предварительные route-time оценки и <b>Compare selected</b>.</p>
-        <p class="help">Результаты лежат в <span class="mono">artifacts/auto/&lt;map&gt;/&lt;job&gt;/</span>. Игровые файлы не коммитятся.</p>
-      </div>
-
-      <div class="tutorial-step">
-        <h3><span>05</span>Быстрый troubleshooting</h3>
-        <div class="tutorial-grid">
-          <div class="mini"><b>python not found</b><span>Используйте <span class="mono">py -3.13</span>; переустановите Python с PATH.</span></div>
-          <div class="mini"><b>SRI not installed</b><span>Распакуйте <span class="mono">cs2mb-sri.exe</span> в <span class="mono">tools\bin\sri</span>; перезапустите сервер.</span></div>
-          <div class="mini"><b>SRI failed</b><span>Проверьте <span class="mono">prepared/sri.log</span> и сборку CS2.</span></div>
-          <div class="mini"><b>invalid CS2 folder</b><span>Нужен корень с <span class="mono">game\csgo\maps</span>, не папка maps.</span></div>
-          <div class="mini"><b>port busy</b><span><span class="mono">--port 8766</span> и откройте новый URL.</span></div>
-          <div class="mini"><b>no .bin</b><span>Загрузите/экспортируйте <span class="mono">.gltf + .bin</span> вместе.</span></div>
-        </div>
-      </div>
-
-      <div class="modal-actions">
-        <label><input id="tutorial-never" type="checkbox"> Больше не показывать при запуске</label>
-        <span class="grow"></span>
-        <button id="tutorial-start" class="primary" type="button">Начать работу →</button>
-      </div>
+      <div class="modal-foot"><label class="check"><input id="tutorial-never" type="checkbox"> Больше не показывать</label><span class="grow"></span><a class="button" href="/docs/USER_GUIDE.md" target="_blank" rel="noopener">Руководство</a><button id="tutorial-start" class="button primary" type="button">Начать работу</button></div>
     </div>
   </div>
 </div>
 
 <script>
+﻿
 const $ = id => document.getElementById(id);
 let pollTimer = null;
 let selectedFiles = [];
 let libraryRows = [];
 let selectedCompare = new Set();
+let currentViewer3d = null;
 
 function escapeHtml(value) {
   return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
@@ -568,6 +422,8 @@ function setStatus(kind, text) {
   $('status').className = 'status ' + kind;
   $('status-text').textContent = text;
   $('output-pill').textContent = text;
+  const footer = $('footer-status');
+  if (footer) footer.textContent = text;
 }
 
 function setStep(n) {
@@ -656,7 +512,14 @@ async function startJob(endpoint, options) {
   $('viewer-launch').hidden = true;
   $('viewer-wrap').hidden = true;
   $('viewer').removeAttribute('src');
-  $('viewer-toggle').textContent = 'Показать здесь';
+  $('viewer3d-frame').hidden = true;
+  $('viewer3d-frame').removeAttribute('src');
+  $('viewer3d-empty').hidden = false;
+  $('viewer3d-link').href = '#';
+  $('viewer3d-tab').href = '#';
+  currentViewer3d = null;
+  try { localStorage.removeItem(LAST_VIEWER3D_KEY); localStorage.removeItem(LAST_VIEWER2D_KEY); } catch (error) { /* ignore */ }
+  $('viewer-toggle').textContent = 'Показать 2D здесь';
   $('viewer-toggle').setAttribute('aria-expanded', 'false');
   $('log').textContent = '';
   setStatus('running', 'uploading');
@@ -704,10 +567,14 @@ async function loadConfig() {
     if (!$('game').value && data.cs2_game && !data.cs2_game.includes('<')) {
       $('game').value = data.cs2_game;
     }
-    $('sri-state').textContent = data.sri_ready
-      ? 'SRI ready' + (data.sri_version ? ' · ' + data.sri_version.replace('cs2mb-sri ', '') : '')
+    const version = (data.sri_version || '').match(/\d+\.\d+\.\d+/);
+    const label = data.sri_ready
+      ? 'SRI ' + (version ? version[0] : 'ready')
       : 'SRI not installed';
-    $('sri-state').className = 'sri-state ' + (data.sri_ready ? 'ready' : 'missing');
+    const cls = 'pill ' + (data.sri_ready ? 'ready' : 'missing');
+    $('sri-state').textContent = label;
+    $('sri-state').className = cls;
+    if ($('sri-note')) { $('sri-note').textContent = data.sri_ready ? 'SRI ready' : 'SRI missing'; $('sri-note').className = 'sri-state ' + (data.sri_ready ? 'ready' : 'missing'); }
   } catch (error) {
     $('sri-state').textContent = 'config error';
   }
@@ -764,9 +631,21 @@ function poll(jobId) {
         if (data.status === 'ok') setStep(2);
         if (data.viewer_url) {
           $('viewer-link').href = data.viewer_url;
+          try { localStorage.setItem(LAST_VIEWER2D_KEY, JSON.stringify(data.viewer_url)); } catch (error) { /* ignore */ }
+        }
+        if (data.viewer3d_url) {
+          currentViewer3d = data.viewer3d_url;
+          $('viewer3d-link').href = data.viewer3d_url;
+          $('viewer3d-tab').href = data.viewer3d_url;
+          $('viewer3d-status').textContent = '3DsVW: collision, NAV, entities и представительные маршруты.';
+          try { localStorage.setItem(LAST_VIEWER3D_KEY, JSON.stringify(data.viewer3d_url)); } catch (error) { /* ignore */ }
+        }
+        if (data.viewer_url || data.viewer3d_url) {
           $('viewer-title').textContent = `Viewer готов · ${data.map || $('job-map').textContent}`;
           $('viewer-launch').hidden = false;
+          if (appSettings.viewerMode === '2d') showViewerTab('2d');
         }
+        if ($('footer-map')) $('footer-map').textContent = data.map || '—';
         $('manifest').textContent = data.manifest ? 'manifest: ' + data.manifest : '';
         loadLibrary();
       }
@@ -827,7 +706,10 @@ function renderLibrary() {
     return;
   }
   const body = rows.map(row => {
-    const viewer = row.viewer_url ? `<a href="${escapeHtml(row.viewer_url)}" target="_blank" rel="noopener noreferrer">open</a>` : '—';
+    const links = [];
+    if (row.viewer3d_url) links.push(`<a href="${escapeHtml(row.viewer3d_url)}" target="_blank" rel="noopener noreferrer">3D</a><button type="button" class="button link" data-view3d="${escapeHtml(row.viewer3d_url)}">here</button>`);
+    if (row.viewer_url) links.push(`<a href="${escapeHtml(row.viewer_url)}" target="_blank" rel="noopener noreferrer">2D</a>`);
+    const viewer = links.join(' · ') || '—';
     const checked = selectedCompare.has(row.job_id) ? 'checked' : '';
     return `<tr><td><input type="checkbox" data-compare-job="${escapeHtml(row.job_id)}" ${checked}></td>` +
       `<td>${escapeHtml(row.map)}</td><td>${verdictBadge(row)}</td><td>${row.areas ?? '—'}</td><td>${row.edges ?? '—'}</td>` +
@@ -851,6 +733,7 @@ async function loadLibrary() {
     const valid = new Set(libraryRows.map(row => row.job_id));
     selectedCompare = new Set([...selectedCompare].filter(job => valid.has(job)));
     renderLibrary();
+    renderOverviewRecent();
   } catch (error) {
     $('library-content').innerHTML = '<p class="help" style="margin:8px 0 0">library error: ' + escapeHtml(error) + '</p>';
   }
@@ -868,12 +751,13 @@ $('viewer-toggle').onclick = () => {
   if (!url || url === '#') return;
   if (!$('viewer').getAttribute('src')) $('viewer').src = url;
   $('viewer-wrap').hidden = false;
-  $('viewer-toggle').textContent = 'Скрыть preview';
+  $('viewer-toggle').textContent = 'Скрыть 2D';
   $('viewer-toggle').setAttribute('aria-expanded', 'true');
-  $('viewer-wrap').scrollIntoView({behavior: 'smooth', block: 'start'});
+  showView('viewer');
 };
 
-$('guide').onclick = openTutorial;
+const guideButton = $('guide');
+if (guideButton) guideButton.onclick = openTutorial;
 $('tutorial-close').onclick = closeTutorial;
 $('tutorial-start').onclick = closeTutorial;
 $('tutorial').onclick = event => {
@@ -903,6 +787,17 @@ $('generate-upload').onclick = generate;
 $('generate-from-game').onclick = generateFromGame;
 $('refresh-library').onclick = loadLibrary;
 $('library-search').oninput = renderLibrary;
+$('library-content').addEventListener('click', event => {
+  const button = event.target.closest('[data-view3d]');
+  if (!button) return;
+  currentViewer3d = button.dataset.view3d;
+  $('viewer3d-link').href = currentViewer3d;
+  $('viewer3d-tab').href = currentViewer3d;
+  $('viewer3d-status').textContent = '3DsVW: выбранная карта.';
+  try { localStorage.setItem(LAST_VIEWER3D_KEY, JSON.stringify(currentViewer3d)); } catch (error) { /* ignore */ }
+  showView('viewer');
+  showViewerTab('3d');
+});
 $('library-content').addEventListener('change', event => {
   const checkbox = event.target.closest('[data-compare-job]');
   if (!checkbox) return;
@@ -936,10 +831,194 @@ $('drop').addEventListener('drop', event => {
   addFiles(event.dataTransfer.files);
 });
 
+
+const APP_SETTINGS_KEY = 'cs2mb_app_v1';
+const VIEWER_SETTINGS_KEY = 'cs2mb_viewer3d_v1';
+const LAST_VIEWER3D_KEY = 'cs2mb_last_viewer3d';
+const LAST_VIEWER2D_KEY = 'cs2mb_last_viewer2d';
+const DEFAULT_LAYERS = {
+  collision: true, floors: true, walls: true, clips: false,
+  nav: true, connections: false, entities: true, places: true, routes: true,
+};
+const appSettings = { viewerMode: '3d' };
+let viewerSettings = { layers: { ...DEFAULT_LAYERS }, quality: 'balanced', remember: true };
+
+function readStored(key) {
+  try { return JSON.parse(localStorage.getItem(key) || 'null'); } catch (error) { return null; }
+}
+
+function loadSettings() {
+  const app = readStored(APP_SETTINGS_KEY);
+  if (app && (app.viewerMode === '3d' || app.viewerMode === '2d')) appSettings.viewerMode = app.viewerMode;
+  const last2d = readStored(LAST_VIEWER2D_KEY);
+  if (typeof last2d === 'string' && /^\/viewer\/[A-Za-z0-9_-]{6,64}$/.test(last2d)) {
+    $('viewer-link').href = last2d;
+  }
+  const lastViewer = readStored(LAST_VIEWER3D_KEY);
+  if (typeof lastViewer === 'string' && /^\/viewer3d\/[A-Za-z0-9_-]+\/[A-Za-z0-9_-]+\/$/.test(lastViewer)) {
+    currentViewer3d = lastViewer;
+    $('viewer3d-link').href = lastViewer;
+    $('viewer3d-tab').href = lastViewer;
+    $('viewer3d-status').textContent = '3DsVW: последняя подготовленная карта.';
+    $('viewer-title').textContent = '3DsVW готов';
+    $('viewer-launch').hidden = false;
+  }
+  const viewer = readStored(VIEWER_SETTINGS_KEY);
+  if (viewer && typeof viewer === 'object') {
+    if (viewer.layers && typeof viewer.layers === 'object') {
+      for (const key of Object.keys(DEFAULT_LAYERS)) {
+        if (typeof viewer.layers[key] === 'boolean') viewerSettings.layers[key] = viewer.layers[key];
+      }
+    }
+    if (['performance', 'balanced', 'quality'].includes(viewer.quality)) viewerSettings.quality = viewer.quality;
+    if (typeof viewer.remember === 'boolean') viewerSettings.remember = viewer.remember;
+  }
+  syncSettingsUI();
+}
+
+function syncSettingsUI() {
+  const mode = $('setting-viewer-mode');
+  if (mode) mode.value = appSettings.viewerMode;
+  const quality = $('setting-quality');
+  if (quality) quality.value = viewerSettings.quality;
+  const remember = $('setting-remember');
+  if (remember) remember.checked = viewerSettings.remember;
+  for (const key of Object.keys(DEFAULT_LAYERS)) {
+    const input = $('setting-layer-' + key);
+    if (input) input.checked = viewerSettings.layers[key];
+  }
+}
+
+function postViewerSettings() {
+  const frame = $('viewer3d-frame');
+  if (!frame || !frame.contentWindow) return;
+  frame.contentWindow.postMessage({
+    type: 'cs2mb:viewer-settings',
+    settings: { layers: viewerSettings.layers, quality: viewerSettings.quality, remember: viewerSettings.remember },
+  }, location.origin);
+}
+
+function saveSettings() {
+  appSettings.viewerMode = $('setting-viewer-mode').value === '2d' ? '2d' : '3d';
+  viewerSettings.quality = $('setting-quality').value;
+  viewerSettings.remember = $('setting-remember').checked;
+  for (const key of Object.keys(DEFAULT_LAYERS)) {
+    const input = $('setting-layer-' + key);
+    if (input) viewerSettings.layers[key] = input.checked;
+  }
+  try {
+    localStorage.setItem(APP_SETTINGS_KEY, JSON.stringify({ viewerMode: appSettings.viewerMode }));
+    if (viewerSettings.remember) {
+      localStorage.setItem(VIEWER_SETTINGS_KEY, JSON.stringify({
+        layers: viewerSettings.layers, quality: viewerSettings.quality, remember: true,
+      }));
+    } else {
+      localStorage.removeItem(VIEWER_SETTINGS_KEY);
+    }
+    if ($('settings-saved')) $('settings-saved').textContent = 'Сохранено локально';
+  } catch (error) {
+    if ($('settings-saved')) $('settings-saved').textContent = 'Не удалось сохранить';
+  }
+  postViewerSettings();
+}
+
+function showView(name) {
+  const valid = ['overview', 'process', 'library', 'viewer', 'settings'];
+  const next = valid.includes(name) ? name : 'overview';
+  document.querySelectorAll('[data-view-panel]').forEach(panel => panel.classList.toggle('is-active', panel.dataset.viewPanel === next));
+  document.querySelectorAll('.app-nav [data-view]').forEach(button => button.classList.toggle('active', button.dataset.view === next));
+  if (next === 'viewer' && currentViewer3d && !$('viewer3d-frame').getAttribute('src')) {
+    $('viewer3d-frame').src = currentViewer3d;
+    $('viewer3d-frame').hidden = false;
+    $('viewer3d-empty').hidden = true;
+    showViewerTab('3d');
+  }
+  if (next === 'library') loadLibrary();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showViewerTab(mode) {
+  const is3d = mode !== '2d';
+  document.querySelectorAll('[data-viewer-tab]').forEach(button => button.classList.toggle('active', button.dataset.viewerTab === (is3d ? '3d' : '2d')));
+  $('viewer3d-wrap').hidden = !is3d;
+  $('viewer-wrap').hidden = is3d;
+  if (is3d && currentViewer3d && !$('viewer3d-frame').getAttribute('src')) {
+    $('viewer3d-frame').src = currentViewer3d;
+    $('viewer3d-frame').hidden = false;
+    $('viewer3d-empty').hidden = true;
+  }
+  if (is3d && currentViewer3d) {
+    $('viewer3d-empty').hidden = true;
+    $('viewer3d-frame').hidden = false;
+  }
+  if (!is3d) {
+    const url = $('viewer-link').getAttribute('href');
+    const available = Boolean(url && url !== '#');
+    $('viewer-wrap').hidden = false;
+    $('viewer2d-empty').hidden = available;
+    $('viewer').hidden = !available;
+    if (available) $('viewer').src = url;
+  }
+}
+
+function renderOverviewRecent() {
+  const target = $('overview-recent');
+  if (target) {
+    if (!libraryRows.length) {
+      target.innerHTML = '<p class="settings-note">Пока нет подготовленных карт.</p>';
+    } else {
+      target.innerHTML = libraryRows.slice(0, 5).map(row => {
+        const link = row.viewer3d_url || row.viewer_url || '#';
+        return `<a class="recent-row" href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer"><b>${escapeHtml(row.map)}</b><span>${row.areas ?? '—'} areas</span><span>${row.floor_pct != null ? row.floor_pct + '% floor' : '—'}</span></a>`;
+      }).join('');
+    }
+  }
+  const count = $('overview-count');
+  if (count) count.textContent = `${libraryRows.length} MAPS →`;
+}
+
+document.querySelectorAll('.app-nav [data-view]').forEach(button => {
+  button.addEventListener('click', () => showView(button.dataset.view));
+});
+document.querySelectorAll('[data-goto]').forEach(button => {
+  button.addEventListener('click', () => showView(button.dataset.goto));
+});
+document.querySelectorAll('[data-viewer-tab]').forEach(button => {
+  button.addEventListener('click', () => showViewerTab(button.dataset.viewerTab));
+});
+$('help-button').addEventListener('click', openTutorial);
+$('setting-viewer-mode').addEventListener('change', saveSettings);
+$('setting-quality').addEventListener('change', saveSettings);
+$('setting-remember').addEventListener('change', saveSettings);
+for (const key of Object.keys(DEFAULT_LAYERS)) {
+  const input = $('setting-layer-' + key);
+  if (input) input.addEventListener('change', saveSettings);
+}
+$('settings-reset').addEventListener('click', () => {
+  appSettings.viewerMode = '3d';
+  viewerSettings = { layers: { ...DEFAULT_LAYERS }, quality: 'balanced', remember: true };
+  try {
+    localStorage.removeItem(APP_SETTINGS_KEY);
+    localStorage.removeItem(VIEWER_SETTINGS_KEY);
+  } catch (error) { /* ignore */ }
+  syncSettingsUI();
+  saveSettings();
+  if ($('viewer3d-frame').getAttribute('src')) $('viewer3d-frame').src = $('viewer3d-frame').getAttribute('src');
+});
+$('viewer3d-frame').addEventListener('load', () => {
+  postViewerSettings();
+});
+const initialView = (location.hash || '').replace('#', '');
+loadSettings();
+showView(initialView || 'overview');
+if (initialView) history.replaceState(null, '', '#' + initialView);
+
 renderFiles();
 loadConfig();
 loadLibrary();
 maybeTutorial();
+
+
 </script>
 </body>
 </html>

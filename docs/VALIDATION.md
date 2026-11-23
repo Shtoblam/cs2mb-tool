@@ -34,6 +34,18 @@ has 415 entities, 15 T spawns, 15 CT spawns and 43 callouts.
 
 **Endpoint security tests:** Host rejection, missing/cross-origin POSTs, oversized uploads, malformed multipart data, invalid map names, invalid extensions, missing sidecars, invalid JSON, viewer path confinement and job-limit rejection are covered by direct HTTP tests. Process-tree termination is covered by a parent/child process test.
 
+**3DsVW validation (2026-11-24):** generated bundles for de_dust2 and de_anubis
+were loaded in Edge with WebGL2. Dust2 produced 435,649 collision triangles,
+2,242 NAV areas and 164 draw calls; Anubis produced 715,842 triangles, 2,633 NAV
+areas and 141 draw calls. Layer toggles, camera presets, selection metadata,
+embedded mode and separate-tab mode were exercised. These are local observations,
+not universal performance guarantees.
+
+**3DsVW security tests:** invalid map/job IDs, encoded traversal, missing
+bundles, fixed-asset path confinement, CSP, MIME types and library/job viewer
+URLs are covered by endpoint tests. Builder tests cover synthetic NAV/glTF,
+texture scrubbing and external-buffer rejection.
+
 **Synthetic cases:** empty file, garbage bytes, minimal valid header, truncated
 block table, oversized declared size, unsupported header version, missing input.
 All produce a controlled non-zero exit with a `cs2mb-sri:` message and no

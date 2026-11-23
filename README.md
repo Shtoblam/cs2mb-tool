@@ -18,7 +18,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Shtoblam/cs2mb-tool/releases/tag/v1.0.0-pre.1"><img alt="Version v1.0.0-pre.1" src="https://img.shields.io/badge/release-v1.0.0--pre.1-e45468?style=flat-square"></a>
+  <a href="https://github.com/Shtoblam/cs2mb-tool/releases/tag/v1.1.0"><img alt="Version v1.1.0" src="https://img.shields.io/badge/release-v1.1.0-e45468?style=flat-square"></a>
   <img alt="Python 3.13" src="https://img.shields.io/badge/python-3.13-3776AB?style=flat-square&logo=python&logoColor=white">
   <a href="https://github.com/Shtoblam/cs2mb-tool/actions/workflows/tests.yml"><img alt="Tests, SRI build and security checks" src="https://github.com/Shtoblam/cs2mb-tool/actions/workflows/tests.yml/badge.svg?branch=main"></a>
   <img alt="SRI — Source Resource Inspector" src="https://img.shields.io/badge/SRI-Source%20Resource%20Inspector-79b6d1?style=flat-square">
@@ -26,7 +26,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Shtoblam/cs2mb-tool/releases/tag/v1.0.0-pre.1"><strong>Complete Windows release ↗</strong></a> ·
+  <a href="https://github.com/Shtoblam/cs2mb-tool/releases/tag/v1.1.0"><strong>Complete Windows release ↗</strong></a> ·
   <a href="https://shtoblam.github.io/cs2mb-tool/"><strong>Project website ↗</strong></a> ·
   <a href="https://github.com/Shtoblam/cs2mb-tool">GitHub repository ↗</a> ·
   <a href="README.ru.md">Русская версия</a>
@@ -81,6 +81,28 @@ analysis pipeline needs.
 - no .NET runtime, Source2Viewer-CLI or `resourceinfo.exe` required
 - SRI path, version and SHA-256 recorded in the preparation manifest
 
+## 3DsVW — 3D Source Map Viewer
+
+**3DsVW** is the browser-based spatial module. It loads generated SRI collision
+geometry, NAV polygons, entity markers and representative routes. It is a
+viewer, not a render-world export: there are no game materials or textures.
+
+<p align="center">
+  <img src="docs/assets/screenshots/3dsvw-anubis.png" alt="3DsVW technical 3D view of de_anubis collision geometry, NAV and routes" width="100%">
+</p>
+
+- locally bundled three.js `0.160.0` — no CDN, no runtime download;
+- floors, walls, other collision surfaces and clip/sky volumes are separated;
+- NAV mesh, directed links, CT/T spawns, site labels and routes are independent
+  layers;
+- orbit, pan, zoom, fit, top, isometric and reset camera actions;
+- click geometry, NAV or an entity to inspect the metadata actually present;
+- embedded in the application and available in a separate tab;
+- renders on demand and groups geometry to keep draw calls bounded.
+
+The viewer deliberately shows **collision-derived geometry**, not a fake render
+map. See [docs/USER_GUIDE.md](docs/USER_GUIDE.md) for controls and limitations.
+
 ## Navigation and collision are separate evidence
 
 <p align="center">
@@ -111,18 +133,18 @@ analysis pipeline needs.
 
 ## Current application
 
-These are actual screenshots of the current `v1.0.0-pre.1` application.
+These are actual screenshots of the current `v1.1.0` application.
 
 <p align="center">
-  <img src="docs/assets/screenshots/cs2mb-main.png" alt="CS2 Map Balance main intake interface with the original logo and SRI status" width="100%">
+  <img src="docs/assets/screenshots/app-v1.1-overview.png" alt="CS2 Map Balance v1.1 overview with the original logo" width="100%">
 </p>
 
 <p align="center">
-  <img src="docs/assets/screenshots/cs2mb-map-viewer.png" alt="Generated CS2 map viewer with navigation routes and collision context" width="100%">
+  <img src="docs/assets/screenshots/3dsvw-dust2.png" alt="3DsVW collision, NAV, entities and route view of de_dust2" width="100%">
 </p>
 
 <p align="center">
-  <img src="docs/assets/screenshots/cs2mb-map-library.png" alt="CS2 Map Balance map library with real generated data and comparison controls" width="100%">
+  <img src="docs/assets/screenshots/app-v1.1-library.png" alt="CS2 Map Balance v1.1 map library with real generated data" width="100%">
 </p>
 
 ## Current capabilities
@@ -132,7 +154,8 @@ These are actual screenshots of the current `v1.0.0-pre.1` application.
 - Read-only VPK and NAV extraction from a local CS2 installation.
 - Browser upload/drop of `.nav`, entity `.txt`, physics `.gltf` and `.bin`.
 - Directed navigation graph with one-way links, components and z-aware lookup.
-- Generated self-contained viewer with representative and all spawn-to-target
+- 3DsVW: embedded/separate 3D view with collision, NAV, entity and route layers.
+- Generated self-contained 2D viewer with representative and all spawn-to-target
   routes.
 - Collision floor, wall and clearance reports.
 - `AK a-b s` route-time range, vertical-transition and `J+` jump-budget
@@ -171,10 +194,10 @@ results.
 ## Installation
 
 Download the complete Windows x64 package from
-**[the v1.0.0-pre.1 release](https://github.com/Shtoblam/cs2mb-tool/releases/tag/v1.0.0-pre.1)**:
+**[the v1.1.0 release](https://github.com/Shtoblam/cs2mb-tool/releases/tag/v1.1.0)**:
 
 ```text
-CS2MB-v1.0.0-pre.1-win-x64.zip
+CS2MB-v1.1.0-win-x64.zip
 ```
 
 Extract it to a normal user folder and run:
@@ -187,6 +210,7 @@ The package includes:
 
 - the SRI executable at `tools/bin/sri/cs2mb-sri.exe`;
 - a portable Python 3.13 runtime at `runtime/`;
+- 3DsVW viewer assets and the offline user guide.
 - the local application, analysis modules, viewer generator and documentation.
 
 No Python installation, `pip install`, .NET runtime, Source2Viewer-CLI or
@@ -206,7 +230,7 @@ For full installation and troubleshooting, read
 **[docs/GETTING_FILES.md](docs/GETTING_FILES.md)**.
 
 <p align="center">
-  <img src="docs/assets/screenshots/cs2mb-setup.png" alt="Actual first-run setup guide in the current CS2MB application" width="92%">
+  <img src="docs/assets/screenshots/app-v1.1-tutorial.png" alt="Actual first-run setup guide in the current CS2MB application" width="92%">
 </p>
 
 ### Build SRI from source (optional)
@@ -239,6 +263,10 @@ Python 3.13.3, SRI `1.0.0`, ValveResourceFormat `20.1.7467`.
 | de_vertigo | 2105 | 37 | 210,596 | 99.45% |
 | de_anubis | 2633 | 34 | 715,842 | 97.34% |
 | de_overpass | 3938 | 36 | 884,775 | 97.71% |
+
+3DsVW integration was exercised on de_dust2 and de_anubis: 435,649 / 715,842
+collision triangles, 2,242 / 2,633 NAV areas and 164 / 141 draw calls in the
+local Edge run. These are local observations, not universal benchmarks.
 
 Entity output was compared against a local `resourceinfo` reference for all nine
 maps: identical entity counts, class distributions and origins (one Inferno
@@ -277,8 +305,10 @@ and [docs/STATE.md](docs/STATE.md) for the current evidence record.
 | `tools/gltf_collision.py` | collision loading, floor/wall/clearance queries |
 | `movement/` | speed profile and route-time model |
 | `simulation/` | rush/split time envelopes and balance comparison |
-| `prototype/dust2_viewer.py` | self-contained viewer generation |
-| `app/server.py` | local intake UI, uploads, jobs, library |
+| `prototype/dust2_viewer.py` | self-contained 2D viewer generation |
+| `viewer3d/build.py` | 3DsVW data bundle, NAV/entity/route export and glTF normalization |
+| `viewer3d/assets/` | locally bundled three.js and 3DsVW viewer |
+| `app/server.py` | local intake UI, uploads, jobs, library, confined viewer routes |
 
 The Python analysis layer remains standard-library only. SRI is the only
 packaged binary component and is isolated behind `tools/sri.py`.
@@ -310,6 +340,7 @@ The complete documentation index is **[docs/README.md](docs/README.md)**.
 - [Setup and troubleshooting](docs/SETUP.md) · [Настройка](docs/SETUP.ru.md)
 - [Getting map files](docs/GETTING_FILES.md) · [Получение файлов](docs/GETTING_FILES.ru.md)
 - [SRI component](sri/README.md)
+- [User guide](docs/USER_GUIDE.md) · [Руководство](docs/USER_GUIDE.ru.md)
 - [Architecture](docs/ARCHITECTURE.md)
 - [Decisions](docs/DECISIONS.md)
 - [Research](docs/RESEARCH.md)
@@ -328,7 +359,7 @@ py -3.13 tools\security_scan.py
 py -3.13 -m compileall -q app tools movement simulation prototype
 ```
 
-The current suite is **88 tests discovered / 87 executed / 1 real-map test
+The current suite is **100 tests discovered / 99 executed / 1 real-map test
 gated** by `CS2MB_TEST_GAME`. CI runs the Python suite, the SRI build and
 SRI-backed tests on Windows. Tests are synthetic and unit-level: passing them is
 not proof that geometry, collision, navigation or movement are correct in game.
@@ -336,7 +367,7 @@ See [docs/VALIDATION.md](docs/VALIDATION.md).
 
 ## Roadmap
 
-- **v1.0.0-pre.1** — complete Windows package, SRI rename, security hardening,
+- **v1.1.0** — complete Windows package, SRI rename, security hardening,
   visual cleanup and consolidated release.
 - **2.2** — line of sight, detection and encounter timing.
 - **2.3** — encounter/combat model only after demo calibration.

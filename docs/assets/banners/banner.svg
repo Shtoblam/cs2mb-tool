@@ -26,5 +26,5 @@
   <path d="M846 142L906 122L972 132L1032 156L1104 184L1188 156" fill="none" stroke="#e45468" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
   <g fill="#f2f4f6"><circle cx="846" cy="142" r="4"/><circle cx="1188" cy="156" r="4"/></g>
   <g fill="#e45468"><circle cx="972" cy="132" r="3"/><circle cx="1104" cy="184" r="3"/></g>
-  <text x="1232" y="300" text-anchor="end" font-family="Consolas, monospace" font-size="9" fill="#707b83">CS2MB · v1.0.0-pre.1</text>
+  <text x="1232" y="300" text-anchor="end" font-family="Consolas, monospace" font-size="9" fill="#707b83">CS2MB · v1.1.0</text>
 </svg>

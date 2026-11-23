@@ -1,4 +1,32 @@
-## SRI, security audit and complete pre-release — 2026-11-23
+## v1.1.0 — UI redesign, 3DsVW and focused security review — 2026-11-24
+
+- Redesigned the application shell into Overview, Process, Library, Viewer and
+  Settings, with compact rectangular panels, a cyan/blue accent and local SVG
+  icons. Existing intake, upload, polling, library and comparison behaviour is
+  preserved.
+- Added a short five-step onboarding guide, Help access, and working local
+  settings for default viewer mode, 3D quality and default 3DsVW layers.
+- Added **3DsVW — 3D Source Map Viewer**: a WebGL2 viewer using locally bundled
+  three.js `0.160.0`, with collision, floor, wall, clip, NAV, entity, place and
+  route layers; fit/top/iso/reset camera actions; selection metadata; embedded
+  and separate-tab modes.
+- 3DsVW visualizes SRI PHYS collision geometry plus NAV/entities/routes. It does
+  not claim render-world geometry, materials or textures.
+- Added `viewer3d/` data builder, vendored viewer assets and confined server
+  routes. Generated bundles are normalized and bounded before serving.
+- Added 3DsVW endpoint security tests, builder tests and real de_dust2/de_anubis
+  integration checks.
+- Added English and Russian user guides and updated README, website, screenshots,
+  social preview and dependency notices.
+- Local 3DsVW measurements: de_dust2 435,649 collision triangles / 2,242 NAV
+  areas / 164 draw calls; de_anubis 715,842 triangles / 2,633 areas / 141 draw
+  calls in Edge. These are local observations, not universal benchmarks.
+- Test suite: **100 discovered / 99 executed / 1 real-map test gated**.
+- Release target: `v1.1.0`, normal release, Windows x64.
+
+---
+
+## Historical: SRI, security audit and v1.0.0-pre.1 — 2026-11-23
 
 - Renamed the internal Source 2 component to **SRI — Source Resource Inspector**:
   `cs2mb-sri.exe`, `tools/sri.py`, `CS2MB_SRI`, `--sri`, `sri_ready`,

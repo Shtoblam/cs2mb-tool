@@ -1,7 +1,7 @@
 # Architecture — CS2 Map Balance
 
-**Status:** current `v1.0.0-pre.1` architecture after the SRI rename and the
-container security audit.
+**Status:** current `v1.1.0` architecture after the SRI rename, the v1.1
+application redesign and the 3DsVW integration.
 
 ## 1. Principles
 
@@ -115,10 +115,29 @@ angles, target names, callout names and other entity properties. The order puts
 These Python modules are unchanged. The converter migration did not change
 movement assumptions, route semantics or balance calculations.
 
-### 3.7 Viewer and library
+### 3.7 2D viewer and library
 
-The viewer generator, map library, manifests and upload/drop workflow are
-unchanged. The viewer remains self-contained and offline.
+The existing 2D viewer generator, map library, manifests and upload/drop
+workflow are preserved. The 2D viewer remains self-contained and offline.
+
+### 3.8 3DsVW — 3D Source Map Viewer
+
+`viewer3d/build.py` turns a prepared map into a bounded viewer bundle:
+
+- `viewer3d/data.json` — NAV areas/edges, entity spawns/places/markers,
+  representative routes, collision node metadata, bounds and statistics;
+- `viewer3d/scene.gltf` and `scene.bin` — normalized SRI collision geometry.
+
+The builder rejects external buffer URIs, missing sidecars, mismatched buffer
+lengths and excessive node/accessor/triangle counts. It strips image/texture
+references because the viewer needs geometry only. `bufferViews[].buffer` is
+filled when the SRI glTF omits it.
+
+The browser viewer is a local ES-module application under
+`viewer3d/assets/`, with three.js `0.160.0` vendored under `vendor/`. It renders
+collision faces split by orientation (floor/wall/other), optional clip/sky
+volumes, NAV polygons and links, entity markers and routes. The embedded app
+iframe and the separate tab use the same page and assets.
 
 ## 4. Data contracts
 
@@ -130,6 +149,8 @@ unchanged. The viewer remains self-contained and offline.
 | `world_physics_physics.bin` | SRI `phys` | glTF sidecar validation |
 | `prepared_manifest.json` | `prepare_map.py` | provenance and job manifest |
 | viewer HTML | `prototype/dust2_viewer.py` | local browser / server |
+| `viewer3d/data.json` | `viewer3d/build.py` | 3DsVW |
+| `viewer3d/scene.gltf` + `.bin` | `viewer3d/build.py` (normalized SRI output) | 3DsVW |
 
 The manual upload path accepts `.nav`, `.txt`, `.gltf` and `.bin` and does not
 require SRI or a CS2 installation.
@@ -154,14 +175,20 @@ require SRI or a CS2 installation.
 - Maximum two simultaneous jobs; excess requests return `429`.
 - 900 s job timeout; Windows process-tree termination includes SRI.
 - Generated viewer and intake UI carry restrictive CSP/frame/referrer headers.
+- 3DsVW assets and bundles are served only from fixed asset roots or
+  `/viewer3d/<map>/<job>/`; map/job IDs are regex-validated and paths are
+  resolved and confined.
+- The 3DsVW CSP allows `script-src 'self'` and `connect-src 'self'` only, with
+  `frame-ancestors 'self'`; no CDN is used.
 - SRI path, version and SHA-256 are recorded; manifests avoid personal absolute
   paths.
 
 ## 7. Distribution
 
-The complete Windows package contains the application, SRI, a portable Python
-3.13 runtime, launchers, documentation, checksums and an SPDX SBOM. The binary
-is not committed to Git. Users do not download a separate converter release.
+The complete Windows package contains the application, SRI, 3DsVW with its
+vendored three.js assets, a portable Python 3.13 runtime, launchers,
+documentation, checksums and an SPDX SBOM. Binaries and extracted game data are
+not committed to Git. Users do not download a separate converter release.
 
 ## 8. Validation layers
 

@@ -46,6 +46,29 @@ tessellated approximations, not exact analytic collision. A future Valve format
 change can require an engine update; the tool must then be revalidated before
 claims are carried forward.
 
+## 0D. 3DsVW data inspection (2026-11-24)
+
+**FACT — SRI output.** The Dust2 collision glTF contains 39 nodes/meshes, 39
+materials, 435,649 indexed triangles and one `.bin` sidecar. Positions use
+Hammer units and Source axes (`x`, `y`, `z-up`). Node extras contain
+`SurfaceProperty`, `CollisionGroup` and `InteractAs`; six nodes are clip/sky.
+
+**FACT — available navigation/entities.** The same preparation produced 2,242
+NAV areas, 6,275 directed links, 30 player spawns, 7 target place labels and 415
+parsed entity records. Representative CT/T routes to A/B/Mid were generated
+from existing NAV helpers.
+
+**FACT — not available.** SRI does not export render-world meshes, materials or
+textures. 3DsVW therefore labels its output as collision-derived and does not
+attempt to imitate a game screenshot.
+
+**FACT — second map.** de_anubis produced 715,842 collision triangles, 2,633 NAV
+areas and 141 draw calls in the local Edge run.
+
+**LIMIT.** The glTF omits `bufferViews[].buffer`; the builder fills it before
+serving. The viewer geometry is collision brush geometry, so curved primitives
+and props are approximations, and no render surface detail is present.
+
 ## 0B. Security and release audit (2026-11-23)
 
 **Scope:** Python app, parsers, SRI C# source, NuGet lockfile, build and package

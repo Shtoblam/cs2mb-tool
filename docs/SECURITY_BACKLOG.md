@@ -7,6 +7,18 @@ SRI, viewer security and documentation.
 This backlog tracks security work larger than a documentation correction. No
 item here authorizes a change to game files or game processes.
 
+## Completed in `v1.1.0`
+
+- Added 3DsVW confined asset and job-bundle routes with regex map/job IDs,
+  resolved-path confinement and 404 handling for traversal/invalid paths.
+- Added glTF normalization and limits: external buffer rejection, buffer length
+  check, texture/image stripping, node/accessor and triangle caps.
+- Added viewer-specific endpoint tests and builder tests.
+- Added a strict 3DsVW CSP with no inline scripts and same-origin connections.
+- Kept loopback-only binding, Host/Origin checks, upload limits, job limits and
+  process-tree timeouts unchanged.
+- Added settings persistence without accounts or external services.
+
 ## Completed in `v1.0.0-pre.1`
 
 - Added the internal **SRI** component with explicit path resolution, argument

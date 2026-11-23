@@ -1,98 +1,106 @@
-# CS2 Map Balance v1.0.0-pre.1 — complete pre-release
+# CS2 Map Balance v1.1.0 — release notes
 
-**Application version:** `v1.0.0-pre.1`
+**Application version:** `v1.1.0`
 **SRI version:** `1.0.0`
-**Release type:** pre-release, Windows x64
+**3DsVW version:** `1.0.0`
+**Release type:** normal release, Windows x64
 
-This is the first complete CS2MB distribution. It contains the application, the
-first-party **SRI — Source Resource Inspector**, a portable Python 3.13 runtime,
-launchers, documentation, checksums and an SPDX SBOM.
+This release turns CS2MB into a complete desktop-oriented analysis workspace and
+adds **3DsVW — 3D Source Map Viewer**, a read-only spatial view built from the
+data the existing pipeline already produces.
 
-## Source 2 processing
+## Application UI
 
-- Renamed the internal component to SRI — Source Resource Inspector.
-- SRI decodes compiled PHYS and EntityLump resources in-process with the pinned
-  MIT ValveResourceFormat `20.1.7467` library.
-- Source2Viewer-CLI and `resourceinfo.exe` are no longer runtime dependencies.
-- Coordinates remain in Hammer units and Source axes (`x`, `y`, `z-up`); the
-  legacy glTF node matrix is not applied.
-- Mesh and convex-hull geometry is exact; sphere/capsule primitives use bounded
-  tessellation.
-- `InteractAs`, `SurfaceProperty` and `CollisionGroup` metadata is preserved.
-- SRI path, version and SHA-256 are recorded in preparation manifests.
+- New workspace navigation: Overview, Process, Library, Viewer, Settings.
+- Rectangular panels, compact typography and a cool cyan/blue technical accent.
+- Local SVG icons only; no emoji and no icon CDN.
+- Repeated tutorial-style text removed from the workflow; contextual help and a
+  dedicated user guide remain.
+- Recent maps, document shortcuts and clear status reporting on the overview.
 
-## Application
+## 3DsVW
 
-- One complete Windows package with `Start-CS2MB.bat` and `Start-CS2MB.ps1`.
-- Portable Python 3.13 runtime; no Python install or `pip` for packaged users.
-- SRI detection and version reporting in the application.
-- Existing NAV parsing, routing, collision, movement, simulation, viewer and
-  library behaviour is preserved.
-- Manual upload of `.nav`, entity `.txt`, `.gltf` and `.bin` remains available.
+- Browser-based WebGL2 viewer with locally bundled three.js `0.160.0`.
+- Renders collision geometry from SRI PHYS, NAV polygons/links, entity markers
+  and representative routes.
+- Floors, walls, other collision surfaces and clip/sky volumes are separated.
+- Orbit, pan, zoom, fit, top, isometric and reset camera actions.
+- Independent collision/NAV/entity/route layers.
+- Object inspector exposes only available metadata: node, category, surface,
+  collision group, `InteractAs`, material, hit point, NAV area or entity fields.
+- Embedded in the application and available in a separate tab; both use the
+  same implementation.
+- No CDN, no external textures, no runtime downloads.
+- On-demand rendering, frustum culling and grouped draw calls.
 
-## Visual identity
+## Settings
 
-- Restored the owner's original `logo.png` byte-for-byte as the canonical mark.
-- Removed invented vector logo variants.
-- Rebuilt banners, SRI/pipeline diagrams, navigation, collision and security
-  illustrations with a restrained charcoal/crimson system.
-- Rebuilt the 1280×640 social preview around the original logo.
-- Reorganized assets into `brand/`, `banners/`, `illustrations/` and
-  `screenshots/`.
-- Captured actual current screenshots of the application, map viewer, map
-  library and onboarding guide.
+- Default viewer mode: 3DsVW or 2D.
+- 3D quality: Performance, Balanced, Quality (pixel ratio).
+- Default 3DsVW layers, including clips/sky and NAV links.
+- Remember-viewer toggle and reset to defaults.
+- Preferences persist locally and apply to embedded and separate-tab viewers.
 
-## Security
+## Documentation
 
-- Maximum two simultaneous jobs; excess requests return HTTP 429.
-- Stale job records and upload directories are pruned.
-- Windows timeout terminates the full process tree, including SRI.
-- Loopback Host allow-list and same-origin POST checks; missing Origin rejected.
-- Remote binding (`--allow-remote`) is rejected.
-- Rejected uploads are removed.
-- Preparation manifests omit personal absolute paths.
-- Direct endpoint tests cover oversized uploads, malformed multipart data,
-  traversal, extensions, missing sidecars, invalid JSON, viewer confinement,
-  Host/Origin rejection and job limits.
-- GitHub Actions pinned to immutable commit SHAs.
-- Release includes `SHA256SUMS.txt` and `SBOM.spdx.json`.
-- SRI is not code-signed; hashes are integrity checks, not a signature.
+- New English and Russian user guides.
+- Setup, SRI, 2D viewer, 3DsVW, settings, troubleshooting, privacy and
+  limitations are documented against the current application.
+- Current screenshots replace the v1.0 application screenshots.
+- Website, README files, social preview and Pages workflow updated.
 
-## Compatibility
+## Security and performance
 
-- Windows 10/11 x64.
-- Portable Python 3.13 included in the complete package.
-- Local CS2 installation optional for automatic extraction.
-- Validated against CS2 build `2000948` (2026-11-19).
-- Upload mode works without CS2 or SRI.
+- Viewers accept only generated bundles under confined map/job paths.
+- Invalid map/job identifiers, traversal paths and missing files return 404.
+- glTF is normalized before serving: `bufferViews[].buffer` filled, textures and
+  images stripped, external buffer URIs rejected.
+- Viewer input is bounded by glTF size, sidecar size, node/accessor count and
+  four million collision triangles.
+- Viewer CSP is `script-src 'self'`, `connect-src 'self'`,
+  `frame-ancestors 'self'`; the application can embed it, external origins cannot.
+- Generated metadata is inserted with safe DOM text APIs, not unsafe HTML.
+- Existing loopback-only binding, Host/Origin checks, upload limits, job limits
+  and process-tree timeouts are preserved.
+- 3DsVW renders on demand and pauses when the document is hidden.
 
-## Known limitations
+## Measured local data
 
-- SRI is Windows x64 only.
-- Curved collision primitives are tessellated approximations.
-- Full clearance validation was performed on Dust2 and Nuke; the other maps in
-  the recorded batch used `Skip clearance`.
-- Entity/PHYS support is tied to the recorded CS2 build; future Valve format
-  changes may require an SRI update.
-- The movement model remains straight-line calibrated and does not include
-  combat, utility, visibility or player decisions.
-- Viewer HTML generation is not a browser sandbox; remaining viewer-content
-  and code-signing work is tracked in `docs/SECURITY_BACKLOG.md`.
-- The route-time indicator is a preliminary heuristic, not a balance verdict.
+| Map | Collision triangles | NAV areas | Draw calls | Viewer data |
+|---|---:|---:|---:|---:|
+| de_dust2 | 435,649 | 2,242 | 164 | ~407 KB + glTF/bin |
+| de_anubis | 715,842 | 2,633 | 141 | ~480 KB + glTF/bin |
+
+Draw calls are from the reference desktop run in Edge. They are not a universal
+benchmark. The SRI collision glTF remains the large file; 3DsVW normalizes and
+copies it into the job bundle.
 
 ## Verification
 
-- 88 tests discovered / 87 executed / 1 real-map test gated by
-  `CS2MB_TEST_GAME`.
-- SRI Release build and engine-backed tests.
-- Nine-map local integration validation.
-- Python compilation, repository hygiene scan, Markdown links, SVG/XML and
-  asset-reference checks.
-- Package extraction, launcher, SRI detection and HTTP startup checks.
-- Checksums re-calculated from the published archive.
+- Python suite, security scan, compileall, JavaScript syntax, SVG XML and asset
+  reference checks.
+- 3DsVW builder tests with synthetic NAV/glTF and external-buffer rejection.
+- Viewer endpoint tests for traversal, invalid IDs, missing bundles, CSP and
+  confined paths.
+- Dust2 and Anubis automatic preparation and upload-mode generation.
+- Embedded and separate-tab viewer loading with real generated data.
+- Package extraction, SRI detection, launcher, docs access and checksum checks.
 
-## Historical release notes
+## Compatibility and limits
 
-Earlier 2.x notes remain under [releases/](releases/). The old standalone
-`source2-v1.0.0` component release and tag were removed after this complete
-release was published and verified.
+- Windows 10/11 x64.
+- Portable Python 3.13 included; no separate install.
+- WebGL2 browser required for 3DsVW.
+- SRI is Windows x64 only and is not code-signed.
+- 3DsVW is a collision-derived technical view, not game render geometry,
+  materials or textures.
+- No map editing, box selection or measurement tools.
+- Curved collision primitives are tessellated approximations.
+- Route time is an estimate, not match balance.
+- Validation is tied to the recorded CS2 build; future Valve format changes may
+  require an SRI update.
+
+## Historical notes
+
+The v1.0.0-pre.1 complete package, SRI rename and the earlier validation record
+remain in [releases/](releases/) and the changelog.

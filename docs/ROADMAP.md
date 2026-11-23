@@ -3,10 +3,24 @@
 **Правило:** сроки не обещаются. Сложность указана относительно, а не в днях.
 Каждый этап заканчивается проверяемым артефактом и тестами.
 
-**Текущая версия приложения:** `v1.0.0-pre.1`. Это чистый baseline
+**Текущая версия приложения:** `v1.1.0`. Это чистый baseline
 репозитория `cs2mb-tool`; исторические release notes сохранены как архив.
 
-## Milestone: SRI and complete v1.0.0-pre.1 release — current 2026-11-23
+## Milestone: v1.1.0 UI and 3DsVW — current 2026-11-24
+
+- Redesigned the application workspace and settings while preserving intake,
+  upload, job polling, library and comparison behaviour.
+- Added **3DsVW — 3D Source Map Viewer** with locally bundled three.js, collision
+  / NAV / entity / route layers, camera presets, selection metadata and embedded
+  plus separate-tab modes.
+- Added viewer-specific path confinement, glTF sanitization, size/triangle caps
+  and endpoint tests.
+- Added English and Russian user guides, current screenshots and v1.1.0 website
+  and release updates.
+- Release gate: clean package extraction, launcher, SRI, Dust2/Anubis viewer,
+  docs access, checksums and SBOM.
+
+## Historical: SRI and complete v1.0.0-pre.1 release — 2026-11-23
 
 - Renamed the internal component to **SRI — Source Resource Inspector**.
 - Closed P1 security backlog items: bounded jobs, process-tree timeout, endpoint

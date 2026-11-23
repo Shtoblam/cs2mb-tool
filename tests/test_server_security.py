@@ -475,5 +475,110 @@ class ServerSecurityTests(unittest.TestCase):
 
 
 
+    def test_viewer3d_assets_and_bundle_are_confined(self) -> None:
+        with live_server() as (port, _inputs, _uploads):
+            bundle = server_module.JOBS_DIR / "de_dust2" / "job123456" / "viewer3d"
+            bundle.mkdir(parents=True)
+            (bundle / "data.json").write_text(
+                '{"schema":"cs2mb.viewer3d/1"}', encoding="utf-8"
+            )
+            (bundle / "scene.gltf").write_text(
+                '{"asset":{"version":"2.0"}}', encoding="utf-8"
+            )
+            status, body = request(port, "GET", "/viewer3d/de_dust2/job123456/")
+            self.assertEqual(status, 200)
+            self.assertIn(b"3DsVW", body)
+            with urlopen(
+                f"http://127.0.0.1:{port}/viewer3d/de_dust2/job123456/", timeout=5
+            ) as response:
+                policy = response.headers.get("Content-Security-Policy", "")
+                self.assertIn("script-src 'self'", policy)
+                self.assertIn("connect-src 'self'", policy)
+                self.assertIn("frame-ancestors 'self'", policy)
+                self.assertEqual(response.headers.get("X-Frame-Options"), "SAMEORIGIN")
+
+            status, body = request(port, "GET", "/viewer3d/de_dust2/job123456/data.json")
+            self.assertEqual(status, 200)
+            self.assertEqual(body[:1], b"{")
+            status, body = request(port, "GET", "/viewer3d/assets/viewer.js")
+            self.assertEqual(status, 200)
+            self.assertIn(b"OrbitControls", body)
+            with urlopen(
+                f"http://127.0.0.1:{port}/viewer3d/assets/viewer.js", timeout=5
+            ) as response:
+                self.assertEqual(
+                    response.headers.get("Content-Type"),
+                    "text/javascript; charset=utf-8",
+                )
+                self.assertEqual(response.headers.get("X-Content-Type-Options"), "nosniff")
+
+            for path in (
+                "/viewer3d/assets/%2e%2e/README.md",
+                "/viewer3d/de_dust2/job123456/%2e%2e/%2e%2e/README.md",
+                "/viewer3d/de_dust2/demo/",
+                "/viewer3d/de_dust2/job123456/missing.json",
+                "/viewer3d/de_dust2/job123456/../../README.md",
+            ):
+                status, _body = request(port, "GET", path)
+                self.assertEqual(status, 404, path)
+
+    def test_library_and_job_report_viewer3d_url(self) -> None:
+        with live_server() as (port, _inputs, _uploads):
+            out_dir = server_module.JOBS_DIR / "de_dust2" / "job123456"
+            bundle = out_dir / "viewer3d"
+            bundle.mkdir(parents=True)
+            (bundle / "data.json").write_text("{}", encoding="utf-8")
+            (out_dir / "summary.json").write_text(
+                '{"map":"de_dust2","generated_utc":"2026-11-24T00:00:00+00:00"}',
+                encoding="utf-8",
+            )
+            with server_module.JOBS_LOCK:
+                server_module.JOBS["job123456"] = {
+                    "id": "job123456",
+                    "map": "de_dust2",
+                    "status": "ok",
+                    "log": [],
+                    "out_dir": str(out_dir),
+                    "viewer": None,
+                    "manifest": None,
+                }
+            status, body = request(port, "GET", "/api/library")
+            self.assertEqual(status, 200)
+            library = json.loads(body.decode("utf-8"))
+            row = library["maps"][0]
+            self.assertEqual(row["viewer3d_url"], "/viewer3d/de_dust2/job123456/")
+
+            status, body = request(port, "GET", "/api/jobs/job123456")
+            self.assertEqual(status, 200)
+            job = json.loads(body.decode("utf-8"))
+            self.assertEqual(job["viewer3d_url"], "/viewer3d/de_dust2/job123456/")
+            with server_module.JOBS_LOCK:
+                server_module.JOBS.clear()
+
+
+    def test_docs_route_is_whitelisted_and_confined(self) -> None:
+        with live_server() as (port, _inputs, _uploads):
+            status, body = request(port, "GET", "/docs/USER_GUIDE.md")
+            self.assertEqual(status, 200)
+            self.assertIn(b"3DsVW", body)
+            with urlopen(
+                f"http://127.0.0.1:{port}/docs/USER_GUIDE.md", timeout=5
+            ) as response:
+                self.assertEqual(
+                    response.headers.get("Content-Type"),
+                    "text/plain; charset=utf-8",
+                )
+                self.assertEqual(response.headers.get("X-Content-Type-Options"), "nosniff")
+            for path in (
+                "/docs/../README.md",
+                "/docs/%2e%2e/README.md",
+                "/docs/UNKNOWN.md",
+                "/docs/USER_GUIDE.md%00",
+                "/docs/USER_GUIDE.txt",
+            ):
+                status, _body = request(port, "GET", path)
+                self.assertEqual(status, 404, path)
+
+
 if __name__ == "__main__":
     unittest.main()

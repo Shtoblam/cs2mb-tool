@@ -1,8 +1,9 @@
 # Dependencies and licenses
 
-**Status:** current for `v1.0.0-pre.1`.
+**Status:** current for `v1.1.0`.
 
-The SRI executable is built against the pinned packages below. The table is
+SRI is built against the pinned NuGet packages below. 3DsVW uses the locally
+vendored three.js runtime. The table is
 derived from `sri/Cs2mb.Sri/packages.lock.json`; exact versions are resolved by
 the lockfile. The complete Windows package also includes the official Python
 3.13.3 embeddable runtime.
@@ -38,6 +39,18 @@ the lockfile. The complete Windows package also includes the official Python
 Official source:
 <https://www.python.org/ftp/python/3.13.3/python-3.13.3-embed-amd64.zip>
 SHA-256: `59ff76e16e6597de47474fb22be69e7191a89116910d728ab735079b078e52db`
+
+## 3DsVW runtime
+
+| Component | Version | Scope | License |
+|---|---:|---|---|
+| three.js module + addons | 0.160.0 | 3DsVW runtime | MIT |
+
+three.js `0.160.0` is vendored under `viewer3d/assets/vendor/`. The files are
+served locally; only module import paths were adjusted. The upstream license is
+included at `viewer3d/assets/vendor/LICENSE-three.txt`. The npm package archive
+SHA-256 used during preparation was
+`1ee2f935c4f555814b388e87b5ef78a44856bd2e9d0feb88643a6e193fb42856`.
 
 ## Audit notes
 

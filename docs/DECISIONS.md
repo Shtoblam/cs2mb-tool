@@ -487,3 +487,61 @@ embed the original PNG faithfully. The favicon is the original PNG.
 - no alternative monogram or navigation-symbol logo remains;
 - screenshots and social assets must use the original image;
 - SVG diagrams are information graphics, not logo substitutes.
+
+## ADR-027. Desktop workspace and cyan technical accent
+
+**Статус:** accepted (2026-11-24).
+
+**Контекст:** the v1.0 intake page exposed all controls in one long form and used
+a warm crimson accent throughout. The product needed a clearer hierarchy and a
+more professional engineering-tool feel.
+
+**Решение:** use a rectangular workspace with Overview, Process, Library, Viewer
+and Settings; compact typography; restrained panels; and a cool cyan/blue
+accent. Keep the original logo unchanged. Use local SVG icons only.
+
+**Последствия:**
+
+- existing intake, upload, polling, library and comparison behaviour is kept;
+- repeated tutorial paragraphs move to contextual help and the user guide;
+- settings are local-only and applied to both viewer modes;
+- the visual language is shared by the application, 3DsVW and documentation.
+
+## ADR-028. 3DsVW visualizes collision-derived spatial data
+
+**Статус:** accepted (2026-11-24).
+
+**Контекст:** SRI exports PHYS collision geometry, entity data and NAV. It does
+not export the render world, materials or textures. Presenting a fabricated
+visual map would be incorrect.
+
+**Решение:** build 3DsVW from the available collision glTF, NAV polygons/links,
+filtered entity markers and representative routes. Split collision faces into
+floors, walls and other surfaces by orientation, keep clip/sky volumes separate,
+and label the viewer explicitly as collision-derived.
+
+**Последствия:**
+
+- no invented render geometry, materials or textures;
+- the viewer is useful for spatial structure, layer inspection and metadata;
+- it is not a game screenshot, map editor or physics simulator;
+- curved primitives and missing render detail are documented limitations.
+
+## ADR-029. Vendor three.js and normalize generated glTF
+
+**Статус:** accepted (2026-11-24).
+
+**Контекст:** 3DsVW must work offline and load generated data without external
+requests. SRI's glTF is geometry-only and omits `bufferViews[].buffer`; uploaded
+glTF can contain unexpected texture/image references.
+
+**Решение:** vendor three.js `0.160.0` and required addons locally, pin the
+version and license, reject external buffer URIs, fill missing buffer references,
+strip images/textures/animations/skins, and bound glTF/sidecar/triangle sizes.
+
+**Последствия:**
+
+- no CDN or runtime download;
+- viewer bundles are self-contained and served from confined paths;
+- only module import paths are adjusted in vendored files;
+- arbitrary uploaded glTF cannot trigger remote asset fetches through 3DsVW.

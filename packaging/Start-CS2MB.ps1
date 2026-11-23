@@ -18,6 +18,11 @@ if (-not (Test-Path -LiteralPath $sri -PathType Leaf)) {
     exit 1
 }
 
+$viewer3d = Join-Path $root "viewer3d\assets\index.html"
+if (-not (Test-Path -LiteralPath $viewer3d -PathType Leaf)) {
+    Write-Warning "3DsVW assets are missing; the 2D viewer remains available."
+}
+
 if (Test-Path -LiteralPath $runtime -PathType Leaf) {
     $python = $runtime
     & $python -c "import sys; raise SystemExit(0 if sys.version_info >= (3,13) else 1)"
@@ -52,8 +57,9 @@ if (Test-Path -LiteralPath $runtime -PathType Leaf) {
 }
 
 Write-Host ""
-Write-Host "CS2 Map Balance v1.0.0-pre.1" -ForegroundColor Red
+Write-Host "CS2 Map Balance v1.1.0" -ForegroundColor Red
 Write-Host "SRI - Source Resource Inspector" -ForegroundColor Cyan
+Write-Host "3DsVW - 3D Source Map Viewer" -ForegroundColor Cyan
 Write-Host "Local server: $url"
 Write-Host "Press Ctrl+C to stop."
 Write-Host ""

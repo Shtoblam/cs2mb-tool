@@ -1,4 +1,4 @@
-# SECURITY — v1.0.0-pre.1
+# SECURITY — v1.1.0
 
 **Область:** локальный `app/server.py`, auto-generation pipeline, SRI (`sri/`),
 `tools/sri.py`, пользовательские файлы и release packaging.
@@ -107,6 +107,36 @@ Upload-режим по-прежнему принимает подготовле�
   binary не коммитится в Git;
 - старые commit-объекты могут содержать исторические примеры путей; текущий
   `main` чистый, rewrite истории без разрешения не выполнялся.
+
+## Аудит 3DsVW (2026-11-24)
+
+3DsVW добавляет второй viewer сгенерированных данных и новые server routes.
+Проверено:
+
+- `/viewer3d/<map>/<job>/` и `/viewer3d/assets/`; map/job ID используют строгий
+  regex, как и job API.
+- Resolved paths остаются внутри фиксированного asset root или каталога
+  `viewer3d/` задачи. Percent-encoded traversal, backslashes, NUL, отсутствующие
+  файлы и произвольные суффиксы дают 404.
+- Общая viewer-страница отдаётся из фиксированного asset root; каталог задачи не
+  может её подменить.
+- `viewer3d/build.py` нормализует glTF: заполняет `bufferViews[].buffer`,
+  отклоняет внешние/отсутствующие sidecars и несовпадение длины buffer, удаляет
+  images/textures/animations/skins и ограничивает glTF, sidecar, nodes/accessors
+  и число collision-треугольников.
+- CSP viewer: `default-src 'none'; script-src 'self'; connect-src 'self'`; без
+  inline scripts и внешних origin.
+- Метаданные объектов/NAV/entities выводятся через `textContent`/DOM nodes, без
+  `innerHTML` для сгенерированных данных.
+- `postMessage` настроек принимается только с того же origin.
+- Endpoint-тесты покрывают traversal, неверные ID, отсутствующие bundles, CSP,
+  content type и confined paths.
+- Builder-тесты покрывают синтетические NAV/glTF, удаление текстур и отклонение
+  внешнего buffer.
+
+3DsVW остаётся локальным read-only viewer. Он не исполняет загруженный код и не
+загружает внешние assets. Локальный процесс, способный переписать generated
+files, находится вне этой модели угроз.
 
 ## Остаточные риски
 

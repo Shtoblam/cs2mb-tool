@@ -115,6 +115,16 @@ def build_sbom(target: Path, version: str, sri_hash: str) -> None:
             "copyrightText": "Copyright (c) 2026 CS2 Map Balance contributors",
         },
         {
+            "name": "three.js",
+            "SPDXID": "SPDXRef-Package-three.js",
+            "versionInfo": "0.160.0",
+            "downloadLocation": "https://www.npmjs.com/package/three/v/0.160.0",
+            "filesAnalyzed": False,
+            "licenseConcluded": "MIT",
+            "licenseDeclared": "MIT",
+            "copyrightText": "Copyright (c) 2010-2023 three.js authors",
+        },
+        {
             "name": "Python",
             "SPDXID": "SPDXRef-Package-Python",
             "versionInfo": PYTHON_VERSION,
@@ -185,6 +195,15 @@ def write_notices(target: Path) -> None:
     notices = SRI_NOTICES.read_text(encoding="utf-8")
     notices += """
 
+## Three.js
+3DsVW bundles three.js 0.160.0 and its GLTFLoader, OrbitControls and
+BufferGeometryUtils addons under `viewer3d/assets/vendor/`. The files are
+vendored locally; only module import paths were adjusted to remove bare
+specifiers. License: MIT. The upstream license text is included at
+`viewer3d/assets/vendor/LICENSE-three.txt`.
+Source: https://www.npmjs.com/package/three/v/0.160.0
+SHA-256 (package archive): 1ee2f935c4f555814b388e87b5ef78a44856bd2e9d0feb88643a6e193fb42856
+
 ## Python runtime
 
 The complete Windows package includes Python 3.13.3 from the official
@@ -226,7 +245,7 @@ def main() -> int:
     staging.mkdir(parents=True)
     DIST.mkdir(parents=True, exist_ok=True)
 
-    for directory in ("app", "movement", "simulation", "prototype", "config", "docs"):
+    for directory in ("app", "movement", "simulation", "prototype", "config", "docs", "viewer3d"):
         copy_tree(ROOT / directory, staging / directory)
     copy_tree(ROOT / "tools", staging / "tools", ignore_names={"bin"})
     (staging / "tools" / "bin" / "sri").mkdir(parents=True)

@@ -9,17 +9,17 @@
 
   <text x="64" y="266" font-family="Segoe UI, Arial, sans-serif" font-size="62" font-weight="700" fill="#f2f4f6">Understand a map</text>
   <text x="64" y="334" font-family="Segoe UI, Arial, sans-serif" font-size="62" font-weight="700" fill="#e45468">beyond the radar.</text>
-  <text x="66" y="380" font-family="Segoe UI, Arial, sans-serif" font-size="19" fill="#b5bcc2">Navigation, collision and route timing — decoded locally.</text>
+  <text x="66" y="380" font-family="Segoe UI, Arial, sans-serif" font-size="19" fill="#b5bcc2">Navigation, collision, routes and a 3D map view — decoded locally.</text>
 
   <g font-family="Consolas, monospace" font-size="11" fill="#cbd2d7">
     <text x="66" y="444">✓ SRI resource inspector inside</text>
-    <text x="66" y="466">✓ No Source2Viewer or resourceinfo</text>
+    <text x="66" y="466">✓ 3DsVW 3D map viewer inside</text>
     <text x="66" y="488">✓ Local, read-only, no telemetry</text>
   </g>
 
   <rect x="66" y="526" width="176" height="30" rx="4" fill="#2a1118" stroke="#8f1732"/>
-  <text x="154" y="545" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#f0c7cf">v1.0.0-pre.1</text>
-  <text x="262" y="545" font-family="Consolas, monospace" font-size="10" fill="#75c98a">PRE-RELEASE</text>
+  <text x="154" y="545" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#f0c7cf">v1.1.0</text>
+  <text x="262" y="545" font-family="Consolas, monospace" font-size="10" fill="#75c98a">RELEASE</text>
 
   <rect x="736" y="104" width="480" height="432" rx="6" fill="#1d2328" stroke="#3d474f"/>
   <text x="760" y="132" font-family="Consolas, monospace" font-size="10" letter-spacing="2" fill="#79b6d1">NAVIGATION / ROUTE VIEW</text>

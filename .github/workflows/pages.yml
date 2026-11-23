@@ -12,6 +12,8 @@ on:
       - "README.ru.md"
       - "docs/SECURITY.md"
       - "docs/SECURITY.ru.md"
+      - "docs/USER_GUIDE.md"
+      - "docs/USER_GUIDE.ru.md"
       - "docs/assets/**"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
@@ -36,7 +38,7 @@ jobs:
         run: |
           mkdir -p _site/docs/assets
           cp index.html site.css site.js README.md README.ru.md _site/
-          cp docs/SECURITY.md docs/SECURITY.ru.md _site/docs/
+          cp docs/SECURITY.md docs/SECURITY.ru.md docs/USER_GUIDE.md docs/USER_GUIDE.ru.md _site/docs/
           cp -r docs/assets/. _site/docs/assets/
           cp logo.png _site/
           touch _site/.nojekyll
@@ -48,6 +50,8 @@ jobs:
           test -s _site/logo.png
           test -s _site/docs/SECURITY.md
           test -s _site/docs/SECURITY.ru.md
+          test -s _site/docs/USER_GUIDE.md
+          test -s _site/docs/USER_GUIDE.ru.md
           test -s _site/docs/assets/banners/banner.svg
           test -s _site/docs/assets/banners/banner.ru.svg
           test -s _site/docs/assets/brand/social-preview.png
@@ -56,10 +60,15 @@ jobs:
           test -s _site/docs/assets/illustrations/navigation.svg
           test -s _site/docs/assets/illustrations/collision.svg
           test -s _site/docs/assets/illustrations/security.svg
-          test -s _site/docs/assets/screenshots/cs2mb-main.png
-          test -s _site/docs/assets/screenshots/cs2mb-map-viewer.png
-          test -s _site/docs/assets/screenshots/cs2mb-map-library.png
-          test -s _site/docs/assets/screenshots/cs2mb-setup.png
+          test -s _site/docs/assets/screenshots/app-v1.1-overview.png
+          test -s _site/docs/assets/screenshots/app-v1.1-process.png
+          test -s _site/docs/assets/screenshots/app-v1.1-library.png
+          test -s _site/docs/assets/screenshots/app-v1.1-settings.png
+          test -s _site/docs/assets/screenshots/app-v1.1-tutorial.png
+          test -s _site/docs/assets/screenshots/app-v1.1-viewer-embedded.png
+          test -s _site/docs/assets/screenshots/3dsvw-dust2.png
+          test -s _site/docs/assets/screenshots/3dsvw-anubis.png
+          test -s _site/docs/assets/screenshots/viewer-2d-dust2.png
           test -s _site/docs/assets/screenshots/website-current.png
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5

@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>3DsVW — CS2MB</title>
+<link rel="icon" type="image/png" href="/logo.png">
+<link rel="stylesheet" href="/viewer3d/assets/viewer.css">
+</head>
+<body>
+<svg class="sprite" aria-hidden="true">
+  <symbol id="i-fit" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
+  <symbol id="i-top" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+  <symbol id="i-iso" viewBox="0 0 24 24"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/></symbol>
+  <symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></symbol>
+  <symbol id="i-external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 13 9 5 9-5"/></symbol>
+  <symbol id="i-panel" viewBox="0 0 24 24"><path d="M4 5h16v14H4zM9 5v14"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.6 2.6 0 1 1 3.7 2.3c-.8.4-1.2 1-1.2 1.9v.3M12 17h.01"/></symbol>
+</svg>
+
+<div class="v3-app">
+  <header class="v3-top">
+    <div class="v3-brand">
+      <span class="v3-mark">3D</span>
+      <div><strong>3DsVW</strong><span>3D Source Map Viewer</span></div>
+    </div>
+    <div class="v3-map">
+      <b id="map-name">map</b>
+      <span id="map-mode">SRI collision · NAV · entities</span>
+    </div>
+    <div class="v3-toolbar">
+      <button type="button" data-view="fit" title="Fit map (F)" aria-label="Fit map"><svg class="icon"><use href="#i-fit"/></svg><span>Fit</span></button>
+      <button type="button" data-view="top" title="Top view (T)" aria-label="Top view"><svg class="icon"><use href="#i-top"/></svg><span>Top</span></button>
+      <button type="button" data-view="iso" title="Isometric view (I)" aria-label="Isometric view"><svg class="icon"><use href="#i-iso"/></svg><span>Iso</span></button>
+      <button type="button" id="reset-view" title="Reset camera (R)" aria-label="Reset camera"><svg class="icon"><use href="#i-reset"/></svg><span>Reset</span></button>
+      <span class="v3-sep"></span>
+      <button type="button" class="icon-only" id="toggle-left" title="Toggle layers" aria-label="Toggle layers"><svg class="icon"><use href="#i-layers"/></svg></button>
+      <button type="button" id="open-tab" class="accent" title="Open this map in a separate tab"><svg class="icon"><use href="#i-external"/></svg><span>New tab</span></button>
+    </div>
+  </header>
+
+  <aside class="v3-left" id="left-panel">
+    <section>
+      <h2>Layers</h2>
+      <label class="layer"><input type="checkbox" data-layer="collision" checked><span>Collision</span><i id="count-collision">—</i></label>
+      <label class="layer sub"><input type="checkbox" data-layer="floors" checked><span>Floors</span></label>
+      <label class="layer sub"><input type="checkbox" data-layer="walls" checked><span>Walls</span></label>
+      <label class="layer sub"><input type="checkbox" data-layer="clips"><span>Clips / sky</span><i id="count-clips">—</i></label>
+      <label class="layer"><input type="checkbox" data-layer="nav" checked><span>Navigation mesh</span><i id="count-nav">—</i></label>
+      <label class="layer"><input type="checkbox" data-layer="connections"><span>NAV links</span><i id="count-links">—</i></label>
+      <label class="layer"><input type="checkbox" data-layer="entities" checked><span>Entities</span><i id="count-entities">—</i></label>
+      <label class="layer sub"><input type="checkbox" data-layer="places" checked><span>Site labels</span></label>
+      <label class="layer"><input type="checkbox" data-layer="routes" checked><span>Routes</span><i id="count-routes">—</i></label>
+    </section>
+    <section>
+      <h2>Display</h2>
+      <label class="field">Quality
+        <select id="quality">
+          <option value="performance">Performance</option>
+          <option value="balanced">Balanced</option>
+          <option value="quality">Quality</option>
+        </select>
+      </label>
+      <label class="check"><input type="checkbox" id="remember" checked> Remember these preferences</label>
+      <button type="button" class="wide" id="reset-layers">Reset visibility</button>
+    </section>
+    <section class="v3-stats">
+      <h2>Map</h2>
+      <dl>
+        <div><dt>NAV areas</dt><dd id="stat-areas">—</dd></div>
+        <div><dt>NAV links</dt><dd id="stat-links">—</dd></div>
+        <div><dt>Collision triangles</dt><dd id="stat-triangles">—</dd></div>
+        <div><dt>Entities</dt><dd id="stat-entities">—</dd></div>
+        <div><dt>Routes</dt><dd id="stat-routes">—</dd></div>
+      </dl>
+      <p class="note">Geometry comes from SRI PHYS collision data. It is not the render world and has no materials or textures.</p>
+    </section>
+  </aside>
+
+  <main class="v3-viewport" id="viewport">
+    <canvas id="canvas" aria-label="3D map viewport"></canvas>
+    <div id="loading" class="v3-overlay"><div class="spinner"></div><b>Loading map</b><span id="loading-text">Reading collision geometry…</span></div>
+    <div id="error" class="v3-overlay error" hidden><b>3D view unavailable</b><span id="error-text"></span><small>Check that the generated viewer3d data exists and is valid.</small></div>
+    <div class="v3-compass" aria-hidden="true">
+      <div class="compass-ring"><span>Y</span><span>X</span><i id="compass-needle"></i><b>Z</b></div>
+    </div>
+    <div class="v3-hint">LMB orbit · RMB pan · wheel zoom · click to inspect</div>
+  </main>
+
+  <aside class="v3-right" id="right-panel">
+    <section>
+      <h2>Selection</h2>
+      <p id="selection-empty">Click collision geometry, a NAV area, or an entity marker to inspect its available metadata.</p>
+      <dl id="selection-data" hidden></dl>
+    </section>
+  </aside>
+
+  <footer class="v3-status">
+    <span id="status-source">SRI collision · CS2 NAV</span>
+    <span class="grow"></span>
+    <span id="stat-fps">— fps</span>
+    <span id="stat-calls">— draws</span>
+    <span id="status-orientation">Z-up · Hammer units</span>
+    <span class="v3-version">3DsVW 1.0.0</span>
+  </footer>
+</div>
+<script type="module" src="/viewer3d/assets/viewer.js"></script>
+</body>
+</html>

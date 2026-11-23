@@ -14,18 +14,19 @@ Start with the [project README](../README.md) or the
 |---|---|---|
 | [STATE.md](STATE.md) | Current | Evolving project state, verified results, active priorities and known gaps |
 | [SETUP.md](SETUP.md) / [SETUP.ru.md](SETUP.ru.md) | Current | Installation, SRI, portable package, map generation and troubleshooting |
+| [USER_GUIDE.md](USER_GUIDE.md) / [USER_GUIDE.ru.md](USER_GUIDE.ru.md) | Current | Complete application guide: intake, SRI, 2D/3DsVW, settings, troubleshooting, privacy |
 | [../sri/README.md](../sri/README.md) | Current | SRI architecture, build, commands, license and validation |
 | [GETTING_FILES.md](GETTING_FILES.md) / [GETTING_FILES.ru.md](GETTING_FILES.ru.md) | Current | Manual extraction of `.nav`, entities and physics glTF |
 | [RELEASE.md](RELEASE.md) / [RELEASE.ru.md](RELEASE.ru.md) | Current | Application release summary and verification scope |
 | [SECURITY.md](SECURITY.md) / [SECURITY.ru.md](SECURITY.ru.md) | Current | Threat model, controls, CS2/anti-cheat boundaries and residual risks |
 | [SECURITY_BACKLOG.md](SECURITY_BACKLOG.md) | Current | Prioritized security-management work and acceptance criteria |
-| [DEPENDENCIES.md](DEPENDENCIES.md) | Current | Pinned NuGet/Python dependencies, licenses, advisory check and SBOM notes |
+| [DEPENDENCIES.md](DEPENDENCIES.md) | Current | Pinned NuGet/Python/three.js dependencies, licenses, advisory check and SBOM notes |
 
 ## Architecture and methodology
 
 | Document | Status | Contents |
 |---|---|---|
-| [ARCHITECTURE.md](ARCHITECTURE.md) | Reference | Data flow, module boundaries, bundle formats and implementation status |
+| [ARCHITECTURE.md](ARCHITECTURE.md) | Reference | Data flow, SRI/3DsVW boundaries, bundle formats and implementation status |
 | [PROJECT.md](PROJECT.md) | Historical brief | Original goals, definitions, data layers and early open decisions |
 | [DECISIONS.md](DECISIONS.md) | Reference | Architecture decision records (ADRs), including superseded decisions |
 | [VALIDATION.md](VALIDATION.md) | Reference | Independent validation levels for data, nav, collision, movement and balance |
@@ -50,14 +51,14 @@ validation of the current CS2 build.
 |---|---|---|
 | [ROADMAP.md](ROADMAP.md) | Current | Staged plan, acceptance criteria, dependencies and deferred work |
 | [RISKS.md](RISKS.md) | Reference | Technical, methodological, legal and scope risks |
-| [RELEASE.md](RELEASE.md) / [RELEASE.ru.md](RELEASE.ru.md) | Current | Complete `v1.0.0-pre.1` release notes and verification scope |
+| [RELEASE.md](RELEASE.md) / [RELEASE.ru.md](RELEASE.ru.md) | Current | Complete `v1.1.0` release notes and verification scope |
 | [releases/pre-alpha-v1.0.md](releases/pre-alpha-v1.0.md) / [RU](releases/pre-alpha-v1.0.ru.md) | Historical | Earlier clean `cs2mb-tool` baseline |
 | [releases/](releases/) | Historical | Earlier 2.x release notes, retained as project history |
 | [CHANGELOG.md](../CHANGELOG.md) | Current | Chronological change log |
 
 ### Release naming note
 
-- The application version in [`VERSION`](../VERSION) is `v1.0.0-pre.1`.
+- The application version in [`VERSION`](../VERSION) is `v1.1.0`.
 - The `cs2mb-tool` repository is a fresh baseline. Earlier 2.x release notes are
   kept under [`releases/`](releases/) as historical project records.
 - The current release note is [RELEASE.md](RELEASE.md); the earlier baseline note is [releases/pre-alpha-v1.0.md](releases/pre-alpha-v1.0.md).

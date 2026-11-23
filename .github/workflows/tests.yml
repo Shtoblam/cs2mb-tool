@@ -20,13 +20,15 @@ jobs:
         with:
           python-version: "3.13"
       - name: Compile project modules
-        run: python -m compileall -q app tools movement simulation prototype
+        run: python -m compileall -q app tools movement simulation prototype viewer3d
       - name: Run unit tests
         run: python -m unittest discover -s tests -v
       - name: Run repository hygiene scan
         run: python tools/security_scan.py
-      - name: Validate website JavaScript
-        run: node --check site.js
+      - name: Validate JavaScript
+        run: |
+          node --check site.js
+          node --check viewer3d/assets/viewer.js
 
   sri-engine:
     runs-on: windows-latest
@@ -50,7 +52,7 @@ jobs:
         shell: pwsh
         run: |
           $env:CS2MB_SRI = "${{ github.workspace }}\sri\dist\win-x64\cs2mb-sri.exe"
-          python -m compileall -q app tools movement simulation prototype
+          python -m compileall -q app tools movement simulation prototype viewer3d
           python -m unittest discover -s tests -v
           python tools/security_scan.py
       - name: Download portable Python
@@ -71,6 +73,9 @@ jobs:
           Expand-Archive $zip.FullName -DestinationPath $target -Force
           $package = Join-Path $target "CS2MB"
           & "$package\tools\bin\sri\cs2mb-sri.exe" --version
-          & "$package\runtime\python.exe" -c "import app.server; import tools.sri; print('package imports ok')"
+          & "$package\runtime\python.exe" -c "import app.server; import tools.sri; import viewer3d.build; print('package imports ok')"
+          if (-not (Test-Path "$package\viewer3d\assets\index.html")) { throw "missing 3DsVW assets" }
+          if (-not (Test-Path "$package\viewer3d\assets\vendor\three.module.min.js")) { throw "missing three.js" }
+          if (-not (Test-Path "$package\docs\USER_GUIDE.md")) { throw "missing user guide" }
           if (-not (Test-Path "$package\SHA256SUMS.txt")) { throw "missing SHA256SUMS.txt" }
           if (-not (Test-Path "$package\SBOM.spdx.json")) { throw "missing SBOM.spdx.json" }

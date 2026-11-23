@@ -202,6 +202,22 @@ def main() -> int:
         print(f"pipeline failed; manifest: {manifest_path}", file=sys.stderr)
         return error.returncode or 1
 
+    viewer3d_info: dict = {"ok": False, "error": "not requested"}
+    try:
+        from viewer3d.build import build_viewer3d
+
+        viewer3d_info = build_viewer3d(
+            args.nav,
+            args.entities,
+            args.collision_gltf,
+            out_dir,
+            args.map,
+        )
+        print(f"wrote {out_dir / 'viewer3d' / 'data.json'}")
+    except Exception as error:  # optional layer; the 2D viewer remains usable
+        viewer3d_info = {"ok": False, "error": "3DsVW data generation failed"}
+        print(f"3DsVW generation failed: {error}", file=sys.stderr)
+
     def report_summary(path: Path) -> dict:
         data = json.loads(path.read_text(encoding="utf-8"))
         return data.get("summary", data)
@@ -300,6 +316,7 @@ def main() -> int:
         "routes": route_metrics,
         "balance": balance.as_dict() if balance else None,
         "viewer_html": str(viewer_html),
+        "viewer3d": viewer3d_info,
         "manifest": str(manifest_path),
     }
     summary_path = out_dir / "summary.json"
@@ -310,6 +327,14 @@ def main() -> int:
     manifest["status"] = "ok"
     manifest["outputs"] = {
         "viewer_html": str(viewer_html),
+        "viewer3d": {
+            "data_json": str(out_dir / "viewer3d" / "data.json")
+            if (out_dir / "viewer3d" / "data.json").is_file()
+            else None,
+            "scene_gltf": str(out_dir / "viewer3d" / "scene.gltf")
+            if (out_dir / "viewer3d" / "scene.gltf").is_file()
+            else None,
+        },
         "collision_floor_json": str(floor_json),
         "connection_json": str(connection_json),
         "clearance_json": None if args.skip_clearance else str(clearance_json),

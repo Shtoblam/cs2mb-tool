@@ -1,11 +1,11 @@
-# SECURITY — v1.0.0-pre.1
+# SECURITY — v1.1.0
 
 **Scope:** local `app/server.py`, auto-generation pipeline, SRI (`sri/`),
 `tools/sri.py`, user-provided files.
 
 ## Security management update
 
-This `v1.0.0-pre.1` audit closes the first security-management backlog cycle:
+This `v1.1.0` audit closes the first security-management backlog cycle:
 
 - bounded simultaneous jobs (maximum two) with controlled `429` rejection;
 - stale job records, upload directories and active process trees are cleaned up;
@@ -38,7 +38,7 @@ with matches.
 
 ## VAC / anti-cheat audit
 
-Audit date: **2026-11-23**. Scope: `app/server.py`, `app/index.html`,
+Audit date: **2026-11-24**. Scope: `app/server.py`, `app/index.html`,
 `tools/prepare_map.py`, `tools/sri.py`, `sri/`, `tools/auto_generate.py`, the
 viewer generator, the release packaging scripts, both GitHub Actions workflows
 and all runtime Python modules. The previous audit dates `2026-10-20` and
@@ -163,6 +163,35 @@ entity text files from any source the user chooses.
 ### Viewer response policy (2026-11-20)
 
 Generated viewer HTML is served only from a resolved path under `artifacts/auto/` after the job ID is validated. The response now sets `default-src 'none'`, allows only the viewer's inline scripts/styles and local/data/blob images, blocks network connections and nested frames, and restricts framing to the same origin. `X-Frame-Options: SAMEORIGIN`, `Referrer-Policy: no-referrer`, `Cross-Origin-Resource-Policy: same-origin`, and `Cache-Control: no-store` are also set. The local UI may embed the viewer; opening it in a separate tab uses the same endpoint and policy.
+
+## 3DsVW viewer audit (2026-11-24)
+
+3DsVW adds a second generated-data viewer and new server routes. Reviewed:
+
+- `/viewer3d/<map>/<job>/` and `/viewer3d/assets/` only; map and job IDs use the
+  same strict regex as the existing job API.
+- Resolved paths must remain under the fixed viewer asset root or the job's
+  `viewer3d/` directory. Percent-encoded traversal, backslashes, NULs, missing
+  files and arbitrary suffixes return 404.
+- The generic viewer page is served from the fixed asset root; job directories
+  cannot replace it.
+- `viewer3d/build.py` normalizes the glTF: fills `bufferViews[].buffer`, rejects
+  external or missing sidecars, rejects mismatched buffer length, strips
+  images/textures/animations/skins and caps glTF, sidecar, nodes/accessors and
+  collision triangles.
+- The viewer CSP is `default-src 'none'; script-src 'self'; connect-src 'self'`;
+  no inline scripts or remote origins are allowed.
+- Object/NAV/entity metadata is inserted with `textContent`/DOM nodes. The viewer
+  does not use `innerHTML` for generated data.
+- `postMessage` settings are accepted only from the same origin.
+- Endpoint tests cover traversal, invalid IDs, missing bundles, CSP, asset
+  content type and confined paths.
+- Builder tests cover synthetic NAV/glTF, texture scrubbing and external buffer
+  rejection.
+
+3DsVW remains a local read-only viewer. It does not execute uploaded code or
+fetch remote assets. A malicious local process that can rewrite generated files
+is outside this threat model.
 
 ## Residual risks
 

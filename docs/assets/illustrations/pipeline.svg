@@ -29,9 +29,9 @@
     <text x="736" y="160" font-family="Consolas, monospace" font-size="9" fill="#75c98a">UNCHANGED</text>
 
     <rect x="944" y="92" width="216" height="92" rx="4" fill="#1d2328" stroke="#3d474f"/>
-    <text x="962" y="118" font-size="14" font-weight="700" fill="#f2f4f6">Viewer + library</text>
+    <text x="962" y="118" font-size="14" font-weight="700" fill="#f2f4f6">Viewer + 3DsVW</text>
     <text x="962" y="140" font-family="Consolas, monospace" font-size="9" fill="#9da7af">self-contained HTML</text>
-    <text x="962" y="160" font-family="Consolas, monospace" font-size="9" fill="#ffb35c">COMPARE · MANIFEST</text>
+    <text x="962" y="160" font-family="Consolas, monospace" font-size="9" fill="#ffb35c">COMPARE · MANIFEST · 3D</text>
   </g>
 
   <g stroke="#e45468" stroke-width="1.8" fill="none">
@@ -41,5 +41,5 @@
     <path d="M914 138h22"/><path d="M928 133l8 5-8 5"/>
   </g>
   <text x="40" y="216" font-family="Consolas, monospace" font-size="9" fill="#8f9aa2">LOCAL · READ-ONLY · NO TELEMETRY</text>
-  <text x="1160" y="216" text-anchor="end" font-family="Consolas, monospace" font-size="9" fill="#8f9aa2">v1.0.0-pre.1</text>
+  <text x="1160" y="216" text-anchor="end" font-family="Consolas, monospace" font-size="9" fill="#8f9aa2">v1.1.0</text>
 </svg>

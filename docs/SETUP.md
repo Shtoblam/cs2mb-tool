@@ -1,6 +1,6 @@
 # Setup and troubleshooting
 
-This guide installs CS2 Map Balance `v1.0.0-pre.1` on Windows and explains how
+This guide installs CS2 Map Balance `v1.1.0` on Windows and explains how
 to produce a map from the installed CS2 folder or from uploaded files.
 
 The application is a local, read-only file analyzer. It does not launch CS2 or
@@ -11,7 +11,8 @@ Steam, read game memory, or interact with anti-cheat. The server binds
 
 - Windows 10/11 **x64**.
 - The complete CS2MB package
-  `CS2MB-v1.0.0-pre.1-win-x64.zip`.
+  `CS2MB-v1.1.0-win-x64.zip`.
+- A WebGL2 browser for 3DsVW (current Chrome, Edge or Firefox).
 - CS2 installed for **Prepare + Generate from installed CS2**.
 - No separate Python install, `pip install`, .NET runtime, Source2Viewer-CLI or
   `resourceinfo.exe` is required for the packaged build.
@@ -22,7 +23,7 @@ Inspector** at `tools/bin/sri/cs2mb-sri.exe`.
 ## 2. Install and start
 
 1. Download the complete package from
-   <https://github.com/Shtoblam/cs2mb-tool/releases/tag/v1.0.0-pre.1>.
+   <https://github.com/Shtoblam/cs2mb-tool/releases/tag/v1.1.0>.
 2. Verify the archive against `SHA256SUMS.txt`.
 3. Extract it to a normal user folder, for example
    `%USERPROFILE%\Documents\CS2MB`.
@@ -93,6 +94,24 @@ Override locations, in priority order:
 
 An explicit path or `CS2MB_SRI` is authoritative: a stale value fails instead
 of silently falling back.
+
+## 4.1 3DsVW — 3D Source Map Viewer
+
+3DsVW is embedded in the package at `viewer3d/`; its three.js runtime is bundled
+under `viewer3d/assets/vendor/`. It requires WebGL2 and needs no network access.
+
+After a job completes, open **Viewer** in the application. You can:
+
+- view 3DsVW embedded in the application;
+- open it in a separate tab;
+- switch to the existing 2D viewer;
+- toggle collision, floor, wall, clip, NAV, entity, site-label and route layers;
+- use Fit, Top, Iso and Reset camera actions;
+- click geometry, NAV or an entity to inspect available metadata.
+
+The viewer displays SRI PHYS collision geometry, not render-world geometry,
+materials or textures. See [USER_GUIDE.md](USER_GUIDE.md) for controls and
+limitations.
 
 ## 5. Generate a map
 

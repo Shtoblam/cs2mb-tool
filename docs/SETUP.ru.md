@@ -1,6 +1,6 @@
 # Установка и устранение неполадок
 
-Это руководство устанавливает CS2 Map Balance `v1.0.0-pre.1` на Windows и
+Это руководство устанавливает CS2 Map Balance `v1.1.0` на Windows и
 объясняет, как получить карту из установленной CS2 или из загруженных файлов.
 
 Приложение — локальный анализатор файлов только для чтения. Оно не запускает
@@ -10,7 +10,8 @@ CS2 или Steam, не читает память игры и не взаимод
 ## 1. Требования
 
 - Windows 10/11 **x64**.
-- Полный пакет CS2MB `CS2MB-v1.0.0-pre.1-win-x64.zip`.
+- Полный пакет CS2MB `CS2MB-v1.1.0-win-x64.zip`.
+- Браузер с WebGL2 для 3DsVW (актуальные Chrome, Edge или Firefox).
 - Установленная CS2 для режима **Prepare + Generate from installed CS2**.
 - Отдельная установка Python, `pip install`, .NET runtime, Source2Viewer-CLI и
   `resourceinfo.exe` для packaged build не нужны.
@@ -21,7 +22,7 @@ Inspector** в `tools/bin/sri/cs2mb-sri.exe`.
 ## 2. Установка и запуск
 
 1. Скачайте полный пакет со
-   <https://github.com/Shtoblam/cs2mb-tool/releases/tag/v1.0.0-pre.1>.
+   <https://github.com/Shtoblam/cs2mb-tool/releases/tag/v1.1.0>.
 2. Сверьте архив с `SHA256SUMS.txt`.
 3. Распакуйте в обычную пользовательскую папку, например
    `%USERPROFILE%\Documents\CS2MB`.
@@ -92,6 +93,24 @@ Get-FileHash ".\tools\bin\sri\cs2mb-sri.exe" -Algorithm SHA256
 
 Явный путь или `CS2MB_SRI` имеют приоритет: устаревшее значение приводит к
 ошибке, а не к молчаливому выбору другого файла.
+
+## 4.1 3DsVW — 3D Source Map Viewer
+
+3DsVW входит в пакет в `viewer3d/`; three.js runtime упакован в
+`viewer3d/assets/vendor/`. Нужен WebGL2, сеть не требуется.
+
+После завершения задачи откройте **Viewer**:
+
+- 3DsVW встроен в приложение;
+- можно открыть отдельную вкладку;
+- можно переключиться на существующий 2D viewer;
+- слои collision, floor, wall, clip, NAV, entity, site label и route
+  переключаются независимо;
+- камера: Fit, Top, Iso, Reset;
+- клик по геометрии, NAV или entity показывает доступные метаданные.
+
+Viewer показывает SRI PHYS collision-геометрию, а не render-world, материалы или
+текстуры. Управление и ограничения — в [USER_GUIDE.ru.md](USER_GUIDE.ru.md).
 
 ## 5. Генерация карты
 

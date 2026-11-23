@@ -28,7 +28,7 @@ from email.parser import BytesParser
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import parse_qs, urlparse
+from urllib.parse import parse_qs, unquote, urlparse
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
@@ -59,6 +59,32 @@ JOBS_LOCK = threading.Lock()
 MAP_RE = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
 JOB_RE = re.compile(r"^[A-Za-z0-9_-]{6,64}$")
 ALLOWED_SUFFIXES = {".nav", ".txt", ".gltf", ".bin"}
+VIEWER3D_ASSETS = ROOT / "viewer3d" / "assets"
+DOCS_DIR = ROOT / "docs"
+VIEWER3D_SUFFIXES = {
+    ".html",
+    ".js",
+    ".css",
+    ".json",
+    ".gltf",
+    ".bin",
+    ".png",
+    ".svg",
+    ".txt",
+    ".woff2",
+}
+VIEWER3D_TYPES = {
+    ".html": "text/html; charset=utf-8",
+    ".js": "text/javascript; charset=utf-8",
+    ".css": "text/css; charset=utf-8",
+    ".json": "application/json; charset=utf-8",
+    ".gltf": "model/gltf+json",
+    ".bin": "application/octet-stream",
+    ".png": "image/png",
+    ".svg": "image/svg+xml",
+    ".txt": "text/plain; charset=utf-8",
+    ".woff2": "font/woff2",
+}
 LOCAL_PATHS = ROOT / "config" / "paths.local.json"
 
 
@@ -198,6 +224,18 @@ VIEWER_HEADERS = {
     "Cross-Origin-Resource-Policy": "same-origin",
     "Cache-Control": "no-store",
 }
+VIEWER3D_HEADERS = {
+    "X-Frame-Options": "SAMEORIGIN",
+    "Content-Security-Policy": (
+        "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; "
+        "img-src 'self' data: blob:; connect-src 'self'; font-src 'self'; "
+        "worker-src 'self' blob:; object-src 'none'; base-uri 'none'; "
+        "form-action 'none'; frame-ancestors 'self'"
+    ),
+    "Referrer-Policy": "no-referrer",
+    "Cross-Origin-Resource-Policy": "same-origin",
+    "Cache-Control": "no-store",
+}
 UI_HEADERS = {
     "X-Frame-Options": "DENY",
     "Content-Security-Policy": (
@@ -318,7 +356,7 @@ def run_job(job_id: str, command: list[str], out_dir: Path) -> None:
 
 
 class Handler(BaseHTTPRequestHandler):
-    server_version = "CS2MapBalance/v1.0.0-pre.1"
+    server_version = "CS2MapBalance/v1.1.0"
 
     def log_message(self, fmt: str, *args) -> None:
         print(f"[{self.log_date_time_string()}] {fmt % args}")
@@ -365,20 +403,118 @@ class Handler(BaseHTTPRequestHandler):
             UI_HEADERS,
         )
 
+    def _viewer3d_url(self, map_name: str, job_id: str, out_dir: Path) -> str | None:
+        if not MAP_RE.fullmatch(map_name) or not JOB_RE.fullmatch(job_id):
+            return None
+        data = out_dir / "viewer3d" / "data.json"
+        return f"/viewer3d/{map_name}/{job_id}/" if data.is_file() else None
+
     def _job_public(self, job_id: str) -> dict | None:
         with JOBS_LOCK:
             job = JOBS.get(job_id)
             if job is None:
                 return None
+            out_dir = Path(job["out_dir"])
+            viewer3d = self._viewer3d_url(job["map"], job_id, out_dir)
+            manifest = job.get("manifest")
+            if manifest:
+                try:
+                    manifest = str(Path(manifest).relative_to(ROOT))
+                except ValueError:
+                    manifest = Path(manifest).name
             return {
                 "id": job_id,
                 "status": job["status"],
                 "map": job["map"],
                 "log": job["log"][-160:],
                 "viewer_url": f"/viewer/{job_id}" if job.get("viewer") else None,
-                "manifest": job.get("manifest"),
+                "viewer3d_url": viewer3d,
+                "manifest": manifest,
                 "returncode": job.get("returncode"),
             }
+
+    def _serve_docs(self, path: str) -> None:
+        tail = unquote(path[len("/docs/") :]) if path.startswith("/docs/") else ""
+        if (
+            not tail
+            or "/" in tail
+            or "\\" in tail
+            or ".." in tail
+            or "\x00" in tail
+            or not tail.endswith(".md")
+            or Path(tail).name != tail
+        ):
+            self.send_error(HTTPStatus.NOT_FOUND)
+            return
+        name = tail
+        target = (DOCS_DIR / name).resolve()
+        if not target.is_relative_to(DOCS_DIR.resolve()) or not target.is_file():
+            self.send_error(HTTPStatus.NOT_FOUND)
+            return
+        self._file(
+            target,
+            "text/plain; charset=utf-8",
+            {
+                "X-Content-Type-Options": "nosniff",
+                "Referrer-Policy": "no-referrer",
+                "Cache-Control": "no-store",
+            },
+        )
+
+    def _serve_viewer3d(self, path: str) -> None:
+        """Serve fixed viewer assets or a confined generated map bundle."""
+        decoded = unquote(path)
+        if "\x00" in decoded or "\\" in decoded:
+            self.send_error(HTTPStatus.NOT_FOUND)
+            return
+        parts = [part for part in decoded.split("/") if part]
+        if not parts or parts[0] != "viewer3d" or len(parts) < 2:
+            self.send_error(HTTPStatus.NOT_FOUND)
+            return
+        if parts[1] == "assets":
+            relative = parts[2:] or ["index.html"]
+            root = VIEWER3D_ASSETS.resolve()
+            target = root.joinpath(*relative).resolve()
+            if not target.is_relative_to(root) or not target.is_file():
+                self.send_error(HTTPStatus.NOT_FOUND)
+                return
+            suffix = target.suffix.lower()
+            if suffix not in VIEWER3D_SUFFIXES:
+                self.send_error(HTTPStatus.NOT_FOUND)
+                return
+            self._file(target, VIEWER3D_TYPES[suffix], VIEWER3D_HEADERS)
+            return
+
+        map_name, job_id = parts[1], parts[2] if len(parts) > 2 else ""
+        if not MAP_RE.fullmatch(map_name) or not JOB_RE.fullmatch(job_id):
+            self.send_error(HTTPStatus.NOT_FOUND)
+            return
+        if len(parts) == 3 and not decoded.endswith("/"):
+            self.send_response(HTTPStatus.PERMANENT_REDIRECT)
+            self.send_header("Location", decoded + "/")
+            self.send_header("Content-Length", "0")
+            self.end_headers()
+            return
+        relative = parts[3:] or ["index.html"]
+        root = (JOBS_DIR / map_name / job_id / "viewer3d").resolve()
+        if not root.is_relative_to(JOBS_DIR.resolve()):
+            self.send_error(HTTPStatus.FORBIDDEN)
+            return
+        if relative == ["index.html"]:
+            target = (VIEWER3D_ASSETS / "index.html").resolve()
+        else:
+            target = root.joinpath(*relative).resolve()
+            if not target.is_relative_to(root) or not target.is_file():
+                self.send_error(HTTPStatus.NOT_FOUND)
+                return
+        if not target.is_file():
+            self.send_error(HTTPStatus.NOT_FOUND)
+            return
+        suffix = target.suffix.lower()
+        if suffix not in VIEWER3D_SUFFIXES:
+            self.send_error(HTTPStatus.NOT_FOUND)
+            return
+        self._file(target, VIEWER3D_TYPES[suffix], VIEWER3D_HEADERS)
 
     def _discover(self, map_name: str) -> dict:
         if not MAP_RE.fullmatch(map_name):
@@ -516,6 +652,11 @@ class Handler(BaseHTTPRequestHandler):
                     "balance_relative_pct": balance.get("relative_pct"),
                     "balance_targets": balance.get("targets", []),
                     "viewer_url": f"/viewer/{job_id}" if JOB_RE.fullmatch(job_id) and viewer.is_file() else None,
+                    "viewer3d_url": self._viewer3d_url(
+                        str(data.get("map") or ""),
+                        job_id,
+                        summary_path.parent,
+                    ),
                 }
             )
         grouped: dict[str, list[dict]] = {}
@@ -822,14 +963,21 @@ class Handler(BaseHTTPRequestHandler):
             paths = load_local_paths()
             game = os.environ.get("CS2_GAME") or paths.get("cs2_game") or ""
             engine = sri_status()
+            sri_display = engine.path
+            if sri_display:
+                try:
+                    sri_display = str(Path(sri_display).relative_to(ROOT))
+                except ValueError:
+                    sri_display = Path(sri_display).name
             self._json(
                 HTTPStatus.OK,
                 {
                     "cs2_game": game,
-                    "sri": engine.path,
+                    "sri": sri_display,
                     "sri_ready": engine.ready,
                     "sri_version": engine.version,
                     "sri_sha256": engine.sha256,
+                    "viewer3d": "1.0.0",
                 },
             )
             return
@@ -860,6 +1008,12 @@ class Handler(BaseHTTPRequestHandler):
                 self._json(HTTPStatus.NOT_FOUND, {"error": "job not found"})
             else:
                 self._json(HTTPStatus.OK, job)
+            return
+        if path.startswith("/docs/"):
+            self._serve_docs(path)
+            return
+        if path.startswith("/viewer3d/"):
+            self._serve_viewer3d(path)
             return
         if path.startswith("/viewer/"):
             job_id = path.rsplit("/", 1)[-1]
