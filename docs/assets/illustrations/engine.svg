@@ -1,46 +1,46 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="300" viewBox="0 0 1200 300" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="320" viewBox="0 0 1200 320" role="img" aria-labelledby="title desc">
   <title id="title">SRI resource path</title>
   <desc id="desc">A map VPK feeds SRI, which emits validated entity text and physics glTF for the existing CS2MB analysis layer.</desc>
-  <rect width="1200" height="300" fill="#17191c"/>
-  <rect x="0.5" y="0.5" width="1199" height="299" fill="none" stroke="#2f363c"/>
-  <text x="40" y="42" font-family="Consolas, monospace" font-size="10" letter-spacing="2.4" fill="#e45468">SRI — SOURCE RESOURCE INSPECTOR</text>
-  <text x="40" y="72" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700" fill="#f2f4f6">Compiled resources, decoded in-process.</text>
+  <rect width="1200" height="320" fill="#17191c"/>
+  <rect x="0.5" y="0.5" width="1199" height="319" fill="none" stroke="#2f363c"/>
+  <text x="40" y="44" font-family="Consolas, monospace" font-size="12" letter-spacing="2.4" fill="#e45468">SRI — SOURCE RESOURCE INSPECTOR</text>
+  <text x="40" y="80" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="700" fill="#f2f4f6">Compiled resources, decoded in-process.</text>
 
   <g font-family="Segoe UI, Arial, sans-serif">
-    <rect x="40" y="108" width="230" height="118" rx="4" fill="#1d2328" stroke="#3d474f"/>
-    <text x="60" y="136" font-size="16" font-weight="700" fill="#f2f4f6">Map VPK</text>
-    <text x="60" y="160" font-family="Consolas, monospace" font-size="10" fill="#9da7af">nav</text>
-    <text x="60" y="178" font-family="Consolas, monospace" font-size="10" fill="#9da7af">default_ents.vents_c</text>
-    <text x="60" y="196" font-family="Consolas, monospace" font-size="10" fill="#9da7af">world_physics.vmdl_c</text>
-    <text x="60" y="216" font-family="Consolas, monospace" font-size="9" fill="#75c98a">READ-ONLY EXTRACTION</text>
+    <rect x="40" y="112" width="240" height="156" rx="5" fill="#1d2328" stroke="#3d474f"/>
+    <text x="62" y="148" font-size="20" font-weight="700" fill="#f2f4f6">Map VPK</text>
+    <text x="62" y="180" font-family="Consolas, monospace" font-size="13" fill="#9da7af">nav</text>
+    <text x="62" y="202" font-family="Consolas, monospace" font-size="13" fill="#9da7af">default_ents.vents_c</text>
+    <text x="62" y="224" font-family="Consolas, monospace" font-size="13" fill="#9da7af">world_physics.vmdl_c</text>
+    <text x="62" y="252" font-family="Consolas, monospace" font-size="11" fill="#75c98a">READ-ONLY EXTRACTION</text>
 
-    <rect x="330" y="108" width="270" height="118" rx="4" fill="#241a20" stroke="#8f1732"/>
-    <rect x="330" y="108" width="4" height="118" fill="#e45468"/>
-    <text x="352" y="136" font-size="16" font-weight="700" fill="#f2f4f6">SRI</text>
-    <text x="352" y="160" font-family="Consolas, monospace" font-size="10" fill="#e9a0ad">EntityLump · PHYS</text>
-    <text x="352" y="178" font-family="Consolas, monospace" font-size="10" fill="#9da7af">binary KV3 · zstd · lz4</text>
-    <text x="352" y="196" font-family="Consolas, monospace" font-size="10" fill="#9da7af">MIT ValveResourceFormat</text>
-    <text x="352" y="216" font-family="Consolas, monospace" font-size="9" fill="#e45468">SELF-CONTAINED WINDOWS X64</text>
+    <rect x="333" y="112" width="240" height="156" rx="5" fill="#241a20" stroke="#8f1732"/>
+    <rect x="333" y="112" width="4" height="156" fill="#e45468"/>
+    <text x="355" y="148" font-size="20" font-weight="700" fill="#f2f4f6">SRI</text>
+    <text x="355" y="180" font-family="Consolas, monospace" font-size="13" fill="#e9a0ad">PHYS · EntityLump</text>
+    <text x="355" y="202" font-family="Consolas, monospace" font-size="13" fill="#9da7af">KV3 · zstd · lz4</text>
+    <text x="355" y="224" font-family="Consolas, monospace" font-size="13" fill="#9da7af">ValveResourceFormat</text>
+    <text x="355" y="252" font-family="Consolas, monospace" font-size="11" fill="#e45468">SELF-CONTAINED · X64</text>
 
-    <rect x="660" y="108" width="230" height="118" rx="4" fill="#1d2328" stroke="#3d474f"/>
-    <text x="680" y="136" font-size="16" font-weight="700" fill="#f2f4f6">Validated contracts</text>
-    <text x="680" y="160" font-family="Consolas, monospace" font-size="10" fill="#79b6d1">entities.txt</text>
-    <text x="680" y="178" font-family="Consolas, monospace" font-size="10" fill="#79b6d1">glTF + .bin</text>
-    <text x="680" y="196" font-family="Consolas, monospace" font-size="10" fill="#9da7af">Hammer units · Source axes</text>
-    <text x="680" y="216" font-family="Consolas, monospace" font-size="9" fill="#79b6d1">INTERACTAS PRESERVED</text>
+    <rect x="626" y="112" width="240" height="156" rx="5" fill="#1d2328" stroke="#3d474f"/>
+    <text x="648" y="148" font-size="20" font-weight="700" fill="#f2f4f6">Validated data</text>
+    <text x="648" y="180" font-family="Consolas, monospace" font-size="13" fill="#79b6d1">entities.txt</text>
+    <text x="648" y="202" font-family="Consolas, monospace" font-size="13" fill="#79b6d1">glTF + .bin</text>
+    <text x="648" y="224" font-family="Consolas, monospace" font-size="13" fill="#9da7af">Hammer units</text>
+    <text x="648" y="252" font-family="Consolas, monospace" font-size="11" fill="#79b6d1">INTERACTAS PRESERVED</text>
 
-    <rect x="950" y="108" width="210" height="118" rx="4" fill="#1d2328" stroke="#3d474f"/>
-    <text x="970" y="136" font-size="16" font-weight="700" fill="#f2f4f6">Existing analysis</text>
-    <text x="970" y="160" font-family="Consolas, monospace" font-size="10" fill="#9da7af">NAV graph · collision</text>
-    <text x="970" y="178" font-family="Consolas, monospace" font-size="10" fill="#9da7af">routes · balance</text>
-    <text x="970" y="196" font-family="Consolas, monospace" font-size="10" fill="#9da7af">viewer · library</text>
-    <text x="970" y="216" font-family="Consolas, monospace" font-size="9" fill="#75c98a">UNCHANGED</text>
+    <rect x="919" y="112" width="240" height="156" rx="5" fill="#1d2328" stroke="#3d474f"/>
+    <text x="941" y="148" font-size="20" font-weight="700" fill="#f2f4f6">Existing analysis</text>
+    <text x="941" y="180" font-family="Consolas, monospace" font-size="13" fill="#9da7af">NAV · collision</text>
+    <text x="941" y="202" font-family="Consolas, monospace" font-size="13" fill="#9da7af">routes · balance</text>
+    <text x="941" y="224" font-family="Consolas, monospace" font-size="13" fill="#9da7af">viewer · library</text>
+    <text x="941" y="252" font-family="Consolas, monospace" font-size="11" fill="#75c98a">UNCHANGED</text>
   </g>
 
   <g stroke="#e45468" stroke-width="1.8" fill="none">
-    <path d="M270 167h42"/><path d="M304 162l8 5-8 5"/>
-    <path d="M600 167h42"/><path d="M634 162l8 5-8 5"/>
-    <path d="M890 167h42"/><path d="M924 162l8 5-8 5"/>
+    <path d="M286 190h36"/><path d="M318 185l8 5-8 5"/>
+    <path d="M579 190h36"/><path d="M611 185l8 5-8 5"/>
+    <path d="M872 190h36"/><path d="M904 185l8 5-8 5"/>
   </g>
-  <text x="1160" y="282" text-anchor="end" font-family="Consolas, monospace" font-size="9" fill="#707b83">READ-ONLY · LOOPBACK · SHA-256 PROVENANCE</text>
+  <text x="1160" y="302" text-anchor="end" font-family="Consolas, monospace" font-size="11" fill="#707b83">READ-ONLY · LOOPBACK · SHA-256 PROVENANCE</text>
 </svg>
