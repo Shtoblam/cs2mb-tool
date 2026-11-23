@@ -367,10 +367,14 @@ class ServerSecurityTests(unittest.TestCase):
                 self.assertTrue(fresh.exists())
 
     def test_process_tree_termination(self) -> None:
+        kwargs = {}
+        if os.name != "nt":
+            kwargs["start_new_session"] = True
         process = subprocess.Popen(
             [sys.executable, "-c", "import time; time.sleep(30)"],
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
+            **kwargs,
         )
         try:
             terminate_process_tree(process)
