@@ -1,4 +1,4 @@
-# Secrets and local configuration
+﻿# Secrets and local configuration
 .env
 .env.*
 *.key
@@ -10,6 +10,12 @@ config/paths.local.json
 # Optional local binaries
 tools/bin/*
 !tools/bin/README.md
+source2/**/bin/
+
+source2/**/obj/
+
+source2/publish/
+source2/dist/
 
 # Python
 .venv/
@@ -67,3 +73,4 @@ Desktop.ini
 
 # Local agent environment (installed separately; never part of the project)
 .agents/
+
