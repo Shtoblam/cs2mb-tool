@@ -1,6 +1,44 @@
-## Internal Source 2 engine — 2026-11-23
+## SRI, security audit and complete pre-release — 2026-11-23
 
-- Added the first-party `cs2mb-source2` component under `source2/`. It links
+- Renamed the internal Source 2 component to **SRI — Source Resource Inspector**:
+  `cs2mb-sri.exe`, `tools/sri.py`, `CS2MB_SRI`, `--sri`, `sri_ready`,
+  `sri_version`, `sri_sha256`, source under `sri/`.
+- SRI functionality is unchanged: PHYS, EntityLump, mesh/hull handling,
+  bounded sphere/capsule tessellation, coordinate contract, glTF + `.bin` and
+  entity text output.
+- Closed the P1 security backlog: two-job limit, controlled `429` rejection,
+  stale job/upload cleanup, Windows process-tree timeout and direct endpoint
+  tests. Added loopback Host allow-listing, required same-origin POSTs, disabled
+  `--allow-remote`, cleaned rejected uploads and redacted personal paths from
+  preparation manifests.
+- Added `v1.0.0-pre.1` versioning across the application, website, docs,
+  package metadata and release links.
+- Restored the owner's original `logo.png` byte-for-byte
+  (`03f11c8167907d4b243c1e2ff64953ea33848257eae51e09dcbed4a2f4876e06`).
+  Removed invented vector logo variants. Rebuilt the banners, pipeline, SRI,
+  navigation, collision and security SVGs with a restrained palette. Used the
+  original logo in the application, website, README, favicon and social preview.
+- Captured actual current screenshots after the SRI/security changes:
+  `cs2mb-main.png`, `cs2mb-map-viewer.png`, `cs2mb-map-library.png`,
+  `cs2mb-setup.png`; the published website screenshot is
+  `website-current.png`.
+- Added a complete Windows package builder with portable Python 3.13, SRI,
+  launchers, docs, `SHA256SUMS.txt` and SPDX SBOM.
+- Test suite: **88 tests discovered / 87 executed / 1 real-map test gated**.
+  Local engine-backed tests, endpoint security tests and process-tree tests pass.
+- Current application version: `v1.0.0-pre.1`. The old standalone
+  `source2-v1.0.0` release is retired only after the complete release is
+  verified.
+- Complete package: `CS2MB-v1.0.0-pre.1-win-x64.zip`, with a release
+  `SHA256SUMS.txt`. Clean extraction, 142 checksums, launcher, SRI detection,
+  automatic Dust2 preparation and upload-mode generation were verified locally.
+- Release target: `v1.0.0-pre.1`.
+
+---
+
+## Historical: internal cs2mb-source2 engine — 2026-11-23
+
+- Added the first-party `cs2mb-source2` component under `sri/`. It links
   ValveResourceFormat `20.1.7467` in-process for binary KV3, Zstandard/LZ4,
   PHYS and EntityLump decoding and exposes `phys`, `entities`, `inspect` and
   `phys-summary` commands. It is not a renamed or wrapped Source2Viewer-CLI.

@@ -301,7 +301,7 @@ steady-state через `cl_showpos`; сохранить
 glTF and `resourceinfo.exe` for the entity dump. Both are external runtime
 utilities; a fresh installation could not process a map without them.
 
-**Решение:** build a first-party `cs2mb-source2` component from `source2/`.
+**Решение:** build a first-party `cs2mb-source2` component from `sri/`.
 It links the pinned MIT ValveResourceFormat 20.1.7467 library in-process for
 binary KV3, Zstandard/LZ4, PHYS and EntityLump decoding and exposes a small
 CS2MB-specific command line (`phys`, `entities`, `inspect`, `phys-summary`).
@@ -386,14 +386,14 @@ exact analytic collision.
 
 ## ADR-022. Component distribution and provenance
 
-**Статус:** accepted (2026-11-23).
+**Статус:** superseded by ADR-024 (2026-11-23). Historical decision preserved.
 
 **Контекст:** the component is a binary and must not be committed to Git or
 downloaded automatically at map-processing time.
 
 **Решение:** publish a versioned `cs2mb-source2-win-x64.zip` release asset with
 the executable, MIT license and third-party notices, plus `SHA256SUMS.txt`.
-Users install it into `tools/bin/source2/` or set `CS2MB_SOURCE2`. The
+Users install it into `tools/bin/sri/` or set `CS2MB_SOURCE2`. The
 preparation manifest records the engine path, version and SHA-256. Normal
 processing is offline; the application does not fetch updates.
 
@@ -401,6 +401,89 @@ processing is offline; the application does not fetch updates.
 
 - the binary stays out of Git;
 - installation requires one explicit download from the CS2MB release page;
-- users can reproduce the build with `source2/build.ps1` and the pinned SDK and
+- users can reproduce the build with `sri/build.ps1` and the pinned SDK and
   package versions;
 - a stale override fails loudly instead of falling back silently.
+
+## ADR-023. Rename the internal component to SRI
+
+**Статус:** accepted (2026-11-23).
+
+**Контекст:** the component was introduced as `cs2mb-source2`. That name
+described the input format but not the component's role, and it conflicted with
+Valve's Source 2 terminology in user-facing text.
+
+**Решение:** the component is **SRI — Source Resource Inspector**. The
+executable is `cs2mb-sri.exe`; the source lives in `sri/`; the Python wrapper is
+`tools/sri.py`; the environment variable is `CS2MB_SRI`; the CLI override is
+`--sri`; server fields are `sri_ready`, `sri_version` and `sri_sha256`.
+The parent product remains CS2 Map Balance / CS2MB.
+
+**Последствия:**
+
+- all current runtime, UI, API, documentation, build and release references use
+  SRI;
+- historical notes that mention `cs2mb-source2` remain labelled historical;
+- PHYS/EntityLump behaviour and coordinate contracts are unchanged;
+- SRI is a resource inspector/converter, not a universal Source 2 viewer.
+
+## ADR-024. One complete CS2MB release
+
+**Статус:** accepted (2026-11-23). Supersedes ADR-022.
+
+**Контекст:** the separate `source2-v1.0.0` component release made users assemble
+the application from multiple downloads.
+
+**Решение:** publish one complete Windows x64 package containing the application,
+SRI, portable Python 3.13, launchers, documentation, `SHA256SUMS.txt` and an
+SPDX SBOM. The old standalone engine release is removed only after the complete
+release is published and verified.
+
+**Последствия:**
+
+- one primary user download;
+- no manual SRI conversion step;
+- no Python installation for packaged users;
+- the complete archive must be extracted and tested before publication;
+- checksums and SBOM are part of the release gate.
+
+## ADR-025. Security hardening for the complete release
+
+**Статус:** accepted (2026-11-23).
+
+**Контекст:** the backlog listed unbounded jobs, incomplete process-tree
+termination, endpoint test gaps, missing Host checks and unsafe remote binding.
+
+**Решение:** implement a two-job limit with `429` rejection, prune stale job and
+upload records, terminate the full Windows process tree on timeout, add direct
+endpoint tests, enforce a loopback Host allow-list and same-origin POST checks,
+reject `--allow-remote`, clean rejected uploads and redact personal absolute
+paths from preparation manifests.
+
+**Последствия:**
+
+- P1 backlog items are closed;
+- P2 endpoint and Host/CSRF items are addressed by runtime tests;
+- remote access is intentionally unsupported;
+- remaining viewer-content and code-signing items stay in the backlog;
+- no security claim beyond the tested local threat model.
+
+## ADR-026. Original logo is the canonical visual identity
+
+**Статус:** accepted (2026-11-23).
+
+**Контекст:** the previous visual pass introduced an invented vector mark that
+did not faithfully represent the owner's original `logo.png`.
+
+**Решение:** preserve the existing root `logo.png` unchanged as the canonical
+CS2MB identity. Remove invented logo variants. Use the original PNG in the
+application, website, README and social preview. Technical SVG illustrations may
+contain no invented brand mark; where a banner or social image needs the logo,
+embed the original PNG faithfully. The favicon is the original PNG.
+
+**Последствия:**
+
+- the owner's identity is preserved byte-for-byte;
+- no alternative monogram or navigation-symbol logo remains;
+- screenshots and social assets must use the original image;
+- SVG diagrams are information graphics, not logo substitutes.

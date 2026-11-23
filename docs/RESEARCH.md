@@ -46,6 +46,47 @@ tessellated approximations, not exact analytic collision. A future Valve format
 change can require an engine update; the tool must then be revalidated before
 claims are carried forward.
 
+## 0B. Security and release audit (2026-11-23)
+
+**Scope:** Python app, parsers, SRI C# source, NuGet lockfile, build and package
+scripts, GitHub Actions, website JavaScript/HTML, upload and HTTP handlers, path
+and process execution, release assets and Git contents.
+
+**FACT — endpoint controls are tested.** Direct HTTP tests cover Host rejection,
+missing/cross-origin POSTs, invalid JSON, invalid map names, oversized uploads,
+malformed multipart data, invalid extensions, missing glTF sidecars, viewer path
+confinement, job-limit rejection and process-tree termination.
+
+**FACT — process cleanup.** The server caps simultaneous jobs at two, rejects
+excess requests with HTTP 429, prunes stale job records and upload directories,
+and terminates the Windows process tree on timeout. The current test starts a
+parent process that spawns a child and verifies both are gone.
+
+**FACT — release integrity.** The complete package is built from the repository,
+contains SRI and a portable Python 3.13 runtime, and ships SHA-256 checksums and
+an SPDX SBOM. The executable is not code-signed; hashes detect corruption but are
+not a signature.
+
+**LIMITS.** Viewer HTML generation is not a browser sandbox. Remote binding is
+disabled. The security scan is a hygiene check, not a proof of security. Current
+findings are recorded in `SECURITY.md` and `SECURITY_BACKLOG.md`.
+
+## 0C. Visual identity research (2026-11-23)
+
+**FACT — canonical source.** The root `logo.png` from the owner's original
+repository is the canonical CS2MB identity. It is preserved byte-for-byte; its
+SHA-256 is `03f11c8167907d4b243c1e2ff64953ea33848257eae51e09dcbed4a2f4876e06`.
+
+**DECISION.** The invented vector logo variants were removed. The application,
+website, README, favicon and social preview use the original PNG. Technical SVG
+diagrams contain no invented brand mark. Current application and site
+screenshots were captured from the running `v1.0.0-pre.1` build after the SRI
+rename and security changes.
+
+**LIMIT.** Screenshots are presentation evidence, not proof of algorithmic
+correctness. The original logo's raster detail is preserved rather than traced
+into an approximate vector mark.
+
 ## 0. Правила доказательности
 
 В документе используются метки:

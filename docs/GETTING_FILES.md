@@ -16,33 +16,32 @@ All commands below are read-only with respect to the game.
 
 If you do not want to run these commands manually:
 
-1. Install `cs2mb-source2.exe` in `tools/bin/source2/` or set `CS2MB_SOURCE2`.
-2. Start the app.
+1. Install the complete CS2MB package; SRI is included at `tools/bin/sri/`.
+2. Start the app with `Start-CS2MB.bat`.
 3. Enter `CS2 game folder` and the map name.
 4. Click **Prepare + Generate**.
 
 The app runs the same extraction steps internally. The manual path below is a
 fallback and for debugging.
 
-## Internal Source 2 engine setup
+## SRI setup
 
-Download `cs2mb-source2-win-x64.zip` from the
-[CS2MB release page](https://github.com/Shtoblam/cs2mb-tool/releases/tag/source2-v1.0.0) and
-extract the self-contained executable:
+The complete CS2MB package already contains SRI at:
 
 ```text
-cs2mb-tool\tools\bin\source2\cs2mb-source2.exe
+CS2MB\tools\bin\sri\cs2mb-sri.exe
 ```
 
-No .NET runtime, Source2Viewer-CLI or `resourceinfo.exe` is required. Verify:
+No separate download, .NET runtime, Source2Viewer-CLI or `resourceinfo.exe` is
+required. For a source checkout, verify:
 
 ```powershell
-& ".\tools\bin\source2\cs2mb-source2.exe" --version
-Get-FileHash ".\tools\bin\source2\cs2mb-source2.exe" -Algorithm SHA256
+& ".\tools\bin\sri\cs2mb-sri.exe" --version
+Get-FileHash ".\tools\bin\sri\cs2mb-sri.exe" -Algorithm SHA256
 ```
 
-The intake panel should show `engine ready` after restarting the app. Full
-install and troubleshooting guide: **[SETUP.md](SETUP.md)**.
+The intake panel should show `SRI ready` after restarting the app. Full install
+and troubleshooting guide: **[SETUP.md](SETUP.md)**.
 
 ## 1. Variables
 
@@ -91,7 +90,7 @@ python tools\vpk_read.py "$CS2\game\csgo\maps\$MAP.vpk" `
 Use the internal engine; it decodes the compiled EntityLump directly:
 
 ```powershell
-& ".\tools\bin\source2\cs2mb-source2.exe" entities `
+& ".\tools\bin\sri\cs2mb-sri.exe" entities `
   --input "$TEMP\default_ents.vents_c" `
   --output "$TEMP\entities.txt"
 ```
@@ -105,7 +104,7 @@ Use the internal engine; it reads `world_physics.vmdl_c` and writes the glTF
 plus `.bin` sidecar expected by the collision loader:
 
 ```powershell
-& ".\tools\bin\source2\cs2mb-source2.exe" phys `
+& ".\tools\bin\sri\cs2mb-sri.exe" phys `
   --input "$TEMP\world_physics.vmdl_c" `
   --output "$TEMP\world_physics_physics.gltf"
 ```
@@ -170,7 +169,7 @@ callouts, but route cards may be empty.
 ### `entities.txt` is empty
 
 Make sure you extracted `default_ents.vents_c`, not a different entity file.
-Re-run `cs2mb-source2 entities` and check the printed entity count.
+Re-run `cs2mb-sri entities` and check the printed entity count.
 
 ### Map has no `world_physics.vmdl_c`
 

@@ -10,11 +10,11 @@ config/paths.local.json
 # Optional local binaries
 tools/bin/*
 !tools/bin/README.md
-source2/**/bin/
-source2/**/obj/
+sri/**/bin/
+sri/**/obj/
 
-source2/publish/
-source2/dist/
+sri/publish/
+sri/dist/
 
 # Python
 .venv/

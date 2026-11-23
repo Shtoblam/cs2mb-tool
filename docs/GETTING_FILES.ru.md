@@ -16,32 +16,31 @@ world_physics_physics.bin
 
 Если не хочется запускать команды вручную:
 
-1. Установить `cs2mb-source2.exe` в `tools/bin/source2/` или задать `CS2MB_SOURCE2`.
-2. Запустить приложение.
+1. Установить полный пакет CS2MB; SRI уже включён в `tools/bin/sri/`.
+2. Запустить приложение через `Start-CS2MB.bat`.
 3. Указать `CS2 game folder` и map name.
 4. Нажать **Prepare + Generate**.
 
 Приложение выполнит те же шаги внутри. Ручной путь ниже — fallback и для
 диагностики.
 
-## Внутренний Source 2 engine
+## SRI setup
 
-Скачайте `cs2mb-source2-win-x64.zip` со
-[страницы релизов CS2MB](https://github.com/Shtoblam/cs2mb-tool/releases/tag/source2-v1.0.0)
-и распакуйте self-contained exe:
+Полный пакет CS2MB уже содержит SRI:
 
 ```text
-cs2mb-tool\tools\bin\source2\cs2mb-source2.exe
+CS2MB\tools\bin\sri\cs2mb-sri.exe
 ```
 
-.NET runtime, Source2Viewer-CLI и `resourceinfo.exe` не нужны. Проверка:
+Отдельная загрузка, .NET runtime, Source2Viewer-CLI и `resourceinfo.exe` не
+нужны. Для source checkout проверьте:
 
 ```powershell
-& ".\tools\bin\source2\cs2mb-source2.exe" --version
-Get-FileHash ".\tools\bin\source2\cs2mb-source2.exe" -Algorithm SHA256
+& ".\tools\bin\sri\cs2mb-sri.exe" --version
+Get-FileHash ".\tools\bin\sri\cs2mb-sri.exe" -Algorithm SHA256
 ```
 
-После перезапуска приложения в intake должно быть `engine ready`. Полный гайд:
+После перезапуска приложения в intake должно быть `SRI ready`. Полный гайд:
 **[SETUP.ru.md](SETUP.ru.md)**.
 
 ## 1. Переменные
@@ -72,7 +71,7 @@ python tools\vpk_read.py "$CS2\game\csgo\maps\$MAP.vpk" `
 ## 4. Entity dump
 
 ```powershell
-& ".\tools\bin\source2\cs2mb-source2.exe" entities `
+& ".\tools\bin\sri\cs2mb-sri.exe" entities `
   --input "$TEMP\default_ents.vents_c" `
   --output "$TEMP\entities.txt"
 ```
@@ -82,7 +81,7 @@ python tools\vpk_read.py "$CS2\game\csgo\maps\$MAP.vpk" `
 ## 5. Physics glTF
 
 ```powershell
-& ".\tools\bin\source2\cs2mb-source2.exe" phys `
+& ".\tools\bin\sri\cs2mb-sri.exe" phys `
   --input "$TEMP\world_physics.vmdl_c" `
   --output "$TEMP\world_physics_physics.gltf"
 ```

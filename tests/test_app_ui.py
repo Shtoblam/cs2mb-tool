@@ -44,10 +44,10 @@ class AppUiContractTests(unittest.TestCase):
             if "icon" in (attrs.get("rel") or "").split()
         ]
         self.assertEqual(len(favicons), 1)
-        self.assertEqual(favicons[0].get("href"), "/logo.png")
+        self.assertIn(favicons[0].get("href"), {"/logo.png", "logo.png"})
         logos = [
             attrs for attrs in self.parser.tags.get("img", [])
-            if attrs.get("src") == "/logo.png"
+            if attrs.get("src") in {"/logo.png", "logo.png"}
         ]
         self.assertEqual(len(logos), 1)
         self.assertEqual(logos[0].get("width"), "34")

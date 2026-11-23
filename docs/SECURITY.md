@@ -1,15 +1,25 @@
-# SECURITY — pre-alpha v1.0
+# SECURITY — v1.0.0-pre.1
 
-**Scope:** local `app/server.py`, auto-generation pipeline, `source2/` engine,
-`tools/source2.py`, user-provided files.
+**Scope:** local `app/server.py`, auto-generation pipeline, SRI (`sri/`),
+`tools/sri.py`, user-provided files.
 
 ## Security management update
 
-Security work is tracked in [SECURITY_BACKLOG.md](SECURITY_BACKLOG.md). The first
-baseline update adds CSP, referrer and cross-origin response headers to the
-intake UI, with a matching regression test. No critical or high-severity
-application finding is currently open; the remaining process, concurrency and
-endpoint-testing work is tracked by priority.
+This `v1.0.0-pre.1` audit closes the first security-management backlog cycle:
+
+- bounded simultaneous jobs (maximum two) with controlled `429` rejection;
+- stale job records, upload directories and active process trees are cleaned up;
+- Windows timeout now terminates the full process tree, including SRI;
+- direct endpoint tests cover Host, Origin, oversized uploads, malformed
+  multipart data, traversal, extensions, missing sidecars, invalid JSON and
+  viewer confinement;
+- `--allow-remote` is rejected; the server is loopback-only;
+- upload failures remove their temporary directory;
+- preparation manifests use `<CS2_GAME>` and `prepared/...` instead of personal
+  absolute paths.
+
+No critical or high-severity application finding is currently open. Remaining
+residual risks are listed below and in `SECURITY_BACKLOG.md`.
 
 ## What it does NOT do
 
@@ -28,11 +38,11 @@ with matches.
 
 ## VAC / anti-cheat audit
 
-Audit date: **2026-10-20**; later viewer/UI hardening was reviewed on
-**2026-11-20**, intake UI response-header hardening on **2026-11-23**, and the
-internal Source 2 engine on **2026-11-23**. Scope: `app/server.py`,
-`app/index.html`, `tools/prepare_map.py`, `tools/source2.py`, `source2/`,
-`tools/auto_generate.py`, the viewer generator and all runtime Python modules.
+Audit date: **2026-11-23**. Scope: `app/server.py`, `app/index.html`,
+`tools/prepare_map.py`, `tools/sri.py`, `sri/`, `tools/auto_generate.py`, the
+viewer generator, the release packaging scripts, both GitHub Actions workflows
+and all runtime Python modules. The previous audit dates `2026-10-20` and
+`2026-11-20` remain in the historical record.
 
 Result: **no VAC-relevant interaction found**. This is a static code and
 dependency review, not a security certification or a guarantee about Valve's
@@ -45,9 +55,8 @@ future policy.
 - no connection to Steam, game servers, VAC or an external API;
 - no game-memory access and no write into the game directory;
 - no administrator/root requirement;
-- the only child processes are the local Python pipeline and the first-party
-  `cs2mb-source2` engine; no Valve diagnostic tool or Source2Viewer-CLI is
-  launched at runtime.
+- the only child processes are the local Python pipeline and SRI; no Valve
+  diagnostic tool or Source2Viewer-CLI is launched at runtime.
 
 The app can be used with CS2 completely closed. The generated viewer is
 self-contained HTML and does not load external JavaScript, CSS or tracking
@@ -63,23 +72,23 @@ Only the optional **Prepare + Generate** mode reads the game folder. It opens
 the map VPK and extracted `nav`, entity lump and `world_physics.vmdl_c`
 read-only, then writes copies/results under `artifacts/`. Upload/drop mode does
 not require the folder at all. The compiled entity and PHYS resources are
-decoded by the first-party `cs2mb-source2` engine, not by a Valve diagnostic
-tool or a separately installed converter.
+decoded by SRI, not by a Valve diagnostic tool or a separately installed
+converter.
 
-### Internal Source 2 engine
+### SRI — Source Resource Inspector
 
-`cs2mb-source2` is built from `source2/` in this repository. It links the
-MIT-licensed ValveResourceFormat 20.1.7467 library in-process for binary KV3,
+SRI is built from `sri/` in this repository. It links the MIT-licensed
+ValveResourceFormat 20.1.7467 library in-process for binary KV3,
 Zstandard/LZ4, PHYS and EntityLump decoding. The executable is self-contained,
 does not download updates, does not connect to the network and does not attach
 to CS2. It reads the extracted resources and writes the requested glTF/entity
 output paths supplied by the local pipeline.
 
-The engine is a trusted local binary. Install it from the CS2MB release page,
-verify its SHA-256 against `SHA256SUMS.txt`, and keep it outside the game
-directory. `tools/prepare_map.py` records its path, version and SHA-256 in
-`prepared_manifest.json`. A stale `CS2MB_SOURCE2` or `--source2` path fails
-loudly instead of silently selecting another executable.
+SRI is a trusted local binary included in the complete CS2MB package. Verify its
+SHA-256 against `SHA256SUMS.txt` and keep it outside the game directory.
+`tools/prepare_map.py` records its path, version and SHA-256 in
+`prepared_manifest.json`. A stale `CS2MB_SRI` or `--sri` path fails loudly
+instead of silently selecting another executable.
 
 ### Removed external runtime tools
 
@@ -101,22 +110,27 @@ entity text files from any source the user chooses.
 
 ## Controls
 
-- loopback bind by default; non-loopback requires explicit `--allow-remote`;
+- loopback bind only; `--allow-remote` and non-loopback hosts are rejected;
+- Host allow-list and same-origin POST checks (`Origin` plus
+  `Sec-Fetch-Site`); direct POSTs without `Origin` are rejected;
 - path API accepts only `inputs/` and `artifacts/uploads/`;
-- POST origin guard rejects third-party origins;
 - upload limits: 300 MB total, 12 files, 160 MB per file;
 - extensions: `.nav`, `.txt`, `.gltf`, `.bin`;
 - map names: `[A-Za-z0-9_-]{1,64}`;
 - uploaded names are reduced to their basename;
+- rejected upload directories are removed; old uploads and job records are
+  pruned;
 - glTF sidecars must stay inside the glTF directory;
 - subprocesses use argument lists, never `shell=True`;
-- job timeout: 900 s; engine calls also have explicit timeouts;
-- engine resolution is explicit path or `CS2MB_SOURCE2`, then packaged
-  locations; a stale override fails instead of falling back;
-- engine path, version and SHA-256 are recorded in the preparation manifest;
-- compiled resources are treated as untrusted input; the engine reports
-  controlled errors, validates bounds and tessellates curved primitives with
-  bounded ring counts;
+- maximum two simultaneous jobs; excess requests receive `429`;
+- job timeout: 900 s; Windows process-tree termination includes SRI;
+- SRI resolution is explicit path or `CS2MB_SRI`, then packaged locations; a
+  stale override fails instead of falling back;
+- SRI path, version and SHA-256 are recorded in the preparation manifest;
+- prepared manifests omit personal absolute paths;
+- compiled resources are treated as untrusted input; SRI reports controlled
+  errors, validates bounds and tessellates curved primitives with bounded ring
+  counts;
 - generated viewer: restrictive CSP response header
   (`default-src 'none'`, `connect-src 'none'`), `X-Frame-Options: SAMEORIGIN`,
   `Referrer-Policy: no-referrer`, `Cross-Origin-Resource-Policy: same-origin`
@@ -133,14 +147,15 @@ entity text files from any source the user chooses.
 
 - current tracked tree: no personal Windows paths, usernames, keys, tokens,
   `.env` files or game assets;
-- `docs/assets/` contains only abstract SVG banners/diagrams and one UI
-  tutorial screenshot; no map screenshots or game assets;
-- `config/paths.local.json`, `tools/bin/*.exe` and `source2/dist/` are ignored;
+- `docs/assets/` contains the original logo, original SVG diagrams and actual
+  current application/site screenshots; no extracted map assets;
+- `config/paths.local.json`, `tools/bin/*.exe` and `sri/dist/` are ignored;
 - two GitHub Actions workflows are tracked: `tests.yml` runs Python checks, the
-  engine build and engine-backed tests; `pages.yml` builds and publishes the
-  static website from an explicit file list. No deployment secrets are tracked;
-- GitHub release assets contain the self-contained engine zip, checksums,
-  license and notices; the engine binary is not committed to Git;
+  SRI build and SRI-backed tests; `pages.yml` builds and publishes the static
+  website from an explicit file list. Actions are pinned to immutable commit
+  SHAs;
+- the complete CS2MB release contains SRI, the portable Python runtime,
+  checksums, SBOM and notices; the binary is not committed to Git;
 - old commit objects may contain historical path examples from earlier
   research. Current `main` is clean; history rewriting was not performed
   without explicit approval. No secret keys were found in the history audit.
@@ -154,13 +169,12 @@ Generated viewer HTML is served only from a resolved path under `artifacts/auto/
 - Python nav/glTF/entity parsers are not a sandbox; do not process untrusted
   files without need.
 - Upload bodies are read into memory up to 300 MB.
-- The local server has no authentication; never expose it to the internet.
-- The engine executable is a trusted local binary. Hashing detects accidental
-  corruption or substitution but is not a code signature; download it only
-  from the CS2MB release page.
-- The engine links an upstream MIT library. A future library or CS2 format
-  change may require an update; the current validation is tied to the recorded
-  game build.
+- The local server has no authentication; remote binding is disabled, but never
+  expose the loopback server through an unsafe proxy.
+- SRI is a trusted local binary. Hashing detects accidental corruption or
+  substitution but is not a code signature; verify the SHA-256 from the release.
+- SRI links an upstream MIT library. A future library or CS2 format change may
+  require an update; the current validation is tied to the recorded game build.
 - The intake UI sends its CSP as a response header and also includes a
   matching meta policy. `frame-ancestors` remains unavailable from meta tags,
   but the response header and `X-Frame-Options: DENY` enforce framing.

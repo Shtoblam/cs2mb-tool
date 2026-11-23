@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' data:; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
 <meta name="referrer" content="no-referrer">
-<title>CS2 Map Balance — Map analysis</title>
-<link rel="icon" type="image/png" href="/logo.png">
+<title>CS2 Map Balance — Map analysis v1.0.0-pre.1</title>
+<link rel="icon" type="image/png" href="logo.png">
 <style>
 :root {
   --bg: #181a1d;
@@ -104,9 +104,9 @@ button.secondary:hover { color: var(--accent-soft); border-color: var(--accent);
 button.link { background: none; border: 0; color: var(--accent-soft); padding: 0; font: inherit; }
 .auto-box { border: 1px solid var(--line-soft); background: #1c2024; padding: 10px; border-radius: 3px; margin-top: 11px; }
 .auto-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; color: var(--text); font: 10px var(--mono); text-transform: uppercase; letter-spacing: .06em; }
-.engine-state { color: var(--faint); font: 9px var(--mono); text-transform: none; letter-spacing: 0; }
-.engine-state.ready { color: var(--green); }
-.engine-state.missing { color: var(--accent-soft); }
+.sri-state { color: var(--faint); font: 9px var(--mono); text-transform: none; letter-spacing: 0; }
+.sri-state.ready { color: var(--green); }
+.sri-state.missing { color: var(--accent-soft); }
 .divider { display: flex; align-items: center; gap: 8px; margin: 12px 0 4px; color: var(--faint); font: 9px var(--mono); text-transform: uppercase; letter-spacing: .06em; }
 .divider::before, .divider::after { content: ""; height: 1px; background: var(--line-soft); flex: 1; }
 .drop {
@@ -229,7 +229,7 @@ pre.code {
   .viewer-wrap { min-height: 420px; }
 }
 
-/* pre-alpha v1.0 — calmer hierarchy, compact intake and optional viewer preview. */
+/* v1.0.0-pre.1 — calmer hierarchy, compact intake and optional viewer preview. */
 body { background: radial-gradient(900px 500px at 100% 0%, rgba(98,198,221,.055), transparent 65%), var(--bg); }
 .topbar { padding: 12px max(18px, calc((100vw - 1540px)/2)); border-color: rgba(255,255,255,.08); }
 .shell { width: min(1540px, calc(100% - 40px)); margin: 0 auto; padding: 18px 0 34px; grid-template-columns: minmax(300px, 370px) minmax(0,1fr); gap: 18px; min-height: calc(100vh - 60px); }
@@ -287,7 +287,7 @@ button.primary:hover:not(:disabled), button.secondary:hover, .ghost:hover { tran
 .viewer-wrap::before { top: 10px; left: 12px; }
 .viewer-wrap iframe { width: 100%; height: 100%; min-height: 540px; }
 .library { max-height: 420px; overflow: auto; border-radius: 7px; }
-.library table { min-width: 620px; }
+.library table { min-width: 900px; }
 .library th { position: sticky; top: 0; background: var(--panel); }
 .library td, .library th { padding: 7px 6px; }
 .library input[type="checkbox"] { accent-color: var(--accent); }
@@ -321,8 +321,8 @@ button.primary:hover:not(:disabled), button.secondary:hover, .ghost:hover { tran
 </head>
 <body>
 <header class="topbar">
-  <img class="logo" src="/logo.png" alt="" width="34" height="34">
-  <div class="brand"><strong>CS2 Map Balance</strong><span>map analysis · pre-alpha v1.0</span></div>
+  <img class="logo" src="logo.png" alt="" width="34" height="34">
+  <div class="brand"><strong>CS2 Map Balance</strong><span>map analysis · v1.0.0-pre.1</span></div>
   <nav class="topnav">
     <a href="#generate">Generate</a>
     <a href="#library">Library</a>
@@ -355,11 +355,11 @@ button.primary:hover:not(:disabled), button.secondary:hover, .ghost:hover { tran
         <summary><span>Автоматически из установленной CS2</span><small>рекомендуется</small></summary>
         <div class="mode-content">
       <div class="auto-box">
-        <div class="auto-head"><b>From installed CS2</b><span id="engine-state" class="engine-state">checking…</span></div>
+        <div class="auto-head"><b>From installed CS2</b><span id="sri-state" class="sri-state">checking…</span></div>
         <label for="game">CS2 game folder</label>
         <input id="game" type="text" placeholder="<CS2_GAME>" spellcheck="false" autocomplete="off">
         <button id="generate-from-game" class="primary" type="button" style="margin-top:8px">Prepare + Generate</button>
-        <p class="help" style="margin:5px 0 0">Nav, entities и collision извлекаются внутри программы. CS2 можно не запускать: доступ к папке только read-only. PHYS и EntityLump читает собственный движок <span class="mono">cs2mb-source2</span>; внешние CLI не нужны.</p>
+        <p class="help" style="margin:5px 0 0">Nav, entities и collision извлекаются внутри программы. CS2 можно не запускать: доступ к папке только read-only. PHYS и EntityLump читает компонент <span class="mono">SRI</span>; внешние CLI не нужны.</p>
       </div>
         </div>
       </details>
@@ -407,19 +407,6 @@ button.primary:hover:not(:disabled), button.secondary:hover, .ghost:hover { tran
       <div id="manifest" class="manifest"></div>
     </section>
 
-    <section class="card" id="library">
-      <div class="section-head">
-        <h2 style="margin:0">Map library</h2>
-        <button id="refresh-library" class="secondary" type="button">Refresh</button>
-      </div>
-      <input id="library-search" class="library-search" type="search" placeholder="Фильтр по карте…" autocomplete="off">
-      <div id="library-content" class="library"><p class="help" style="margin:8px 0 0">Пока нет сгенерированных карт.</p></div>
-      <div class="compare-bar">
-        <button id="compare-selected" class="secondary" type="button" disabled>Compare selected (0)</button>
-        <button id="clear-compare" class="link" type="button">Clear</button>
-      </div>
-      <div id="compare-panel" class="compare-panel"></div>
-    </section>
     <div class="footnote">Локальная обработка · read-only · без доступа к процессу игры. Оценка маршрутов предварительная: encounters и combat не моделируются.</div>
   </aside>
 
@@ -434,6 +421,19 @@ button.primary:hover:not(:disabled), button.secondary:hover, .ghost:hover { tran
         <summary>Журнал обработки <span>показать / скрыть</span></summary>
         <pre id="log" class="log">idle</pre>
       </details>
+    </section>
+    <section class="card" id="library">
+      <div class="section-head">
+        <h2 style="margin:0">Map library</h2>
+        <button id="refresh-library" class="secondary" type="button">Refresh</button>
+      </div>
+      <input id="library-search" class="library-search" type="search" placeholder="Фильтр по карте…" autocomplete="off">
+      <div id="library-content" class="library"><p class="help" style="margin:8px 0 0">Пока нет сгенерированных карт.</p></div>
+      <div class="compare-bar">
+        <button id="compare-selected" class="secondary" type="button" disabled>Compare selected (0)</button>
+        <button id="clear-compare" class="link" type="button">Clear</button>
+      </div>
+      <div id="compare-panel" class="compare-panel"></div>
     </section>
     <section class="card viewer-launch" id="viewer-launch" hidden>
       <div class="viewer-launch-head">
@@ -485,21 +485,19 @@ button.primary:hover:not(:disabled), button.secondary:hover, .ghost:hover { tran
       </div>
 
       <div class="tutorial-step">
-        <h3><span>01</span>Внутренний Source 2 engine: установка</h3>
-        <p>Авто-режим использует первый собственный конвертер <span class="mono">cs2mb-source2</span>. Он читает PHYS и EntityLump напрямую; Source2Viewer-CLI и resourceinfo не нужны.</p>
-        <p>Скачайте <b>cs2mb-source2-win-x64.zip</b> со
-          <a href="https://github.com/Shtoblam/cs2mb-tool/releases/tag/source2-v1.0.0" target="_blank" rel="noopener noreferrer">страницы релизов CS2MB</a>
-          и распакуйте в папку проекта:</p>
-        <pre class="code">cs2mb-tool\
+        <h3><span>01</span>SRI — Source Resource Inspector</h3>
+        <p><b>SRI</b> входит в полный пакет CS2MB. Отдельный zip конвертера больше не нужен: распакуйте пакет и запустите <span class="mono">Start-CS2MB.ps1</span>. SRI читает PHYS и EntityLump напрямую; Source2Viewer-CLI и resourceinfo не требуются.</p>
+        <pre class="code">CS2MB\
+  Start-CS2MB.ps1
   tools\
     bin\
-      source2\
-        cs2mb-source2.exe</pre>
-        <p>Это self-contained сборка Windows x64; .NET runtime и сторонние CLI не требуются. Файл игнорируется Git. Альтернатива: переменная <span class="mono">CS2MB_SOURCE2</span> или флаг <span class="mono">--source2</span>.</p>
-        <pre class="code"><button class="copy" type="button">copy</button>Get-ChildItem .\tools\bin\source2
-&amp; ".\tools\bin\source2\cs2mb-source2.exe" --version
-Get-FileHash ".\tools\bin\source2\cs2mb-source2.exe" -Algorithm SHA256</pre>
-        <p class="help">Приложение покажет <b>engine ready</b> и версию. Если <b>engine not installed</b> — проверьте путь, имя exe и перезапустите сервер. SHA-256 сверяйте с <span class="mono">SHA256SUMS.txt</span> из релиза.</p>
+      sri\
+        cs2mb-sri.exe</pre>
+        <p>Для source checkout положите <span class="mono">cs2mb-sri.exe</span> в <span class="mono">tools\bin\sri</span> или задайте <span class="mono">CS2MB_SRI</span>. Статус показывается как <b>SRI ready</b> с версией.</p>
+        <pre class="code"><button class="copy" type="button">copy</button>&amp; ".\tools\bin\sri\cs2mb-sri.exe" --version
+py -3.13 tools\sri.py --status
+Get-FileHash ".\tools\bin\sri\cs2mb-sri.exe" -Algorithm SHA256</pre>
+        <p class="help">SHA-256 сверяйте с <span class="mono">SHA256SUMS.txt</span> из релиза. SRI — локальный self-contained Windows x64 компонент; .NET runtime не требуется.</p>
       </div>
 
       <div class="tutorial-step">
@@ -538,8 +536,8 @@ Get-FileHash ".\tools\bin\source2\cs2mb-source2.exe" -Algorithm SHA256</pre>
         <h3><span>05</span>Быстрый troubleshooting</h3>
         <div class="tutorial-grid">
           <div class="mini"><b>python not found</b><span>Используйте <span class="mono">py -3.13</span>; переустановите Python с PATH.</span></div>
-          <div class="mini"><b>engine not installed</b><span>Распакуйте <span class="mono">cs2mb-source2.exe</span> в <span class="mono">tools\bin\source2</span>; перезапустите сервер.</span></div>
-          <div class="mini"><b>engine failed</b><span>Проверьте <span class="mono">prepared/source2.log</span> и сборку CS2.</span></div>
+          <div class="mini"><b>SRI not installed</b><span>Распакуйте <span class="mono">cs2mb-sri.exe</span> в <span class="mono">tools\bin\sri</span>; перезапустите сервер.</span></div>
+          <div class="mini"><b>SRI failed</b><span>Проверьте <span class="mono">prepared/sri.log</span> и сборку CS2.</span></div>
           <div class="mini"><b>invalid CS2 folder</b><span>Нужен корень с <span class="mono">game\csgo\maps</span>, не папка maps.</span></div>
           <div class="mini"><b>port busy</b><span><span class="mono">--port 8766</span> и откройте новый URL.</span></div>
           <div class="mini"><b>no .bin</b><span>Загрузите/экспортируйте <span class="mono">.gltf + .bin</span> вместе.</span></div>
@@ -706,12 +704,12 @@ async function loadConfig() {
     if (!$('game').value && data.cs2_game && !data.cs2_game.includes('<')) {
       $('game').value = data.cs2_game;
     }
-    $('engine-state').textContent = data.source2_ready
-      ? 'engine ready' + (data.source2_version ? ' · ' + data.source2_version.replace('cs2mb-source2 ', '') : '')
-      : 'engine not installed';
-    $('engine-state').className = 'engine-state ' + (data.source2_ready ? 'ready' : 'missing');
+    $('sri-state').textContent = data.sri_ready
+      ? 'SRI ready' + (data.sri_version ? ' · ' + data.sri_version.replace('cs2mb-sri ', '') : '')
+      : 'SRI not installed';
+    $('sri-state').className = 'sri-state ' + (data.sri_ready ? 'ready' : 'missing');
   } catch (error) {
-    $('engine-state').textContent = 'config error';
+    $('sri-state').textContent = 'config error';
   }
 }
 
@@ -791,7 +789,8 @@ function verdictBadge(row) {
     return `<span class="verdict balanced" title="${escapeHtml(title)}">CLOSE ±</span>`;
   }
   const cls = side === 'CT' ? 'ct' : 't';
-  return `<span class="verdict ${cls}" title="${escapeHtml(title)}">${side} +${Math.abs(advantage).toFixed(1)}s</span>`;
+  const safeSide = escapeHtml(side);
+  return `<span class="verdict ${cls}" title="${escapeHtml(title)}">${safeSide} +${Math.abs(advantage).toFixed(1)}s</span>`;
 }
 
 function updateCompareButton() {

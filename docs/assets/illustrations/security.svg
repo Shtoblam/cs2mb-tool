@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title id="title">Local security boundary</title>
+  <desc id="desc">Read-only CS2 input enters local CS2MB analysis and produces artifacts; the server is loopback-only with no game process or telemetry.</desc>
+  <rect width="640" height="360" fill="#17191c"/>
+  <rect x="0.5" y="0.5" width="639" height="359" fill="none" stroke="#2f363c"/>
+  <text x="28" y="36" font-family="Consolas, monospace" font-size="10" letter-spacing="2" fill="#75c98a">LOCAL BOUNDARY</text>
+  <text x="28" y="64" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="700" fill="#f2f4f6">The boundary is the machine.</text>
+  <text x="28" y="86" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#9da7af">Read-only input · loopback server · no telemetry</text>
+
+  <rect x="34" y="112" width="572" height="178" rx="6" fill="none" stroke="#3d474f" stroke-dasharray="4 6"/>
+  <text x="48" y="132" font-family="Consolas, monospace" font-size="9" fill="#8f9aa2">127.0.0.1</text>
+
+  <g font-family="Segoe UI, Arial, sans-serif">
+    <rect x="62" y="156" width="150" height="86" rx="4" fill="#1d2328" stroke="#3d474f"/>
+    <text x="80" y="182" font-size="13" font-weight="700" fill="#f2f4f6">CS2 install</text>
+    <text x="80" y="202" font-family="Consolas, monospace" font-size="9" fill="#75c98a">READ-ONLY</text>
+    <text x="80" y="220" font-family="Consolas, monospace" font-size="9" fill="#9da7af">local files</text>
+
+    <rect x="248" y="156" width="150" height="86" rx="4" fill="#241a20" stroke="#8f1732"/>
+    <text x="266" y="182" font-size="13" font-weight="700" fill="#f2f4f6">CS2MB + SRI</text>
+    <text x="266" y="202" font-family="Consolas, monospace" font-size="9" fill="#e9a0ad">LOCAL PROCESS</text>
+    <text x="266" y="220" font-family="Consolas, monospace" font-size="9" fill="#9da7af">no game process</text>
+
+    <rect x="434" y="156" width="150" height="86" rx="4" fill="#1d2328" stroke="#3d474f"/>
+    <text x="452" y="182" font-size="13" font-weight="700" fill="#f2f4f6">artifacts/</text>
+    <text x="452" y="202" font-family="Consolas, monospace" font-size="9" fill="#79b6d1">VIEWER · MANIFEST</text>
+    <text x="452" y="220" font-family="Consolas, monospace" font-size="9" fill="#9da7af">SHA-256 hashes</text>
+  </g>
+
+  <g stroke="#e45468" stroke-width="1.6" fill="none">
+    <path d="M212 199h28"/><path d="M232 194l8 5-8 5"/>
+    <path d="M398 199h28"/><path d="M418 194l8 5-8 5"/>
+  </g>
+  <g font-family="Consolas, monospace" font-size="9" fill="#75c98a">
+    <text x="62" y="324">✓ NO TELEMETRY</text>
+    <text x="190" y="324">✓ NO GAME MEMORY</text>
+    <text x="338" y="324">✓ NO EXTERNAL API</text>
+  </g>
+</svg>

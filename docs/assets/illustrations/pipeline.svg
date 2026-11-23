@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="250" viewBox="0 0 1200 250" role="img" aria-labelledby="title desc">
+  <title id="title">CS2MB local processing pipeline</title>
+  <desc id="desc">CS2 VPK resources pass through SRI and stable contracts into analysis and the viewer/library.</desc>
+  <rect width="1200" height="250" fill="#17191c"/>
+  <rect x="0.5" y="0.5" width="1199" height="249" fill="none" stroke="#2f363c"/>
+  <text x="40" y="38" font-family="Consolas, monospace" font-size="10" letter-spacing="2.2" fill="#e45468">LOCAL PIPELINE</text>
+  <text x="40" y="66" font-family="Segoe UI, Arial, sans-serif" font-size="21" font-weight="700" fill="#f2f4f6">One read-only path from map resources to inspectable results.</text>
+
+  <g font-family="Segoe UI, Arial, sans-serif">
+    <rect x="40" y="92" width="196" height="92" rx="4" fill="#1d2328" stroke="#3d474f"/>
+    <text x="58" y="118" font-size="14" font-weight="700" fill="#f2f4f6">CS2 VPK</text>
+    <text x="58" y="140" font-family="Consolas, monospace" font-size="9" fill="#9da7af">nav · vents · vmdl</text>
+    <text x="58" y="160" font-family="Consolas, monospace" font-size="9" fill="#75c98a">READ-ONLY</text>
+
+    <rect x="266" y="92" width="196" height="92" rx="4" fill="#241a20" stroke="#8f1732"/>
+    <rect x="266" y="92" width="4" height="92" fill="#e45468"/>
+    <text x="284" y="118" font-size="14" font-weight="700" fill="#f2f4f6">SRI</text>
+    <text x="284" y="140" font-family="Consolas, monospace" font-size="9" fill="#e9a0ad">EntityLump · PHYS</text>
+    <text x="284" y="160" font-family="Consolas, monospace" font-size="9" fill="#e45468">INTERNAL COMPONENT</text>
+
+    <rect x="492" y="92" width="196" height="92" rx="4" fill="#1d2328" stroke="#3d474f"/>
+    <text x="510" y="118" font-size="14" font-weight="700" fill="#f2f4f6">Contracts</text>
+    <text x="510" y="140" font-family="Consolas, monospace" font-size="9" fill="#79b6d1">entities.txt · glTF + .bin</text>
+    <text x="510" y="160" font-family="Consolas, monospace" font-size="9" fill="#79b6d1">HAMMER UNITS</text>
+
+    <rect x="718" y="92" width="196" height="92" rx="4" fill="#1d2328" stroke="#3d474f"/>
+    <text x="736" y="118" font-size="14" font-weight="700" fill="#f2f4f6">Analysis</text>
+    <text x="736" y="140" font-family="Consolas, monospace" font-size="9" fill="#9da7af">NAV · collision · routes</text>
+    <text x="736" y="160" font-family="Consolas, monospace" font-size="9" fill="#75c98a">UNCHANGED</text>
+
+    <rect x="944" y="92" width="216" height="92" rx="4" fill="#1d2328" stroke="#3d474f"/>
+    <text x="962" y="118" font-size="14" font-weight="700" fill="#f2f4f6">Viewer + library</text>
+    <text x="962" y="140" font-family="Consolas, monospace" font-size="9" fill="#9da7af">self-contained HTML</text>
+    <text x="962" y="160" font-family="Consolas, monospace" font-size="9" fill="#ffb35c">COMPARE · MANIFEST</text>
+  </g>
+
+  <g stroke="#e45468" stroke-width="1.8" fill="none">
+    <path d="M236 138h22"/><path d="M250 133l8 5-8 5"/>
+    <path d="M462 138h22"/><path d="M476 133l8 5-8 5"/>
+    <path d="M688 138h22"/><path d="M702 133l8 5-8 5"/>
+    <path d="M914 138h22"/><path d="M928 133l8 5-8 5"/>
+  </g>
+  <text x="40" y="216" font-family="Consolas, monospace" font-size="9" fill="#8f9aa2">LOCAL · READ-ONLY · NO TELEMETRY</text>
+  <text x="1160" y="216" text-anchor="end" font-family="Consolas, monospace" font-size="9" fill="#8f9aa2">v1.0.0-pre.1</text>
+</svg>

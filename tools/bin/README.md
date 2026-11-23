@@ -1,32 +1,30 @@
-# Optional local executables
+# SRI executable location
 
-This directory is ignored by Git except for this README.
+This directory is ignored by Git except for this README. It is populated when
+the complete CS2MB package is built or installed locally.
 
-## Internal Source 2 engine
+## SRI — Source Resource Inspector
 
-Automatic map intake uses the first-party `cs2mb-source2.exe` component. Install
-the Windows x64 asset from the CS2MB release page into:
+The packaged executable lives at:
 
 ```text
-tools/bin/source2/cs2mb-source2.exe
+tools/bin/sri/cs2mb-sri.exe
 ```
 
-The executable is self-contained: it does not require the .NET runtime,
-Source2Viewer-CLI, resourceinfo or a separately installed Valve utility. It is
-built from `source2/` in this repository against the pinned MIT
-ValveResourceFormat library.
+SRI is the first-party Source 2 resource inspector used for PHYS and EntityLump
+decoding. It is included in the complete CS2MB Windows package; users do not
+download a separate converter.
 
-Verify the installation:
+Verify:
 
 ```powershell
-& ".\tools\bin\source2\cs2mb-source2.exe" --version
-python tools/source2.py --status
-Get-FileHash ".\tools\bin\source2\cs2mb-source2.exe" -Algorithm SHA256
+& ".\tools\bin\sri\cs2mb-sri.exe" --version
+python tools/sri.py --status
+Get-FileHash ".\tools\bin\sri\cs2mb-sri.exe" -Algorithm SHA256
 ```
 
-Compare the hash with `SHA256SUMS.txt` from the same release. Alternative
-locations are `tools/bin/cs2mb-source2.exe` and
-`source2/bin/win-x64/cs2mb-source2.exe`; `CS2MB_SOURCE2` overrides both.
+Expected version: `cs2mb-sri 1.0.0 (SRI — Source Resource Inspector)`.
 
-Do not place executables inside the CS2/Steam installation. Without the
-engine, manual upload of `.nav`, entity `.txt`, `.gltf` and `.bin` still works.
+No .NET runtime, Source2Viewer-CLI or `resourceinfo.exe` is required. Do not
+place executables inside the CS2/Steam installation. Upload mode still accepts
+`.nav`, entity `.txt`, `.gltf` and `.bin` without SRI.

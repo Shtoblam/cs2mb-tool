@@ -1,132 +1,99 @@
 # Установка и устранение неполадок
 
-Это руководство устанавливает локальное приложение CS2 Map Balance на Windows
-и объясняет, как получить карту из установленной CS2 или из загруженных файлов.
+Это руководство устанавливает CS2 Map Balance `v1.0.0-pre.1` на Windows и
+объясняет, как получить карту из установленной CS2 или из загруженных файлов.
 
 Приложение — локальный анализатор файлов только для чтения. Оно не запускает
 CS2 или Steam, не читает память игры и не взаимодействует с античитом. Сервер
-должен оставаться на `127.0.0.1`.
+слушает `127.0.0.1`; remote binding отключён.
 
 ## 1. Требования
 
 - Windows 10/11 **x64**.
-- **Python 3.13 x64** — проверенная версия. Шаг `pip install` не нужен.
-- Папка проекта или ZIP исходников из `main`.
+- Полный пакет CS2MB `CS2MB-v1.0.0-pre.1-win-x64.zip`.
 - Установленная CS2 для режима **Prepare + Generate from installed CS2**.
-- Компонент **cs2mb-source2** для автоматического разбора PHYS и EntityLump.
-  Это собственный self-contained компонент CS2MB. .NET runtime,
-  Source2Viewer-CLI и `resourceinfo.exe` не требуются.
+- Отдельная установка Python, `pip install`, .NET runtime, Source2Viewer-CLI и
+  `resourceinfo.exe` для packaged build не нужны.
 
-Права администратора, общесистемная установка и изменение файлов игры не
-нужны.
+В пакет входят портативный Python 3.13 runtime и **SRI — Source Resource
+Inspector** в `tools/bin/sri/cs2mb-sri.exe`.
 
-## 2. Установка Python 3.13
+## 2. Установка и запуск
 
-1. Откройте <https://www.python.org/downloads/windows/>.
-2. Скачайте **Windows installer (64-bit)** для Python 3.13.
-3. Включите **Add python.exe to PATH** и выберите **Install Now**.
-4. Откройте **новое** окно PowerShell и проверьте:
+1. Скачайте полный пакет со
+   <https://github.com/Shtoblam/cs2mb-tool/releases/tag/v1.0.0-pre.1>.
+2. Сверьте архив с `SHA256SUMS.txt`.
+3. Распакуйте в обычную пользовательскую папку, например
+   `%USERPROFILE%\Documents\CS2MB`.
+4. Запустите `Start-CS2MB.bat` (или `Start-CS2MB.ps1`).
+5. Откройте <http://127.0.0.1:8765/>, если браузер не открылся автоматически.
 
-```powershell
-py -3.13 --version
-python --version
-```
+Не распаковывайте пакет внутрь папки CS2/Steam.
 
-Если `python` открывает Microsoft Store или не найден, используйте `py -3.13`
-во всех командах ниже либо переустановите Python с включённым PATH.
+Launcher использует `runtime\python.exe` из пакета, проверяет наличие SRI,
+запускает локальный сервер и открывает URL. Права администратора и изменения
+реестра не нужны.
 
-## 3. Получение проекта
+## 3. Source checkout (для разработки)
 
-Репозиторий публичный: <https://github.com/Shtoblam/cs2mb-tool>.
-
-Вариант A — ZIP исходников:
-
-1. Скачайте <https://github.com/Shtoblam/cs2mb-tool/archive/refs/heads/main.zip>.
-2. Распакуйте в обычную пользовательскую папку, например
-   `%USERPROFILE%\Documents\cs2mb-tool`.
-
-Вариант B — Git:
+Обычным пользователям нужен полный пакет. Для source checkout:
 
 ```powershell
 git clone https://github.com/Shtoblam/cs2mb-tool.git
 cd cs2mb-tool
-```
-
-Не распаковывайте проект внутрь папки CS2/Steam.
-
-## 4. Установка внутреннего Source 2 engine
-
-Автоматический режим использует `cs2mb-source2.exe`, собранный из `source2/`
-в этом репозитории. Он подключает MIT-библиотеку ValveResourceFormat
-непосредственно в процессе и не запускает сторонний CLI.
-
-1. Откройте страницу релизов CS2MB:
-   <https://github.com/Shtoblam/cs2mb-tool/releases/tag/source2-v1.0.0>.
-2. Скачайте `cs2mb-source2-win-x64.zip`.
-3. Сверьте архив с `SHA256SUMS.txt` из того же релиза.
-4. Распакуйте `cs2mb-source2.exe` в:
-
-```text
-<PROJECT>\tools\bin\source2\cs2mb-source2.exe
-```
-
-5. Проверьте установку из корня проекта:
-
-```powershell
-& ".\tools\bin\source2\cs2mb-source2.exe" --version
-py -3.13 tools\source2.py --status
-Get-FileHash ".\tools\bin\source2\cs2mb-source2.exe" -Algorithm SHA256
-```
-
-Ожидаемый статус: `"ready": true` и версия `cs2mb-source2 1.0.0`. Исполняемый
-файл игнорируется Git. Не кладите его в установку CS2/Steam, `C:\Windows` или
-недоверенный путь.
-
-Компонент self-contained. .NET runtime, Source2Viewer-CLI, `resourceinfo.exe`
-и настройка `S2V_CLI` не используются. Дополнительные места поиска:
-
-- переменная окружения `CS2MB_SOURCE2`;
-- `tools\bin\cs2mb-source2.exe`;
-- `source2\bin\win-x64\cs2mb-source2.exe`;
-- `--source2 <path>` для ручного запуска `tools/prepare_map.py`.
-
-Явный путь или `CS2MB_SOURCE2` имеют приоритет: устаревшее значение приводит
-к ошибке, а не к молчаливому запуску другого файла.
-
-### Сборка engine из исходников (необязательно)
-
-Обычным пользователям этот шаг не нужен. Для сборки требуется .NET SDK 10.0.x;
-опубликованный exe не требует SDK или runtime.
-
-```powershell
-source2\build.ps1
-source2\build.ps1 -Install   # копирует в tools\bin\source2\
-```
-
-Версии закреплены в `source2/global.json`, `source2/Cs2mb.Source2/Cs2mb.Source2.csproj`
-и `packages.lock.json`. См. `source2/README.md` и
-`source2/THIRD_PARTY_NOTICES.md`.
-
-## 5. Запуск приложения
-
-Из корня проекта:
-
-```powershell
+py -3.13 tools\sri.py --status
 py -3.13 app\server.py --port 8765
 ```
 
-Откройте <http://127.0.0.1:8765/>. При первом запуске открывается обучение;
-кнопка обучения открывает его снова. Остановка — `Ctrl+C` в PowerShell.
+Требования source checkout:
 
-Если порт 8765 занят:
+- Python 3.13 x64;
+- SRI в `tools/bin/sri/cs2mb-sri.exe` или `CS2MB_SRI`, указывающий на executable.
+
+Сборка SRI из исходников:
 
 ```powershell
-py -3.13 app\server.py --port 8766
+sri\build.ps1
 ```
 
-Затем откройте `http://127.0.0.1:8766/`. Не выставляйте сервер в интернет.
+Для сборки нужен .NET SDK 10.0.x; для обычного запуска — нет.
 
-## 6. Генерация карты
+## 4. SRI — Source Resource Inspector
+
+SRI — собственный компонент CS2MB для чтения скомпилированных ресурсов Source 2.
+Это не универсальный просмотрщик/редактор Source 2 и не переименованный сторонний
+CLI.
+
+- `world_physics.vmdl_c` → PHYS → glTF + `.bin`;
+- `default_ents.vents_c` → EntityLump → entity text;
+- координаты остаются в Hammer units и Source axes (`x`, `y`, `z-up`);
+- `InteractAs`, `SurfaceProperty` и `CollisionGroup` сохраняются;
+- sphere/capsule примитивы тесселируются с ограниченным числом колец;
+- существующий collision loader и модули анализа не изменены.
+
+Проверка компонента:
+
+```powershell
+& ".\tools\bin\sri\cs2mb-sri.exe" --version
+py -3.13 tools\sri.py --status
+Get-FileHash ".\tools\bin\sri\cs2mb-sri.exe" -Algorithm SHA256
+```
+
+Ожидается `cs2mb-sri 1.0.0 (SRI — Source Resource Inspector)` и
+`"ready": true`. В приложении отображается **SRI ready** с версией.
+
+Места поиска по приоритету:
+
+- переменная `CS2MB_SRI`;
+- `tools\bin\sri\cs2mb-sri.exe`;
+- `tools\bin\cs2mb-sri.exe`;
+- `sri\bin\win-x64\cs2mb-sri.exe`;
+- `--sri <path>` для ручного `tools/prepare_map.py`.
+
+Явный путь или `CS2MB_SRI` имеют приоритет: устаревшее значение приводит к
+ошибке, а не к молчаливому выбору другого файла.
+
+## 5. Генерация карты
 
 ### Автоматический режим (рекомендуется)
 
@@ -136,7 +103,7 @@ py -3.13 app\server.py --port 8766
 4. Нажмите **Prepare + Generate**.
 5. Дождитесь ссылки на viewer и новой строки в Map library.
 
-В выбранной папке должны быть:
+В папке должны быть:
 
 ```text
 game\csgo\maps\<map>.vpk
@@ -144,11 +111,8 @@ game\csgo\gameinfo.gi
 ```
 
 Найти её: Steam → **Библиотека → Counter-Strike 2 → Управление → Просмотреть
-локальные файлы**. Папка игры используется только для чтения; извлечённые
-ресурсы и результаты пишутся в `artifacts/`.
-
-Индикатор показывает `engine ready` и версию компонента. `engine not
-installed` означает, что exe отсутствует или путь неверен.
+локальные файлы**. Игра используется только для чтения; результаты пишутся в
+`artifacts/`.
 
 ### Режим файлов (без доступа к папке CS2)
 
@@ -159,57 +123,47 @@ installed` означает, что exe отсутствует или путь �
 4. Нажмите **Generate map**.
 
 `Skip clearance` занимает около 20 секунд на Dust2; полная проверка — около
-2.5 минут на тестовой машине. Viewer и строка library появляются после job.
+2.5 минут на тестовой машине.
 
-## 7. Что делает внутренний engine
+## 6. Security controls
 
-```text
-map VPK (read-only)
-   ├─ <map>.nav                  → существующий Python NAV parser
-   ├─ default_ents.vents_c       → cs2mb-source2 entities → entity dump
-   └─ world_physics.vmdl_c       → cs2mb-source2 phys     → glTF + .bin
-```
+- loopback-only сервер; `--allow-remote` отклоняется;
+- Host и Origin checks для локального HTTP surface;
+- upload limits: 300 MB, 12 файлов, 160 MB на файл;
+- разрешены `.nav`, `.txt`, `.gltf`, `.bin`;
+- path mode ограничен `inputs/` и `artifacts/uploads/`;
+- не более двух одновременных jobs;
+- timeout 900 s с завершением дерева процессов Windows;
+- старые job records и upload directories очищаются;
+- нет телеметрии, внешних загрузок, доступа к процессу игры и anti-cheat;
+- SRI — локальный доверенный бинарник; сверяйте SHA-256.
 
-- `cs2mb-source2 entities` разбирает скомпилированный EntityLump и пишет
-  построчный dump для существующего parser. Сохраняются classname, origin,
-  angles, targetname, callouts и остальные свойства.
-- `cs2mb-source2 phys` разбирает PHYS, выдаёт collision-треугольники с
-  группировкой по collision attribute и surface property и сохраняет
-  `InteractAs`. Координаты остаются в Hammer units и Source axes (`x`, `y`,
-  `z-up`); устаревшая glTF node matrix не применяется.
-- Существующие collision loader, movement model, routing и balance logic не
-  изменены.
+Preparation manifest хранит provenance без личных абсолютных путей: вместо
+имени пользователя и home directory используются `<CS2_GAME>` и `prepared/...`.
 
-Конвертер не подменяет physics geometry рендер-геометрией: читается именно
-`world_physics.vmdl_c`.
-
-## 8. Устранение неполадок
+## 7. Устранение неполадок
 
 | Симптом | Действие |
 |---|---|
-| `python not found` | Используйте `py -3.13`; переустановите Python с PATH. |
-| `engine not installed` | Распакуйте `cs2mb-source2.exe` в `tools\bin\source2\`; перезапустите сервер. |
-| `cs2mb-source2 failed` | Проверьте `artifacts/.../prepared/source2.log`; убедитесь, что файл относится к поддерживаемой сборке CS2. |
-| Large collision output | Карты с большим числом треугольников (например Inferno) дают крупный `.bin` и обрабатываются дольше; это ожидаемо. |
+| `SRI not installed` | Проверьте `tools\bin\sri\cs2mb-sri.exe`; запускайте `Start-CS2MB.ps1` из корня пакета. |
+| `SRI failed` | Проверьте `artifacts/.../prepared/sri.log`; убедитесь, что ресурс относится к поддерживаемой сборке CS2. |
+| Launcher не находит Python | Используйте полный пакет или установите Python 3.13 x64 для source checkout. |
 | `invalid CS2 folder` | Выберите корень CS2 с `game\csgo\maps`, а не папку `maps`. |
-| Порт занят | Запустите с `--port 8766` и откройте новый URL. |
-| `no .bin` | Загружайте/экспортируйте `.gltf` и `.bin` вместе. |
+| Порт занят | Запустите с `--port 8766`. |
+| `no .bin` | Загружайте `.gltf` и `.bin` вместе. |
+| `too many active jobs` | Дождитесь завершения job; лимит — два. |
+| `missing Origin header` | Используйте локальный web UI; прямые non-browser POST отклоняются. |
 
-## 9. Безопасность и ограничения
+## 8. Ограничения
 
-- Сервер по умолчанию только loopback; не выставляйте его в LAN или интернет.
-- Ограничения upload, allow-list путей, проверка Origin, таймауты job и
-  security-заголовки сохранены.
-- Нет телеметрии, внешних загрузок, доступа к процессу игры, инъекций и
-  взаимодействия с античитом.
-- Engine — локальный доверенный компонент. Сверяйте SHA-256 с релизом. Он
-  обрабатывает недоверенные бинарные ресурсы и сообщает контролируемые ошибки.
-- Текущий конвертер выдаёт mesh и convex hull collision напрямую, а
-  sphere/capsule примитивы тесселирует с ограниченным числом колец. Кривые
-  поверхности — приближение для анализа, а не точная аналитическая collision.
-- Поддержка entity и physics проверена на установленной сборке CS2 из
-  [STATE.md](STATE.md); будущее изменение формата Valve может потребовать
-  обновления engine.
+- SRI работает только на Windows x64.
+- Кривые collision-примитивы тесселируются приближённо.
+- Поддержка entity/PHYS проверена на записанной сборке CS2; будущее изменение
+  формата Valve может потребовать обновления SRI.
+- Movement-модель остаётся straight-line и не включает combat, utility,
+  visibility или решения игроков.
+- Полный clearance проверялся на Dust2 и Nuke; остальные карты использовали
+  `Skip clearance`.
 
-Engine реализован независимо для CS2MB. ValveResourceFormat — MIT-библиотека
-сообщества, а не продукт Valve и не официальный CS2 SDK.
+См. [SECURITY.ru.md](SECURITY.ru.md), [VALIDATION.md](VALIDATION.md) и
+[STATE.md](STATE.md).

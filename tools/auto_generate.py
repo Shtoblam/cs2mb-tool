@@ -18,6 +18,7 @@ import argparse
 import hashlib
 import json
 import math
+import re
 import subprocess
 import sys
 from datetime import datetime, timezone
@@ -62,6 +63,10 @@ def main() -> int:
     parser.add_argument("--skip-clearance", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
+
+    if not re.fullmatch(r"^[A-Za-z0-9_-]{1,64}$", args.map):
+        print("invalid map name", file=sys.stderr)
+        return 2
 
     inputs = {
         "nav": args.nav,

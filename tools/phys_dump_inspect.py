@@ -11,7 +11,7 @@ It intentionally reads only scalar fields that resourceinfo prints in full:
   m_flVolume
 
 Large hex blobs (vertices/edges/faces) are ignored because the default
-resourceinfo dump can truncate them. Use VRF/Source2Viewer for full collision
+resourceinfo dump can truncate them. Use SRI/VRF for full collision
 triangles.
 
 Usage:

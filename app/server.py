@@ -15,11 +15,14 @@ import argparse
 import json
 import os
 import re
+import shutil
+import signal
 import subprocess
 import sys
 import threading
+import time
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from email import policy
 from email.parser import BytesParser
 from http import HTTPStatus
@@ -32,10 +35,10 @@ sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "tools"))
 
 from simulation.balance import time_only_balance  # noqa: E402
-from source2 import (  # noqa: E402
-    Source2Error,
-    resolve_source2,
-    status as source2_status,
+from sri import (  # noqa: E402
+    SriError,
+    resolve_sri,
+    status as sri_status,
 )
 
 APP_DIR = ROOT / "app"
@@ -45,6 +48,11 @@ MAX_UPLOAD = 300 * 1024 * 1024
 MAX_FILES = 12
 MAX_FILE_SIZE = 160 * 1024 * 1024
 JOB_TIMEOUT_SECONDS = 900
+MAX_ACTIVE_JOBS = 2
+MAX_JOB_RECORDS = 100
+JOB_RETENTION_SECONDS = 6 * 60 * 60
+UPLOAD_RETENTION_SECONDS = 24 * 60 * 60
+ACTIVE_JOB_STATUSES = {"queued", "running"}
 ALLOWED_INPUT_ROOTS = (ROOT / "inputs", UPLOADS_DIR)
 JOBS: dict[str, dict] = {}
 JOBS_LOCK = threading.Lock()
@@ -52,6 +60,131 @@ MAP_RE = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
 JOB_RE = re.compile(r"^[A-Za-z0-9_-]{6,64}$")
 ALLOWED_SUFFIXES = {".nav", ".txt", ".gltf", ".bin"}
 LOCAL_PATHS = ROOT / "config" / "paths.local.json"
+
+
+class JobLimitError(RuntimeError):
+    """Raised when the configured simultaneous-job limit is reached."""
+
+
+def _timestamp(value: str | None) -> datetime | None:
+    if not value:
+        return None
+    try:
+        parsed = datetime.fromisoformat(value)
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed
+
+
+def prune_jobs_locked() -> None:
+    """Drop expired finished jobs and cap retained in-memory records."""
+    now = datetime.now(timezone.utc)
+    finished: list[tuple[datetime, str]] = []
+    for job_id, job in list(JOBS.items()):
+        if job.get("status") in ACTIVE_JOB_STATUSES:
+            continue
+        stamp = _timestamp(job.get("finished_utc") or job.get("started_utc"))
+        if stamp is None:
+            continue
+        if now - stamp > timedelta(seconds=JOB_RETENTION_SECONDS):
+            JOBS.pop(job_id, None)
+        else:
+            finished.append((stamp, job_id))
+    if len(JOBS) > MAX_JOB_RECORDS:
+        for _stamp, job_id in sorted(finished)[: len(JOBS) - MAX_JOB_RECORDS]:
+            JOBS.pop(job_id, None)
+
+
+def prune_jobs() -> None:
+    with JOBS_LOCK:
+        prune_jobs_locked()
+
+
+def prune_uploads() -> None:
+    """Remove old upload directories, but never an active job's uploads."""
+    if not UPLOADS_DIR.is_dir():
+        return
+    active: set[Path] = set()
+    with JOBS_LOCK:
+        for job in JOBS.values():
+            if job.get("status") in ACTIVE_JOB_STATUSES and job.get("uploads"):
+                try:
+                    active.add(Path(job["uploads"]).resolve())
+                except OSError:
+                    continue
+    cutoff = time.time() - UPLOAD_RETENTION_SECONDS
+    for directory in UPLOADS_DIR.iterdir():
+        if not directory.is_dir() or directory.is_symlink():
+            continue
+        try:
+            if directory.resolve() in active or directory.stat().st_mtime >= cutoff:
+                continue
+            shutil.rmtree(directory, ignore_errors=True)
+        except OSError:
+            continue
+
+
+def terminate_process_tree(process: subprocess.Popen[str]) -> None:
+    """Terminate a pipeline process and its descendants where supported."""
+    if process.poll() is not None:
+        return
+    if os.name == "nt":
+        try:
+            subprocess.run(
+                ["taskkill", "/PID", str(process.pid), "/T", "/F"],
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+                timeout=15,
+                check=False,
+            )
+        except (OSError, subprocess.TimeoutExpired):
+            pass
+    else:
+        try:
+            os.killpg(os.getpgid(process.pid), signal.SIGKILL)
+        except (OSError, ProcessLookupError):
+            try:
+                process.kill()
+            except OSError:
+                pass
+    try:
+        process.wait(timeout=10)
+    except subprocess.TimeoutExpired:
+        try:
+            process.kill()
+        except OSError:
+            pass
+
+
+def stop_active_jobs() -> None:
+    """Terminate every active pipeline before the server exits."""
+    with JOBS_LOCK:
+        processes = [
+            job.get("process")
+            for job in JOBS.values()
+            if job.get("status") in ACTIVE_JOB_STATUSES
+        ]
+    for process in processes:
+        if process is not None:
+            terminate_process_tree(process)
+
+
+def register_job(job: dict) -> None:
+    """Reserve a job slot or raise JobLimitError."""
+    with JOBS_LOCK:
+        prune_jobs_locked()
+        active = sum(
+            1 for existing in JOBS.values()
+            if existing.get("status") in ACTIVE_JOB_STATUSES
+        )
+        if active >= MAX_ACTIVE_JOBS:
+            raise JobLimitError(
+                f"too many active jobs (max {MAX_ACTIVE_JOBS}); wait for one to finish"
+            )
+        JOBS[job["id"]] = job
 VIEWER_HEADERS = {
     "X-Frame-Options": "SAMEORIGIN",
     "Content-Security-Policy": (
@@ -126,6 +259,11 @@ def run_job(job_id: str, command: list[str], out_dir: Path) -> None:
     process: subprocess.Popen[str] | None = None
     timer: threading.Timer | None = None
     try:
+        spawn_kwargs: dict = {}
+        if os.name == "nt":
+            spawn_kwargs["creationflags"] = subprocess.CREATE_NEW_PROCESS_GROUP
+        else:
+            spawn_kwargs["start_new_session"] = True
         process = subprocess.Popen(
             command,
             cwd=ROOT,
@@ -135,13 +273,16 @@ def run_job(job_id: str, command: list[str], out_dir: Path) -> None:
             encoding="utf-8",
             errors="replace",
             bufsize=1,
+            **spawn_kwargs,
         )
+        with JOBS_LOCK:
+            job["process"] = process
         if process.stdout is None:
             raise RuntimeError("pipeline stdout is unavailable")
 
         def on_timeout() -> None:
             timed_out.set()
-            process.kill()
+            terminate_process_tree(process)
 
         timer = threading.Timer(JOB_TIMEOUT_SECONDS, on_timeout)
         timer.daemon = True
@@ -155,6 +296,8 @@ def run_job(job_id: str, command: list[str], out_dir: Path) -> None:
     finally:
         if timer is not None:
             timer.cancel()
+        with JOBS_LOCK:
+            job.pop("process", None)
     if timed_out.is_set():
         append_log(job, f"job timed out after {JOB_TIMEOUT_SECONDS} s")
         returncode = -1
@@ -175,7 +318,7 @@ def run_job(job_id: str, command: list[str], out_dir: Path) -> None:
 
 
 class Handler(BaseHTTPRequestHandler):
-    server_version = "CS2MapBalance/pre-alpha v1.0"
+    server_version = "CS2MapBalance/v1.0.0-pre.1"
 
     def log_message(self, fmt: str, *args) -> None:
         print(f"[{self.log_date_time_string()}] {fmt % args}")
@@ -188,7 +331,10 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("X-Content-Type-Options", "nosniff")
         self.send_header("Cache-Control", "no-store")
         self.end_headers()
-        self.wfile.write(body)
+        try:
+            self.wfile.write(body)
+        except (BrokenPipeError, ConnectionAbortedError):
+            pass
 
     def _file(
         self,
@@ -207,7 +353,10 @@ class Handler(BaseHTTPRequestHandler):
         for key, value in (extra_headers or {}).items():
             self.send_header(key, value)
         self.end_headers()
-        self.wfile.write(data)
+        try:
+            self.wfile.write(data)
+        except (BrokenPipeError, ConnectionAbortedError):
+            pass
 
     def _serve_app(self) -> None:
         self._file(
@@ -252,15 +401,41 @@ class Handler(BaseHTTPRequestHandler):
             "directory": str(directory.relative_to(ROOT)),
         }
 
+    def _host_ok(self) -> bool:
+        """Reject requests whose Host does not identify this loopback server."""
+        host = self.headers.get("Host", "").strip().lower()
+        port = self.server.server_address[1]
+        allowed = {
+            f"127.0.0.1:{port}",
+            f"localhost:{port}",
+            "127.0.0.1",
+            "localhost",
+        }
+        if self.server.server_address[0] in {"::1", "::"}:
+            allowed.add(f"[::1]:{port}")
+            allowed.add("[::1]")
+        if host in allowed:
+            return True
+        self._json(HTTPStatus.FORBIDDEN, {"error": "invalid Host header"})
+        return False
+
     def _origin_ok(self) -> bool:
+        """Require a same-origin browser request for state-changing POSTs."""
+        sec_fetch_site = self.headers.get("Sec-Fetch-Site")
+        if sec_fetch_site and sec_fetch_site not in {"same-origin", "none"}:
+            self._json(HTTPStatus.FORBIDDEN, {"error": "cross-site request rejected"})
+            return False
         origin = self.headers.get("Origin")
         if not origin:
-            return True
+            self._json(HTTPStatus.FORBIDDEN, {"error": "missing Origin header"})
+            return False
         port = self.server.server_address[1]
         allowed = {
             f"http://127.0.0.1:{port}",
             f"http://localhost:{port}",
         }
+        if self.server.server_address[0] in {"::1", "::"}:
+            allowed.add(f"http://[::1]:{port}")
         if origin in allowed:
             return True
         self._json(HTTPStatus.FORBIDDEN, {"error": "cross-origin request rejected"})
@@ -370,7 +545,6 @@ class Handler(BaseHTTPRequestHandler):
     ) -> str:
         job_id = uuid.uuid4().hex[:12]
         out_dir = JOBS_DIR / map_name / job_id
-        out_dir.mkdir(parents=True, exist_ok=True)
         job = {
             "id": job_id,
             "map": map_name,
@@ -381,8 +555,14 @@ class Handler(BaseHTTPRequestHandler):
             "viewer": None,
             "manifest": None,
         }
-        with JOBS_LOCK:
-            JOBS[job_id] = job
+        try:
+            register_job(job)
+            out_dir.mkdir(parents=True, exist_ok=True)
+        except Exception:
+            with JOBS_LOCK:
+                JOBS.pop(job_id, None)
+            shutil.rmtree(out_dir, ignore_errors=True)
+            raise
 
         command = [
             sys.executable,
@@ -432,13 +612,12 @@ class Handler(BaseHTTPRequestHandler):
         self,
         map_name: str,
         game: Path,
-        source2: Path,
+        sri: Path,
         dry_run: bool,
         skip_clearance: bool,
     ) -> str:
         job_id = uuid.uuid4().hex[:12]
         out_dir = JOBS_DIR / map_name / job_id
-        out_dir.mkdir(parents=True, exist_ok=True)
         job = {
             "id": job_id,
             "map": map_name,
@@ -448,8 +627,14 @@ class Handler(BaseHTTPRequestHandler):
             "viewer": None,
             "manifest": None,
         }
-        with JOBS_LOCK:
-            JOBS[job_id] = job
+        try:
+            register_job(job)
+            out_dir.mkdir(parents=True, exist_ok=True)
+        except Exception:
+            with JOBS_LOCK:
+                JOBS.pop(job_id, None)
+            shutil.rmtree(out_dir, ignore_errors=True)
+            raise
         command = [
             sys.executable,
             "tools/prepare_map.py",
@@ -461,8 +646,8 @@ class Handler(BaseHTTPRequestHandler):
             str(out_dir),
             "--generate-out",
             str(out_dir),
-            "--source2",
-            str(source2),
+            "--sri",
+            str(sri),
         ]
         if skip_clearance:
             command.append("--skip-clearance")
@@ -513,23 +698,27 @@ class Handler(BaseHTTPRequestHandler):
             )
             return
         try:
-            converter = resolve_source2()
-        except Source2Error as error:
+            converter = resolve_sri()
+        except SriError as error:
             self._json(
                 HTTPStatus.BAD_REQUEST,
                 {"error": str(error)},
             )
             return
 
-        job_id = self._start_game_job(
-            map_name,
-            game,
-            converter,
-            dry_run=payload.get("dry_run") is True
-            or str(payload.get("dry_run", "")).lower() == "true",
-            skip_clearance=payload.get("skip_clearance") is True
-            or str(payload.get("skip_clearance", "")).lower() == "true",
-        )
+        try:
+            job_id = self._start_game_job(
+                map_name,
+                game,
+                converter,
+                dry_run=payload.get("dry_run") is True
+                or str(payload.get("dry_run", "")).lower() == "true",
+                skip_clearance=payload.get("skip_clearance") is True
+                or str(payload.get("skip_clearance", "")).lower() == "true",
+            )
+        except JobLimitError as error:
+            self._json(HTTPStatus.TOO_MANY_REQUESTS, {"error": str(error)})
+            return
         self._json(HTTPStatus.ACCEPTED, {"job_id": job_id, "status": "queued"})
 
     def _upload(self) -> None:
@@ -547,15 +736,29 @@ class Handler(BaseHTTPRequestHandler):
             return
 
         upload_id = uuid.uuid4().hex[:12]
+        prune_uploads()
         upload_dir = UPLOADS_DIR / upload_id
         upload_dir.mkdir(parents=True, exist_ok=True)
+
+        def fail(status: int, payload: dict) -> None:
+            shutil.rmtree(upload_dir, ignore_errors=True)
+            self._json(status, payload)
+
         saved: dict[str, Path] = {}
-        for _field, filename, payload in files:
-            target = upload_dir / Path(filename).name
-            if target.exists() or target.is_symlink():
-                target = upload_dir / f"{target.stem}_{uuid.uuid4().hex[:6]}{target.suffix}"
-            target.write_bytes(payload)
-            saved[filename] = target
+        try:
+            for _field, filename, payload in files:
+                target = upload_dir / Path(filename).name
+                if target.exists() or target.is_symlink():
+                    target = upload_dir / f"{target.stem}_{uuid.uuid4().hex[:6]}{target.suffix}"
+                target.write_bytes(payload)
+                saved[filename] = target
+        except OSError as error:
+            self._json(
+                HTTPStatus.BAD_REQUEST,
+                {"error": f"could not store uploaded file: {error}"},
+            )
+            shutil.rmtree(upload_dir, ignore_errors=True)
+            return
 
         def first(suffix: str) -> Path | None:
             return next(
@@ -567,7 +770,7 @@ class Handler(BaseHTTPRequestHandler):
         gltf = first(".gltf")
         entity = first(".txt")
         if nav is None or gltf is None or entity is None:
-            self._json(
+            fail(
                 HTTPStatus.BAD_REQUEST,
                 {
                     "error": "need at least one .nav, one entity .txt and one .gltf",
@@ -577,7 +780,7 @@ class Handler(BaseHTTPRequestHandler):
             return
         missing_sidecars = self._missing_gltf_sidecars(gltf)
         if missing_sidecars:
-            self._json(
+            fail(
                 HTTPStatus.BAD_REQUEST,
                 {
                     "error": "missing glTF buffer sidecar(s); upload .bin too",
@@ -585,19 +788,25 @@ class Handler(BaseHTTPRequestHandler):
                 },
             )
             return
-        job_id = self._start_job(
-            map_name,
-            {"nav": nav, "entities": entity, "collision_gltf": gltf},
-            dry_run=fields.get("dry_run", "").lower() == "true",
-            skip_clearance=fields.get("skip_clearance", "").lower() == "true",
-            uploads_dir=upload_dir,
-        )
+        try:
+            job_id = self._start_job(
+                map_name,
+                {"nav": nav, "entities": entity, "collision_gltf": gltf},
+                dry_run=fields.get("dry_run", "").lower() == "true",
+                skip_clearance=fields.get("skip_clearance", "").lower() == "true",
+                uploads_dir=upload_dir,
+            )
+        except JobLimitError as error:
+            fail(HTTPStatus.TOO_MANY_REQUESTS, {"error": str(error)})
+            return
         self._json(
             HTTPStatus.ACCEPTED,
             {"job_id": job_id, "status": "queued", "upload_id": upload_id},
         )
 
     def do_GET(self) -> None:  # noqa: N802
+        if not self._host_ok():
+            return
         parsed = urlparse(self.path)
         path = parsed.path
         if path in ("/", "/index.html"):
@@ -612,15 +821,15 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/api/config":
             paths = load_local_paths()
             game = os.environ.get("CS2_GAME") or paths.get("cs2_game") or ""
-            engine = source2_status()
+            engine = sri_status()
             self._json(
                 HTTPStatus.OK,
                 {
                     "cs2_game": game,
-                    "source2": engine.path,
-                    "source2_ready": engine.ready,
-                    "source2_version": engine.version,
-                    "source2_sha256": engine.sha256,
+                    "sri": engine.path,
+                    "sri_ready": engine.ready,
+                    "sri_version": engine.version,
+                    "sri_sha256": engine.sha256,
                 },
             )
             return
@@ -676,6 +885,8 @@ class Handler(BaseHTTPRequestHandler):
         self.send_error(HTTPStatus.NOT_FOUND)
 
     def do_POST(self) -> None:  # noqa: N802
+        if not self._host_ok():
+            return
         if not self._origin_ok():
             return
         parsed = urlparse(self.path)
@@ -737,14 +948,18 @@ class Handler(BaseHTTPRequestHandler):
             )
             return
 
-        job_id = self._start_job(
-            map_name,
-            inputs,
-            dry_run=payload.get("dry_run") is True
-            or str(payload.get("dry_run", "")).lower() == "true",
-            skip_clearance=payload.get("skip_clearance") is True
-            or str(payload.get("skip_clearance", "")).lower() == "true",
-        )
+        try:
+            job_id = self._start_job(
+                map_name,
+                inputs,
+                dry_run=payload.get("dry_run") is True
+                or str(payload.get("dry_run", "")).lower() == "true",
+                skip_clearance=payload.get("skip_clearance") is True
+                or str(payload.get("skip_clearance", "")).lower() == "true",
+            )
+        except JobLimitError as error:
+            self._json(HTTPStatus.TOO_MANY_REQUESTS, {"error": str(error)})
+            return
         self._json(HTTPStatus.ACCEPTED, {"job_id": job_id, "status": "queued"})
 
 
@@ -755,19 +970,21 @@ def main() -> int:
     parser.add_argument(
         "--allow-remote",
         action="store_true",
-        help="allow binding to a non-loopback interface (not recommended)",
+        help=argparse.SUPPRESS,
     )
     args = parser.parse_args()
     loopback = {"127.0.0.1", "localhost", "::1"}
-    if args.host not in loopback and not args.allow_remote:
+    if args.allow_remote or args.host not in loopback:
         print(
-            "refusing non-loopback host without --allow-remote; "
-            "the app has no authentication",
+            "remote binding is disabled: the local application has no "
+            "authentication. Use a loopback bind and an SSH tunnel if remote "
+            "access is required.",
             file=sys.stderr,
         )
         return 2
     JOBS_DIR.mkdir(parents=True, exist_ok=True)
     UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
+    prune_uploads()
     server = ThreadingHTTPServer((args.host, args.port), Handler)
     print(f"CS2 Map Balance auto-generation app: http://{args.host}:{args.port}/")
     print(f"Inputs: {ROOT / 'inputs'} (map subdirectories)")
@@ -776,6 +993,7 @@ def main() -> int:
     except KeyboardInterrupt:
         print("\nstopping")
     finally:
+        stop_active_jobs()
         server.server_close()
     return 0
 

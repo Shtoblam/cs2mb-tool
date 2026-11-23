@@ -6,8 +6,8 @@ world_physics.vmdl_c from the map VPK, decodes the compiled entity and PHYS
 resources with the internal CS2MB Source 2 engine, and can hand the four files
 to the normal auto-generation pipeline.
 
-The internal engine is the first-party ``cs2mb-source2`` executable built from
-``source2/``.  No external converter binary is used.
+The internal engine is the first-party ``cs2mb-sri`` executable built from
+``sri/``.  No external converter binary is used.
 """
 
 from __future__ import annotations
@@ -22,11 +22,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 
-from source2 import (  # noqa: E402
-    Source2Error,
+from sri import (  # noqa: E402
+    SriError,
     convert_entities,
     convert_physics,
-    resolve_source2,
+    resolve_sri,
     sha256,
     version,
 )
@@ -62,9 +62,9 @@ def run(command: list[str], log_path: Path) -> None:
         )
 
 
-def file_record(path: Path) -> dict:
+def file_record(path: Path, display: str | None = None) -> dict:
     return {
-        "path": str(path),
+        "path": display or path.name,
         "size": path.stat().st_size,
         "sha256": sha256(path),
     }
@@ -76,9 +76,9 @@ def main() -> int:
     parser.add_argument("--game", required=True, type=Path)
     parser.add_argument("--out-dir", required=True, type=Path)
     parser.add_argument(
-        "--source2",
+        "--sri",
         type=Path,
-        help="optional cs2mb-source2 executable path (default: packaged location)",
+        help="optional cs2mb-sri executable path (default: packaged location)",
     )
     parser.add_argument("--generate-out", type=Path)
     parser.add_argument("--skip-clearance", action="store_true")
@@ -99,9 +99,9 @@ def main() -> int:
             return 2
 
     try:
-        converter = resolve_source2(args.source2)
+        converter = resolve_sri(args.sri)
         converter_version = version(explicit=converter)
-    except Source2Error as error:
+    except SriError as error:
         print(str(error), file=sys.stderr)
         return 2
 
@@ -131,11 +131,11 @@ def main() -> int:
         ]
         log_lines.append(convert_entities(vents, entities, explicit=converter))
         log_lines.append(convert_physics(vmdl, gltf, explicit=converter))
-    except Source2Error as error:
+    except SriError as error:
         print(str(error), file=sys.stderr)
         return 1
 
-    (prepared / "source2.log").write_text(
+    (prepared / "sri.log").write_text(
         "\n".join(log_lines) + "\n", encoding="utf-8"
     )
 
@@ -147,23 +147,23 @@ def main() -> int:
     manifest = {
         "schema_version": 2,
         "map": args.map,
-        "game": str(game),
-        "source2": {
-            "path": str(converter),
+        "game": "<CS2_GAME>",
+        "sri": {
+            "path": converter.name,
             "version": converter_version,
             "sha256": sha256(converter),
         },
         "inputs": {
-            "map_vpk": file_record(map_vpk),
-            "nav": file_record(nav),
-            "entities_resource": file_record(vents),
-            "physics_resource": file_record(vmdl),
+            "map_vpk": file_record(map_vpk, f"<CS2_GAME>/game/csgo/maps/{args.map}.vpk"),
+            "nav": file_record(nav, f"prepared/{nav.name}"),
+            "entities_resource": file_record(vents, f"prepared/{vents.name}"),
+            "physics_resource": file_record(vmdl, f"prepared/{vmdl.name}"),
         },
         "prepared": {
-            "nav": file_record(nav),
-            "entities": file_record(entities),
-            "collision_gltf": file_record(gltf),
-            "collision_bin": file_record(gltf_bin),
+            "nav": file_record(nav, f"prepared/{nav.name}"),
+            "entities": file_record(entities, f"prepared/{entities.name}"),
+            "collision_gltf": file_record(gltf, f"prepared/{gltf.name}"),
+            "collision_bin": file_record(gltf_bin, f"prepared/{gltf_bin.name}"),
         },
     }
     (out_dir / "prepared_manifest.json").write_text(

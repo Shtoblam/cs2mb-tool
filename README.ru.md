@@ -3,11 +3,11 @@
 </p>
 
 <p align="center">
-  <img src="docs/assets/logo.svg" width="92" alt="Логотип CS2 Map Balance">
+  <img src="logo.png" width="96" alt="Оригинальный логотип CS2 Map Balance">
 </p>
 
 <p align="center">
-  <img src="docs/assets/banner.ru.svg" alt="CS2 Map Balance — геометрия Source 2, навигация и анализ маршрутов" width="100%">
+  <img src="docs/assets/banners/banner.ru.svg" alt="CS2 Map Balance — анализ карт Source 2, локально" width="100%">
 </p>
 
 <h1 align="center">CS2 Map Balance</h1>
@@ -18,16 +18,16 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Shtoblam/cs2mb-tool/archive/refs/heads/main.zip"><img alt="Версия pre-alpha v1.0" src="https://img.shields.io/badge/release-pre--alpha%20v1.0-e45468?style=flat-square"></a>
+  <a href="https://github.com/Shtoblam/cs2mb-tool/releases/tag/v1.0.0-pre.1"><img alt="Версия v1.0.0-pre.1" src="https://img.shields.io/badge/release-v1.0.0--pre.1-e45468?style=flat-square"></a>
   <img alt="Python 3.13" src="https://img.shields.io/badge/python-3.13-3776AB?style=flat-square&logo=python&logoColor=white">
-  <a href="https://github.com/Shtoblam/cs2mb-tool/actions/workflows/tests.yml"><img alt="Тесты, сборка engine и security checks" src="https://github.com/Shtoblam/cs2mb-tool/actions/workflows/tests.yml/badge.svg?branch=main"></a>
-  <img alt="Внутренний Source 2 engine" src="https://img.shields.io/badge/engine-internal%20Source%202-79b6d1?style=flat-square">
+  <a href="https://github.com/Shtoblam/cs2mb-tool/actions/workflows/tests.yml"><img alt="Тесты, сборка SRI и security checks" src="https://github.com/Shtoblam/cs2mb-tool/actions/workflows/tests.yml/badge.svg?branch=main"></a>
+  <img alt="SRI — Source Resource Inspector" src="https://img.shields.io/badge/SRI-Source%20Resource%20Inspector-79b6d1?style=flat-square">
   <img alt="Локально, без телеметрии" src="https://img.shields.io/badge/local--only-no%20telemetry-75c98a?style=flat-square">
 </p>
 
 <p align="center">
+  <a href="https://github.com/Shtoblam/cs2mb-tool/releases/tag/v1.0.0-pre.1"><strong>Полный Windows-релиз ↗</strong></a> ·
   <a href="https://shtoblam.github.io/cs2mb-tool/"><strong>Сайт проекта ↗</strong></a> ·
-  <a href="https://github.com/Shtoblam/cs2mb-tool/releases/tag/source2-v1.0.0"><strong>Релиз engine ↗</strong></a> ·
   <a href="https://github.com/Shtoblam/cs2mb-tool">GitHub репозиторий ↗</a> ·
   <a href="README.md">English version</a>
 </p>
@@ -62,31 +62,30 @@ CS2 Map Balance превращает read-only ресурсы Counter-Strike 2 �
 в [docs/PROJECT.md](docs/PROJECT.md), полная архитектура — в
 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
-## Чем проект отличается
+## SRI — Source Resource Inspector
 
-### Source 2 ресурсы разбираются внутри
-
-Автоматическому pipeline больше не нужны Source2Viewer-CLI или
-`resourceinfo.exe`. Собственный компонент **cs2mb-source2** читает
-скомпилированные PHYS и EntityLump напрямую и выдаёт существующие контракты
-CS2MB.
+Внутренний компонент Source 2 называется **SRI**. Это не универсальный
+просмотрщик/редактор Source 2 и не переименованный сторонний CLI. Это собственный
+инспектор и конвертер ресурсов, который CS2MB использует для двух
+скомпилированных ресурсов, необходимых pipeline.
 
 <p align="center">
-  <img src="docs/assets/engine.svg" alt="Внутренний Source 2 engine: map VPK, cs2mb-source2, стабильные контракты и существующий анализ" width="100%">
+  <img src="docs/assets/illustrations/engine.svg" alt="Путь ресурсов через SRI: map VPK, SRI, проверенные контракты и существующий анализ" width="100%">
 </p>
 
 - `world_physics.vmdl_c` → PHYS → glTF + `.bin`
 - `default_ents.vents_c` → EntityLump → entity text
 - binary KV3, Zstandard и LZ4 из закреплённой MIT-библиотеки
   ValveResourceFormat
-- self-contained Windows x64 компонент; .NET runtime пользователю не нужен
-- путь, версия и SHA-256 engine записываются в preparation manifest
+- self-contained Windows x64 executable входит в полный пакет CS2MB
+- .NET runtime, Source2Viewer-CLI и `resourceinfo.exe` не требуются
+- путь, версия и SHA-256 SRI записываются в preparation manifest
 
-### Навигация и collision — разные доказательства
+## Навигация и collision — разные доказательства
 
 <p align="center">
-  <img src="docs/assets/navmesh.svg" alt="Навигационная сетка с направленными рёбрами, one-way связями и z-aware поиском" width="49%">
-  <img src="docs/assets/collision.svg" alt="Треугольники physics collision, метаданные поверхностей и player clearance" width="49%">
+  <img src="docs/assets/illustrations/navigation.svg" alt="Навигационные области с направленными рёбрами, one-way связями и выбранным маршрутом" width="49%">
+  <img src="docs/assets/illustrations/collision.svg" alt="Треугольники physics collision, метаданные поверхностей и player clearance" width="49%">
 </p>
 
 - Навигация направленная там, где это требует источник; one-way связи,
@@ -97,23 +96,40 @@ CS2MB.
 - Floor, wall и clearance проверки используют существующий collision loader и
   контракт Hammer units/Source axes.
 
-### Локально по замыслу
+## Локально по замыслу
 
 <p align="center">
-  <img src="docs/assets/local.svg" alt="Локальная read-only граница: без процесса игры, телеметрии и внешнего API" width="72%">
+  <img src="docs/assets/illustrations/security.svg" alt="Локальная read-only граница: без процесса игры, телеметрии и внешнего API" width="72%">
 </p>
 
-- сервер по умолчанию слушает `127.0.0.1`;
+- сервер по умолчанию слушает `127.0.0.1`; remote binding отключён;
 - установка игры открывается только для чтения;
 - нет процесса игры, доступа к памяти, инъекций, автоматизации геймплея и
   взаимодействия с VAC;
 - нет телеметрии, внешних загрузок и runtime-зависимости от интернета;
 - подготовленные входы и выходы сопровождаются SHA-256 provenance.
 
+## Текущее приложение
+
+Это реальные скриншоты приложения `v1.0.0-pre.1`.
+
+<p align="center">
+  <img src="docs/assets/screenshots/cs2mb-main.png" alt="Главный интерфейс CS2 Map Balance с оригинальным логотипом и статусом SRI" width="100%">
+</p>
+
+<p align="center">
+  <img src="docs/assets/screenshots/cs2mb-map-viewer.png" alt="Сгенерированный viewer карты CS2 с навигационными маршрутами и collision-контекстом" width="100%">
+</p>
+
+<p align="center">
+  <img src="docs/assets/screenshots/cs2mb-map-library.png" alt="Map library CS2 Map Balance с реальными данными и сравнением" width="100%">
+</p>
+
 ## Текущие возможности
 
-- Read-only извлечение VPK, NAV, EntityLump и PHYS из локальной CS2.
-- Внутренний Source 2 engine для скомпилированных entity и physics ресурсов.
+- Полный Windows x64 пакет с SRI и встроенным Python 3.13 runtime.
+- Внутренний разбор скомпилированных entity и physics ресурсов.
+- Read-only извлечение VPK и NAV из локальной CS2.
 - Browser upload/drop `.nav`, entity `.txt`, physics `.gltf` и `.bin`.
 - Направленный navigation graph с one-way, компонентами и z-aware lookup.
 - Self-contained viewer с representative и all spawn-to-target маршрутами.
@@ -121,22 +137,22 @@ CS2MB.
 - Диапазон `AK a-b s`, vertical-transition и `J+` jump-budget индикаторы.
 - Локальная map library с предварительным CT/T route-time индикатором и
   сравнением карт.
-- `manifest.json` с SHA-256 входов, выходов и engine.
-- Loopback-only сервер с upload limits, allow-list путей, Origin checks и
-  таймаутом job.
+- `manifest.json` с SHA-256 входов, выходов и SRI.
+- Loopback-only сервер с upload limits, allow-list путей, Host/Origin checks,
+  ограничением параллельных jobs и process-tree timeout.
 
 ## Pipeline
 
 <p align="center">
-  <img src="docs/assets/pipeline.ru.svg" alt="Локальный pipeline: установка CS2, внутренний engine, контракты, анализ, viewer и library" width="100%">
+  <img src="docs/assets/illustrations/pipeline.svg" alt="Локальный pipeline CS2MB: CS2 VPK, SRI, проверенные контракты, анализ, viewer и library" width="100%">
 </p>
 
 ```text
 Установка CS2 (read-only)
   map VPK
     ├─ <map>.nav              -> существующий Python NAV parser
-    ├─ default_ents.vents_c   -> cs2mb-source2 entities -> entity dump
-    └─ world_physics.vmdl_c   -> cs2mb-source2 phys     -> glTF + .bin
+    ├─ default_ents.vents_c   -> SRI entities -> entity dump
+    └─ world_physics.vmdl_c   -> SRI phys     -> glTF + .bin
                                      |
                                      v
                     существующий NAV / collision / movement анализ
@@ -152,49 +168,61 @@ CS2MB.
 
 ## Установка
 
-Требования: **Windows 10/11 x64**, **Python 3.13 x64** и ассет внутреннего
-engine. `pip install`, .NET runtime, Source2Viewer-CLI и `resourceinfo.exe` не
-нужны. CS2 необязательна для upload-режима.
+Скачайте полный пакет Windows x64 со
+**[страницы релиза v1.0.0-pre.1](https://github.com/Shtoblam/cs2mb-tool/releases/tag/v1.0.0-pre.1)**:
+
+```text
+CS2MB-v1.0.0-pre.1-win-x64.zip
+```
+
+Распакуйте в обычную пользовательскую папку и запустите:
+
+```text
+Start-CS2MB.bat
+```
+
+В пакет входят:
+
+- SRI executable в `tools/bin/sri/cs2mb-sri.exe`;
+- портативный Python 3.13 runtime в `runtime/`;
+- локальное приложение, модули анализа, viewer и документация.
+
+Установка Python, `pip install`, .NET runtime, Source2Viewer-CLI и
+`resourceinfo.exe` не требуется. CS2 остаётся необязательной для upload-режима.
+
+Source checkout:
 
 ```powershell
 git clone https://github.com/Shtoblam/cs2mb-tool.git
 cd cs2mb-tool
-
-# Скачайте cs2mb-source2-win-x64.zip со страницы релизов и распакуйте:
-# tools\bin\source2\cs2mb-source2.exe
-
-py -3.13 tools\source2.py --status
+py -3.13 tools\sri.py --status
 py -3.13 app\server.py --port 8765
 ```
-
-Откройте <http://127.0.0.1:8765/>. Сервер должен оставаться на loopback.
 
 Полная установка и troubleshooting: **[docs/SETUP.ru.md](docs/SETUP.ru.md)**.
 Ручная подготовка файлов: **[docs/GETTING_FILES.ru.md](docs/GETTING_FILES.ru.md)**.
 
 <p align="center">
-  <img src="docs/assets/app-tutorial.png" alt="Реальный первый запуск и обучающий экран локального приложения CS2 Map Balance" width="92%">
+  <img src="docs/assets/screenshots/cs2mb-setup.png" alt="Реальный первый запуск и обучающий экран текущего приложения CS2MB" width="92%">
 </p>
 
-<p align="center"><sub>Реальный скриншот приложения: обучающий экран первого запуска.</sub></p>
+### Сборка SRI из исходников (необязательно)
 
-### Сборка engine из исходников (необязательно)
-
-Обычным пользователям это не нужно. Для сборки требуется .NET SDK 10.0.x.
+Обычным пользователям это не нужно. Для сборки требуется .NET SDK 10.0.x;
+опубликованный SRI executable не требует SDK или runtime.
 
 ```powershell
-source2\build.ps1
-source2\build.ps1 -Install
+sri\build.ps1
 ```
 
-Версии закреплены в `source2/global.json`, `source2/Cs2mb.Source2/Cs2mb.Source2.csproj`
-и `packages.lock.json`. См. [source2/README.md](source2/README.md) и
-[source2/THIRD_PARTY_NOTICES.md](source2/THIRD_PARTY_NOTICES.md).
+Версии закреплены в `sri/global.json`, `sri/Cs2mb.Sri/Cs2mb.Sri.csproj` и
+`packages.lock.json`. См. [sri/README.md](sri/README.md) и
+[sri/THIRD_PARTY_NOTICES.md](sri/THIRD_PARTY_NOTICES.md).
 
 ## Текущая валидация
 
 Reference-окружение: CS2 build `2000948` (2026-11-19), Windows x64,
-Python 3.13.3, `cs2mb-source2 1.0.0`, ValveResourceFormat `20.1.7467`.
+Python 3.13.3, SRI `1.0.0`, ValveResourceFormat `20.1.7467`.
 
 | Карта | NAV areas | Collision primitives | Triangles | Floor agreement |
 |---|---:|---:|---:|---:|
@@ -208,15 +236,15 @@ Python 3.13.3, `cs2mb-source2 1.0.0`, ValveResourceFormat `20.1.7467`.
 | de_anubis | 2633 | 34 | 715,842 | 97.34% |
 | de_overpass | 3938 | 36 | 884,775 | 97.71% |
 
-Entity-вывод семантически совпадает с локальным `resourceinfo` reference для всех
-девяти карт: одинаковые количества entity, распределения classname и origin
-(один спавн Inferno отличается на 0.01 units из-за текстового округления).
-Dust2 по-прежнему воспроизводит исторические collision-итоги точно: 39
-primitives, 1,306,947 экспортированных vertices и 435,649 triangles.
+Entity-вывод сравнивался с локальным `resourceinfo` reference для всех девяти
+карт: одинаковые количества entity, распределения classname и origin (один
+спавн Inferno отличается на 0.01 units из-за текстового округления). Dust2
+воспроизводит исторические collision-итоги точно: 39 primitives, 1,306,947
+экспортированных vertices и 435,649 triangles.
 
 Это локальные интеграционные доказательства, а не обещание покрытия любой
 будущей сборки CS2. Методика — в [docs/VALIDATION.md](docs/VALIDATION.md),
-текущее состояние доказательств — в [docs/STATE.md](docs/STATE.md).
+текущее состояние — в [docs/STATE.md](docs/STATE.md).
 
 ## Важные ограничения
 
@@ -233,41 +261,14 @@ primitives, 1,306,947 экспортированных vertices и 435,649 trian
 - Полный clearance проверялся на Dust2 и Nuke; остальные карты в записанной
   серии использовали `Skip clearance`.
 
-## Безопасность и приватность
-
-Проект — **локальный анализатор файлов**. Он не запускает CS2/Steam, не
-подключается к процессу игры, не читает и не пишет память, не внедряет код, не
-автоматизирует геймплей, не связывается с игровыми серверами или anti-cheat и не
-отправляет телеметрию.
-
-- Сервер слушает `127.0.0.1`; non-loopback bind требует явного флага.
-- Upload ограничен количеством, размером и расширениями; пути нормализуются и
-  проходят allow-list.
-- POST защищён Origin guard; job имеет timeout.
-- Сгенерированный viewer self-contained и отдаётся с ограничительным CSP.
-- Intake UI отдаёт CSP response header и соответствующую meta policy, а также
-  framing/MIME protections.
-- Engine — локальный доверенный бинарник; его SHA-256 записывается при
-  подготовке.
-- Сгенерированные данные карт, uploads и извлечённые ресурсы не попадают в Git.
-
-<p align="center">
-  <img src="docs/assets/safety.ru.svg" alt="Модель безопасности: локально, read-only, без процесса игры, памяти и телеметрии" width="100%">
-</p>
-
-Полная модель — в [docs/SECURITY.ru.md](docs/SECURITY.ru.md) (English:
-[docs/SECURITY.md](docs/SECURITY.md)). Ни один инструмент не может обещать
-будущую политику Valve; утверждения относятся к этому коду и его документированным
-зависимостям.
-
 ## Архитектура
 
 | Компонент | Ответственность |
 |---|---|
 | `tools/vpk_read.py` | read-only VPK listing и extraction |
-| `tools/prepare_map.py` | map VPK intake и orchestration engine |
-| `tools/source2.py` | разрешение engine, argument arrays, timeouts, status |
-| `source2/` | собственный PHYS и EntityLump converter |
+| `tools/prepare_map.py` | map VPK intake и orchestration SRI |
+| `tools/sri.py` | разрешение SRI, argument arrays, timeouts, status |
+| `sri/` | собственный PHYS и EntityLump inspector |
 | `tools/nav_inspect.py` | NAV parsing и graph summary |
 | `tools/gltf_collision.py` | collision loading, floor/wall/clearance queries |
 | `movement/` | speed profile и route-time model |
@@ -275,8 +276,30 @@ primitives, 1,306,947 экспортированных vertices и 435,649 trian
 | `prototype/dust2_viewer.py` | генерация self-contained viewer |
 | `app/server.py` | локальный intake UI, uploads, jobs, library |
 
-Python-анализ остаётся stdlib-only. Engine — единственный упакованный бинарный
-компонент и изолирован через `tools/source2.py`.
+Python-анализ остаётся stdlib-only. SRI — единственный упакованный бинарный
+компонент и изолирован через `tools/sri.py`.
+
+## Безопасность и приватность
+
+Проект — **локальный анализатор файлов**. Он не запускает CS2/Steam, не
+подключается к процессу игры, не читает и не пишет память, не внедряет код, не
+автоматизирует геймплей, не связывается с игровыми серверами или anti-cheat и не
+отправляет телеметрию.
+
+- Сервер слушает `127.0.0.1`; remote binding отклоняется.
+- Host и Origin checks защищают локальный HTTP surface.
+- Upload ограничен количеством, размером и расширениями; пути нормализуются и
+  проходят allow-list.
+- Jobs имеют лимит параллельности, process-tree timeout и очистку старых записей.
+- Сгенерированный viewer self-contained и отдаётся с ограничительным CSP.
+- Intake UI отдаёт CSP response header и соответствующую meta policy.
+- SRI — локальный доверенный бинарник; его SHA-256 записывается при подготовке.
+- Сгенерированные данные карт, uploads и извлечённые ресурсы не попадают в Git.
+
+Полная модель — в [docs/SECURITY.ru.md](docs/SECURITY.ru.md) (English:
+[docs/SECURITY.md](docs/SECURITY.md)). Ни один инструмент не может обещать
+будущую политику Valve; утверждения относятся к этому коду и его
+документированным зависимостям.
 
 ## Документация
 
@@ -284,7 +307,7 @@ Python-анализ остаётся stdlib-only. Engine — единствен�
 
 - [Установка](docs/SETUP.ru.md) · [Setup](docs/SETUP.md)
 - [Получение файлов](docs/GETTING_FILES.ru.md) · [Getting files](docs/GETTING_FILES.md)
-- [Внутренний engine](source2/README.md)
+- [SRI component](sri/README.md)
 - [Архитектура](docs/ARCHITECTURE.md)
 - [Решения](docs/DECISIONS.md)
 - [Исследование](docs/RESEARCH.md)
@@ -295,10 +318,6 @@ Python-анализ остаётся stdlib-only. Engine — единствен�
 - [Release notes](docs/RELEASE.ru.md) и [архив релизов](docs/releases/)
 - [Changelog](CHANGELOG.md)
 
-> **Репозиторий и опубликованный сайт:** ссылки в README ведут на файлы GitHub.
-> Static-site workflow публикует только часть файлов, поэтому некоторые ссылки
-> открываются на GitHub, но не на Pages.
-
 ## Разработка и тесты
 
 ```powershell
@@ -307,16 +326,16 @@ py -3.13 tools\security_scan.py
 py -3.13 -m compileall -q app tools movement simulation prototype
 ```
 
-Текущий набор: **76 tests discovered / 75 executed / 1 real-map test gated** через
-`CS2MB_TEST_GAME`. CI запускает Python suite, сборку engine и engine-backed тесты
-на Windows. Тесты синтетические и unit-level: их прохождение не доказывает
+Текущий набор: **88 tests discovered / 87 executed / 1 real-map test gated** через
+`CS2MB_TEST_GAME`. CI запускает Python suite, сборку SRI и SRI-backed тесты на
+Windows. Тесты синтетические и unit-level: их прохождение не доказывает
 корректность геометрии, collision, навигации или движения в игре. См.
 [docs/VALIDATION.md](docs/VALIDATION.md).
 
 ## Roadmap
 
-- **pre-alpha v1.0** — чистый baseline репозитория, внутренний Source 2 engine,
-  авто-извлечение карт, upload, route-time индикатор, сравнение.
+- **v1.0.0-pre.1** — полный Windows-пакет, переименование в SRI, security
+  hardening, визуальная cleanup и консолидированный релиз.
 - **2.2** — line of sight, detection и encounter timing.
 - **2.3** — encounter/combat model только после demo-калибровки.
 - **3.0 research** — более широкое покрытие форматов и golden-сравнение на
@@ -326,7 +345,8 @@ py -3.13 -m compileall -q app tools movement simulation prototype
 
 ## Лицензия и независимость
 
-MIT. См. [LICENSE](LICENSE). Проект не связан с Valve. ValveResourceFormat —
+MIT. См. [LICENSE](LICENSE). Оригинальный `logo.png` — каноническая айдентика
+CS2MB и сохраняется без изменений. Проект не связан с Valve. ValveResourceFormat —
 MIT-библиотека сообщества, а не продукт Valve и не официальный CS2 SDK.
 Извлечённые игровые ресурсы остаются собственностью Valve; их нельзя коммитить
 или распространять.

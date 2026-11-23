@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title id="title">Navigation graph</title>
+  <desc id="desc">Nav areas, directed connections, a one-way drop and a selected route.</desc>
+  <rect width="640" height="360" fill="#17191c"/>
+  <rect x="0.5" y="0.5" width="639" height="359" fill="none" stroke="#2f363c"/>
+  <text x="28" y="36" font-family="Consolas, monospace" font-size="10" letter-spacing="2" fill="#79b6d1">NAVIGATION</text>
+  <text x="28" y="64" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="700" fill="#f2f4f6">Directed areas, not a straight line.</text>
+  <text x="28" y="86" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#9da7af">Polygons · connections · one-way links · z-levels</text>
+
+  <g fill="#1d2328" stroke="#46515a" stroke-width="1.4" stroke-linejoin="round">
+    <path d="M54 158L120 128L184 154L172 216L102 230Z"/>
+    <path d="M184 154L252 132L320 160L306 224L172 216Z"/>
+    <path d="M320 160L392 142L452 174L438 238L306 224Z"/>
+    <path d="M452 174L528 156L566 204L522 250L438 238Z"/>
+    <path d="M102 230L172 216L190 275L132 298Z"/>
+    <path d="M306 224L438 238L420 300L346 312Z"/>
+  </g>
+  <g fill="none" stroke="#6d7a84" stroke-width="1.5">
+    <path d="M120 184L184 172"/><path d="M252 176L306 182"/><path d="M392 190L438 200"/>
+    <path d="M528 196L554 210"/><path d="M132 258L172 246"/><path d="M346 264L420 270"/>
+  </g>
+  <g fill="#e45468"><path d="M184 172l-9-4v8z"/><path d="M306 182l-9-4v8z"/><path d="M438 200l-9-4v8z"/></g>
+  <g fill="#79b6d1"><path d="M172 246l-9-4v8z"/><path d="M420 270l-9-4v8z"/></g>
+  <path d="M74 192L134 174L210 186L268 202L330 216L402 238L472 224L540 202" fill="none" stroke="#e45468" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <g fill="#f2f4f6"><circle cx="74" cy="192" r="4"/><circle cx="540" cy="202" r="4"/></g>
+  <g fill="#e45468"><circle cx="268" cy="202" r="3"/><circle cx="402" cy="238" r="3"/></g>
+
+  <g font-family="Consolas, monospace" font-size="9" fill="#8f9aa2">
+    <text x="28" y="332">NAV AREA</text>
+    <path d="M98 328h18" stroke="#e45468" stroke-width="2"/><text x="124" y="332">ROUTE</text>
+    <path d="M184 328h18" stroke="#79b6d1" stroke-width="2"/><text x="210" y="332">ONE-WAY / DROP</text>
+  </g>
+</svg>

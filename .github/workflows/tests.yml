@@ -1,4 +1,4 @@
-name: Python tests, engine build and security checks
+name: Python tests, SRI build and security checks
 
 on:
   push:
@@ -14,9 +14,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out source
-        uses: actions/checkout@v5
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.13"
       - name: Compile project modules
@@ -28,28 +28,48 @@ jobs:
       - name: Validate website JavaScript
         run: node --check site.js
 
-  source2-engine:
+  sri-engine:
     runs-on: windows-latest
     steps:
       - name: Check out source
-        uses: actions/checkout@v5
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.13"
       - name: Set up .NET SDK
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
         with:
           dotnet-version: "10.0.x"
-      - name: Build the internal Source 2 engine
+      - name: Build SRI
         shell: pwsh
-        run: ./source2/build.ps1
-      - name: Compile the engine project without trimming
-        run: dotnet build source2/Cs2mb.Source2/Cs2mb.Source2.csproj -c Release
-      - name: Run tests against the built engine
+        run: ./sri/build.ps1
+      - name: Compile SRI without trimming
+        run: dotnet build sri/Cs2mb.Sri/Cs2mb.Sri.csproj -c Release
+      - name: Run tests against the built SRI
         shell: pwsh
         run: |
-          $env:CS2MB_SOURCE2 = "${{ github.workspace }}\source2\dist\win-x64\cs2mb-source2.exe"
+          $env:CS2MB_SRI = "${{ github.workspace }}\sri\dist\win-x64\cs2mb-sri.exe"
           python -m compileall -q app tools movement simulation prototype
           python -m unittest discover -s tests -v
           python tools/security_scan.py
+      - name: Download portable Python
+        shell: pwsh
+        run: |
+          $url = "https://www.python.org/ftp/python/3.13.3/python-3.13.3-embed-amd64.zip"
+          Invoke-WebRequest $url -OutFile python-embeddable.zip
+          $expected = "59ff76e16e6597de47474fb22be69e7191a89116910d728ab735079b078e52db"
+          $actual = (Get-FileHash python-embeddable.zip -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($actual -ne $expected) { throw "Python runtime checksum mismatch: $actual" }
+      - name: Build complete Windows package
+        run: python tools/package_release.py --python-runtime python-embeddable.zip --sri sri/dist/win-x64/cs2mb-sri.exe
+      - name: Verify extracted package
+        shell: pwsh
+        run: |
+          $zip = Get-ChildItem dist/CS2MB-*-win-x64.zip | Select-Object -First 1
+          $target = Join-Path $env:RUNNER_TEMP "cs2mb-package"
+          Expand-Archive $zip.FullName -DestinationPath $target -Force
+          & "$target\tools\bin\sri\cs2mb-sri.exe" --version
+          & "$target\runtime\python.exe" -c "import app.server; import tools.sri; print('package imports ok')"
+          if (-not (Test-Path "$target\SHA256SUMS.txt")) { throw "missing SHA256SUMS.txt" }
+          if (-not (Test-Path "$target\SBOM.spdx.json")) { throw "missing SBOM.spdx.json" }

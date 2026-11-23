@@ -13,12 +13,13 @@ Start with the [project README](../README.md) or the
 | Document | Status | Contents |
 |---|---|---|
 | [STATE.md](STATE.md) | Current | Evolving project state, verified results, active priorities and known gaps |
-| [SETUP.md](SETUP.md) / [SETUP.ru.md](SETUP.ru.md) | Current | Installation, internal Source 2 engine, map generation and troubleshooting |
-| [../source2/README.md](../source2/README.md) | Current | Engine architecture, build, commands, license and validation |
+| [SETUP.md](SETUP.md) / [SETUP.ru.md](SETUP.ru.md) | Current | Installation, SRI, portable package, map generation and troubleshooting |
+| [../sri/README.md](../sri/README.md) | Current | SRI architecture, build, commands, license and validation |
 | [GETTING_FILES.md](GETTING_FILES.md) / [GETTING_FILES.ru.md](GETTING_FILES.ru.md) | Current | Manual extraction of `.nav`, entities and physics glTF |
 | [RELEASE.md](RELEASE.md) / [RELEASE.ru.md](RELEASE.ru.md) | Current | Application release summary and verification scope |
 | [SECURITY.md](SECURITY.md) / [SECURITY.ru.md](SECURITY.ru.md) | Current | Threat model, controls, CS2/anti-cheat boundaries and residual risks |
 | [SECURITY_BACKLOG.md](SECURITY_BACKLOG.md) | Current | Prioritized security-management work and acceptance criteria |
+| [DEPENDENCIES.md](DEPENDENCIES.md) | Current | Pinned NuGet/Python dependencies, licenses, advisory check and SBOM notes |
 
 ## Architecture and methodology
 
@@ -49,16 +50,17 @@ validation of the current CS2 build.
 |---|---|---|
 | [ROADMAP.md](ROADMAP.md) | Current | Staged plan, acceptance criteria, dependencies and deferred work |
 | [RISKS.md](RISKS.md) | Reference | Technical, methodological, legal and scope risks |
-| [releases/pre-alpha-v1.0.md](releases/pre-alpha-v1.0.md) / [RU](releases/pre-alpha-v1.0.ru.md) | Current | Clean `cs2mb-tool` baseline |
+| [RELEASE.md](RELEASE.md) / [RELEASE.ru.md](RELEASE.ru.md) | Current | Complete `v1.0.0-pre.1` release notes and verification scope |
+| [releases/pre-alpha-v1.0.md](releases/pre-alpha-v1.0.md) / [RU](releases/pre-alpha-v1.0.ru.md) | Historical | Earlier clean `cs2mb-tool` baseline |
 | [releases/](releases/) | Historical | Earlier 2.x release notes, retained as project history |
 | [CHANGELOG.md](../CHANGELOG.md) | Current | Chronological change log |
 
 ### Release naming note
 
-- The application version in [`VERSION`](../VERSION) is `pre-alpha v1.0`.
+- The application version in [`VERSION`](../VERSION) is `v1.0.0-pre.1`.
 - The `cs2mb-tool` repository is a fresh baseline. Earlier 2.x release notes are
   kept under [`releases/`](releases/) as historical project records.
-- The current baseline note is [pre-alpha v1.0](releases/pre-alpha-v1.0.md).
+- The current release note is [RELEASE.md](RELEASE.md); the earlier baseline note is [releases/pre-alpha-v1.0.md](releases/pre-alpha-v1.0.md).
 - `docs/releases/v2.1.0-alpha.md` contains the alpha.1 notes; the file name is
   kept for link stability.
 - `docs/releases/v2.0.0-alpha.md` contains the 2.0.0-alpha.1 notes for the same

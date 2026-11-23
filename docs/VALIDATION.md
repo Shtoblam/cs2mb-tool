@@ -6,7 +6,7 @@
 ## 0. Internal Source 2 engine validation (2026-11-23)
 
 **Reference environment:** installed CS2 build `2000948`, patch `1.42.0.0`,
-version date `2026-11-19`; Windows x64; Python 3.13.3; `cs2mb-source2 1.0.0`
+version date `2026-11-19`; Windows x64; Python 3.13.3; `cs2mb-sri 1.0.0`
 built against ValveResourceFormat `20.1.7467`.
 
 **Procedure:** extract `<map>.nav`, `default_ents.vents_c` and
@@ -32,9 +32,11 @@ Entity comparison: identical entity counts and class distributions for all nine
 maps; spawn/callout/bombsite origins match after 0.01-unit text rounding. Dust2
 has 415 entities, 15 T spawns, 15 CT spawns and 43 callouts.
 
+**Endpoint security tests:** Host rejection, missing/cross-origin POSTs, oversized uploads, malformed multipart data, invalid map names, invalid extensions, missing sidecars, invalid JSON, viewer path confinement and job-limit rejection are covered by direct HTTP tests. Process-tree termination is covered by a parent/child process test.
+
 **Synthetic cases:** empty file, garbage bytes, minimal valid header, truncated
 block table, oversized declared size, unsupported header version, missing input.
-All produce a controlled non-zero exit with a `cs2mb-source2:` message and no
+All produce a controlled non-zero exit with a `cs2mb-sri:` message and no
 stack trace. These run in the normal test suite when the engine is installed.
 
 **Limits:** the real-game comparison is local and not part of CI; CI validates

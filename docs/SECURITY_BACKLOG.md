@@ -1,35 +1,50 @@
-﻿# Security management backlog
+# Security management backlog
 
 **Status:** active
-**Scope:** local application server, upload/path handling, process execution, viewer security and documentation.
+**Scope:** local application server, upload/path handling, process execution,
+SRI, viewer security and documentation.
 
-This backlog tracks security work that is larger than a documentation correction. It is intentionally separate from map-analysis research. No item here authorizes a change to game files or game processes.
+This backlog tracks security work larger than a documentation correction. No
+item here authorizes a change to game files or game processes.
 
-## Completed in the pre-alpha v1.0 baseline
+## Completed in `v1.0.0-pre.1`
 
-- Added restrictive CSP, `Referrer-Policy: no-referrer` and `Cross-Origin-Resource-Policy: same-origin` response headers to the intake UI.
-- Kept the matching UI CSP/referrer meta policies.
-- Added a regression test for the UI response-header constants.
-- Clarified the security documentation so response headers and meta policies are not conflated.
-- Added the internal `cs2mb-source2` engine with explicit path resolution, argument arrays, timeouts and SHA-256 provenance; removed the Source2Viewer-CLI/resourceinfo runtime path.
+- Added the internal **SRI** component with explicit path resolution, argument
+  arrays, timeouts and SHA-256 provenance.
+- Removed the Source2Viewer-CLI and `resourceinfo.exe` runtime paths.
+- Added a maximum of two simultaneous jobs with controlled `429` rejection.
+- Added stale job-record cleanup and upload-directory retention.
+- Added Windows process-tree termination on timeout, including descendants.
+- Added endpoint-level tests for Host, Origin, oversized uploads, malformed
+  multipart data, traversal, extensions, missing sidecars, invalid JSON and
+  viewer confinement.
+- Added a loopback Host allow-list and same-origin POST checks; missing Origin
+  is rejected.
+- Disabled remote binding (`--allow-remote` is rejected).
+- Added map-name validation to the direct auto-generation CLI.
+- Removed rejected upload directories and added upload retention cleanup.
+- Redacted personal absolute paths from preparation manifests.
+- Pinned third-party GitHub Actions to immutable commit SHAs.
+- Added SBOM and release checksum generation.
 
-## Open work, highest priority first
+## Open work
 
 | Priority | Item | Current behavior | Acceptance criteria |
 |---|---|---|---|
-| P1 | Bounded job execution | `app/server.py` starts jobs without a concurrency cap and keeps job records in memory for the server lifetime. | A documented limit, controlled rejection/queue behavior, cleanup of old job state, tests for the limit and clean shutdown. |
-| P1 | Process-tree timeout | The 900 s job timeout kills the Python child process, but its descendants may survive on Windows. The internal engine is a direct child; a timeout should terminate the full tree. | Timeout terminates the full process tree on Windows; equivalent behavior is defined for other platforms; testable without a real game install. |
-| P2 | Endpoint-level security tests | Tests cover helper functions and selected routes, but not oversized uploads, malformed multipart bodies, traversal attempts, viewer confinement or timeout behavior. | Runtime tests for each boundary, including negative cases and bounded resource use. |
-| P2 | Host-header and CSRF hardening | POSTs have an Origin check, but no Host allow-list and no CSRF token; requests without an Origin header remain possible. | Explicit loopback Host policy, documented local-client behavior, and tests for allowed/denied cases. |
-| P2 | Remote-binding warning/controls | `--allow-remote` permits a non-loopback bind without authentication. | Strong warning, minimal allow-list, or an explicit authentication gate before remote exposure. |
-| P3 | Direct CLI map-name validation | `tools/auto_generate.py` accepts arbitrary `--map` values. | Validate map names consistently with the server and test rejection of traversal/invalid names. |
-| P3 | Upload-directory lifecycle | Validation failures can leave upload directories behind; there is no retention policy. | Cleanup on rejected jobs and a documented retention policy for completed uploads. |
+| P2 | Viewer HTML hardening review | Viewer HTML is generated locally and served with a restrictive CSP, but the generator is not a browser sandbox. | Add a generated-content injection review with adversarial entity/callout strings and a documented policy. |
+| P3 | Full endpoint fuzzing | Targeted endpoint tests exist; continuous malformed-request fuzzing is not automated. | Bounded fuzz run in CI with a documented corpus and no unbounded resource use. |
+| P3 | Code signing | SRI is hash-verified but not code-signed. | Sign the release executable if a suitable certificate and release policy exist. |
+| P3 | Cross-platform SRI | SRI is Windows x64 only. | Define and test a supported Linux/macOS build if required. |
 
 ## Working rules
 
-- Keep the server loopback-only by default.
+- Keep the server loopback-only; remote binding stays disabled.
 - Keep all game-resource access read-only.
 - Do not add remote telemetry or external services to fix a local security issue.
-- Add a focused failing test before changing parser, path, upload, process or server behavior.
-- Re-run `python -m unittest discover -s tests`, `python tools/security_scan.py` and the Markdown checks after changes.
+- Add a focused failing test before changing parser, path, upload, process or
+  server behavior.
+- Re-run `python -m unittest discover -s tests`, `python tools/security_scan.py`
+  and the Markdown/asset checks after changes.
 - Record any remaining limitation in `docs/SECURITY.md` and `docs/STATE.md`.
+- Do not describe the application as perfectly secure; these controls reduce
+  risk but are not a security certification.

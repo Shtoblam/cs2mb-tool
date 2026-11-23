@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyName>cs2mb-sri</AssemblyName>
+    <RootNamespace>Cs2mb.Sri</RootNamespace>
+    <Version>1.0.0</Version>
+    <AssemblyTitle>SRI — Source Resource Inspector</AssemblyTitle>
+    <Description>SRI — first-party Source 2 resource inspector and converter for CS2 Map Balance.</Description>
+    <Company>CS2 Map Balance contributors</Company>
+    <RepositoryUrl>https://github.com/Shtoblam/cs2mb-tool</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ValveResourceFormat" Version="20.1.7467" />
+  </ItemGroup>
+
+</Project>

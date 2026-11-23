@@ -3,14 +3,28 @@
 **Правило:** сроки не обещаются. Сложность указана относительно, а не в днях.
 Каждый этап заканчивается проверяемым артефактом и тестами.
 
-**Текущая версия приложения:** `pre-alpha v1.0`. Это чистый baseline
+**Текущая версия приложения:** `v1.0.0-pre.1`. Это чистый baseline
 репозитория `cs2mb-tool`; исторические release notes сохранены как архив.
 
-## Milestone: internal Source 2 engine — completed 2026-11-23
+## Milestone: SRI and complete v1.0.0-pre.1 release — current 2026-11-23
+
+- Renamed the internal component to **SRI — Source Resource Inspector**.
+- Closed P1 security backlog items: bounded jobs, process-tree timeout, endpoint
+  tests, Host/Origin controls, disabled remote binding, upload cleanup and
+  manifest path redaction.
+- Rebuilt visual identity around the owner's original `logo.png`; removed
+  invented logo variants; rebuilt technical illustrations and captured actual
+  current application screenshots.
+- Added a complete Windows package with SRI, portable Python 3.13, launchers,
+  checksums and SPDX SBOM.
+- Remaining release gate: publish and verify the complete package, then retire
+  the old standalone engine release.
+
+## Historical: internal Source 2 engine — completed 2026-11-23
 
 **Status:** implemented and locally validated.
 
-- First-party `cs2mb-source2` component built from `source2/`; VRF library
+- First-party `cs2mb-sri` component built from `sri/`; VRF library
   linked in-process; self-contained Windows x64 artifact.
 - PHYS and EntityLump decoded without Source2Viewer-CLI or `resourceinfo.exe`.
 - Runtime CLI resolution removed from `tools/prepare_map.py` and

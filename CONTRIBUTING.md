@@ -65,7 +65,7 @@ Do not commit:
 - `.env`, tokens, API keys, passwords or personal paths;
 - generated `artifacts/`, uploads or large derived data;
 - downloaded executables such as Source2Viewer-CLI or the built
-  `cs2mb-source2` engine binary; publish the engine as a hash-verified release
+  `cs2mb-sri` engine binary; publish the engine as a hash-verified release
   asset instead.
 
 Do not modify the CS2/Steam installation, interact with game processes or memory,
@@ -81,16 +81,16 @@ automate gameplay, or connect to game servers/anti-cheat for this project.
 - Keep English and Russian documentation technically equivalent where both
   versions exist.
 
-## Engine changes
+## SRI changes
 
-When changing `source2/` or `tools/source2.py`:
+When changing `sri/` or `tools/sri.py`:
 
-- build the self-contained engine with `source2/build.ps1`;
-- run the Python suite with `CS2MB_SOURCE2` set to the built executable;
+- build the self-contained engine with `sri/build.ps1`;
+- run the Python suite with `CS2MB_SRI` set to the built executable;
 - keep the synthetic malformed/truncated/oversized resource tests passing;
-- re-run the nine-map integration validation when physics/entity decoding
+- re-run the nine-map integration validation when SRI physics/entity decoding
   changes;
-- update `source2/THIRD_PARTY_NOTICES.md` when a dependency changes.
+- update `sri/THIRD_PARTY_NOTICES.md` when a dependency changes.
 
 ## Pull requests
 

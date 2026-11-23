@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Compare nav floor heights with exported physics collision floors.
 
-The glTF is produced by Source2Viewer from maps/<map>/world_physics.vmdl_c.
+The glTF is produced by SRI from maps/<map>/world_physics.vmdl_c.
 Coordinates are Hammer units, Source axes; the glTF node matrix is ignored.
 
 For every nav area, sample the centroid and midpoints toward its corners,

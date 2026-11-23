@@ -1,5 +1,79 @@
 # Changelog
 
+## v1.0.0-pre.1 — 2026-11-23
+
+### Source 2 processing
+
+- Renamed the internal component to **SRI — Source Resource Inspector**
+  (`cs2mb-sri.exe`, `sri/`, `tools/sri.py`, `CS2MB_SRI`, `--sri`,
+  `sri_ready`, `sri_version`, `sri_sha256`).
+- SRI reads compiled PHYS and EntityLump resources in-process with the pinned
+  MIT ValveResourceFormat `20.1.7467` library.
+- Removed Source2Viewer-CLI and `resourceinfo.exe` from the normal runtime.
+- Preserved mesh/hull geometry, bounded sphere/capsule tessellation, Hammer
+  units/Source axes, `InteractAs`/`SurfaceProperty`/`CollisionGroup` metadata
+  and the existing glTF/entity contracts.
+- Preparation manifests now record SRI path/version/hash and use relative
+  provenance (`<CS2_GAME>`, `prepared/...`) instead of personal paths.
+
+### Application
+
+- Added a complete Windows x64 package with a portable Python 3.13 runtime,
+  `Start-CS2MB.bat` and `Start-CS2MB.ps1`.
+- The package includes SRI at `tools/bin/sri/cs2mb-sri.exe`; users no longer
+  download a separate converter.
+- Existing NAV parsing, routing, collision, movement, simulation, viewer,
+  library, upload and comparison functionality is preserved.
+- Version reconciled to `v1.0.0-pre.1` across the application, UI, site, docs,
+  package metadata and release links.
+
+### Security
+
+- Added a two-job concurrency limit with controlled `429` rejection.
+- Added stale job-record cleanup and upload-directory retention.
+- Added Windows process-tree termination on timeout, including SRI descendants.
+- Added loopback Host allow-listing and same-origin POST checks; missing Origin
+  is rejected.
+- Disabled remote binding; `--allow-remote` is rejected.
+- Added endpoint tests for oversized uploads, malformed multipart bodies,
+  traversal, invalid extensions, missing sidecars, invalid JSON, viewer
+  confinement, rejected origins and job limits.
+- Removed rejected upload directories.
+- Added direct map-name validation to the auto-generation CLI.
+- Pinned GitHub Actions to immutable commit SHAs.
+- Added SPDX SBOM and release checksum generation.
+- Documented remaining limitations; SRI is not code-signed.
+
+### Visual identity and repository
+
+- Restored the owner's original `logo.png` byte-for-byte as the canonical mark.
+- Removed invented vector logo variants and the obsolete tutorial/site
+  screenshots.
+- Rebuilt banners, SRI/pipeline diagrams, navigation, collision and security
+  illustrations with a restrained charcoal/crimson palette.
+- Rebuilt the 1280×640 social preview around the original logo.
+- Reorganized assets into `brand/`, `banners/`, `illustrations/` and
+  `screenshots/`.
+- Captured actual current screenshots of the application, map viewer, map
+  library and onboarding guide.
+- Updated the English and Russian READMEs, website, Pages workflow and asset
+  references.
+- Added a detailed release note and updated architecture, decisions, research,
+  setup, state, roadmap and security documents.
+
+### Compatibility and limits
+
+- Windows 10/11 x64.
+- Portable Python 3.13 included.
+- Local CS2 is optional; automatic extraction remains read-only.
+- Validated against CS2 build `2000948` (2026-11-19).
+- SRI is Windows x64 only; curved primitives are tessellated approximations.
+- Movement remains straight-line calibrated; no combat, utility, visibility or
+  demo-tick simulation.
+- Full clearance validation remains limited to Dust2 and Nuke in the recorded
+  batch.
+
+
 ## Unreleased — Internal Source 2 engine (2026-11-23)
 
 ### Processing
