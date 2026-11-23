@@ -28,6 +28,10 @@
   <a href="README.ru.md">Русская версия</a>
 </p>
 
+<p align="center">
+  <a href="https://shtoblam.github.io/cs2mb-tool/"><img src="docs/assets/site-overview.png" alt="CS2 Map Balance project website overview" width="100%"></a>
+</p>
+
 > [!WARNING]
 > **The current CT/T indicator is a preliminary route-time signal, not a competitive balance verdict.**
 > It compares estimated travel time along navigation routes from spawns to common targets. It does

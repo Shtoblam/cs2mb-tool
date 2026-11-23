@@ -29,6 +29,10 @@
   <a href="README.md">English</a>
 </p>
 
+<p align="center">
+  <a href="https://shtoblam.github.io/cs2mb-tool/"><img src="docs/assets/site-overview.png" alt="Обзор сайта проекта CS2 Map Balance" width="100%"></a>
+</p>
+
 > [!WARNING]
 > **Текущий индикатор CT/T — предварительный сигнал по времени маршрута, а не вердикт о соревновательном балансе.**
 > Он сравнивает расчётное время перемещения по навигационным маршрутам от спавнов

@@ -17,6 +17,7 @@ Start with the [project README](../README.md) or the
 | [GETTING_FILES.md](GETTING_FILES.md) / [GETTING_FILES.ru.md](GETTING_FILES.ru.md) | Current | Manual extraction of `.nav`, entities and physics glTF |
 | [RELEASE.md](RELEASE.md) / [RELEASE.ru.md](RELEASE.ru.md) | Current | Application release summary and verification scope |
 | [SECURITY.md](SECURITY.md) / [SECURITY.ru.md](SECURITY.ru.md) | Current | Threat model, controls, CS2/anti-cheat boundaries and residual risks |
+| [SECURITY_BACKLOG.md](SECURITY_BACKLOG.md) | Current | Prioritized security-management work and acceptance criteria |
 
 ## Architecture and methodology
 

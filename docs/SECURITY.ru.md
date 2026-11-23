@@ -2,6 +2,14 @@
 
 Приложение локальное и работает только с файлами пользователя.
 
+## Управление обновлениями безопасности
+
+Работы по безопасности ведутся в [SECURITY_BACKLOG.md](SECURITY_BACKLOG.md).
+Первый baseline-апдейт добавляет CSP, referrer и cross-origin response headers
+для intake UI и соответствующий regression test. Открытых critical/high
+application-находок сейчас нет; оставшиеся работы по process, concurrency и
+endpoint-тестам отслеживаются по приоритету.
+
 ## Что оно не делает
 
 - не запускает CS2/Steam;

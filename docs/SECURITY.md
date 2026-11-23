@@ -2,6 +2,14 @@
 
 **Scope:** local `app/server.py`, auto-generation pipeline, user-provided files.
 
+## Security management update
+
+Security work is tracked in [SECURITY_BACKLOG.md](SECURITY_BACKLOG.md). The first
+baseline update adds CSP, referrer and cross-origin response headers to the
+intake UI, with a matching regression test. No critical or high-severity
+application finding is currently open; the remaining process, concurrency and
+endpoint-testing work is tracked by priority.
+
 ## What it does NOT do
 
 - does not launch CS2 or Steam;

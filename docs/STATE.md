@@ -3,6 +3,7 @@
 - Fresh `cs2mb-tool` repository baseline created from the sanitized project tree.
 - Application version is `pre-alpha v1.0`; historical 2.x release notes remain archived under `docs/releases/`.
 - Added response-header CSP/referrer hardening for the intake UI while keeping the existing meta policy.
+- Started the security-management backlog in `docs/SECURITY_BACKLOG.md`; endpoint/process/concurrency work is prioritized there.
 - Current suite: **56 unit tests**; Python compilation, security scan, Markdown validation and asset checks pass.
 - Repository links, setup commands and website labels now target `Shtoblam/cs2mb-tool`.
 - No map-analysis algorithm, movement model, collision calculation or simulation behavior was changed.

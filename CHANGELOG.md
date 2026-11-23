@@ -8,6 +8,7 @@
 - Updated the application, UI, website, documentation and configuration version labels to `pre-alpha v1.0`.
 - Updated repository links and setup commands to `Shtoblam/cs2mb-tool`.
 - Added CSP and referrer response headers for the intake UI while retaining the matching meta policies.
+- Added the initial security-management backlog and completed the UI response-header regression test.
 - No map-analysis algorithms or application behavior were intentionally changed.
 
 ## Unreleased — Repository documentation modernization (2026-11-21)
