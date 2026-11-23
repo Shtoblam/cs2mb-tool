@@ -22,7 +22,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Shtoblam/cs2mb-tool"><strong>GitHub repository ↗</strong></a> ·
+  <a href="https://shtoblam.github.io/cs2mb-tool/"><strong>Project website ↗</strong></a> ·
+  <a href="https://github.com/Shtoblam/cs2mb-tool">GitHub repository ↗</a> ·
   <a href="https://github.com/Shtoblam/cs2mb-tool/archive/refs/heads/main.zip">Latest source ZIP</a> ·
   <a href="README.ru.md">Русская версия</a>
 </p>
@@ -205,9 +206,9 @@ The complete documentation index is **[docs/README.md](docs/README.md)**.
 - [Changelog](CHANGELOG.md)
 
 > **Repository vs published website:** links in this README point to files in the
-> GitHub repository. The included static-site workflow is not enabled by
-> default; if it is enabled, it publishes only a subset of those files, so some
-> documentation links open on GitHub but not on the Pages copy.
+> GitHub repository. The enabled static-site workflow publishes only a subset of
+> those files, so some documentation links open on GitHub but not on the Pages
+> copy.
 
 ## Development and testing
 

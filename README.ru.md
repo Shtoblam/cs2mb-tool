@@ -23,7 +23,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Shtoblam/cs2mb-tool"><strong>GitHub-репозиторий ↗</strong></a> ·
+  <a href="https://shtoblam.github.io/cs2mb-tool/"><strong>Сайт проекта ↗</strong></a> ·
+  <a href="https://github.com/Shtoblam/cs2mb-tool">GitHub-репозиторий ↗</a> ·
   <a href="https://github.com/Shtoblam/cs2mb-tool/archive/refs/heads/main.zip">Последний source ZIP</a> ·
   <a href="README.md">English</a>
 </p>
@@ -212,9 +213,8 @@ clearance`. Методика и аномалии: [docs/MAP_DATA.md](docs/MAP_DA
 - [Changelog](CHANGELOG.md)
 
 > **Репозиторий и опубликованный сайт:** ссылки в этом README ведут на файлы
-> GitHub-репозитория. Включённый static-site workflow по умолчанию не активирован;
-> если он включён, публикуется только часть файлов, поэтому некоторые ссылки
-> открываются на GitHub, но не в копии на Pages.
+> GitHub-репозитория. Включённый static-site workflow публикует только часть
+> файлов, поэтому некоторые ссылки открываются на GitHub, но не в копии на Pages.
 
 ## Разработка и тесты
 
