@@ -1,6 +1,6 @@
 ﻿# Security management backlog
 
-**Status:** active  
+**Status:** active
 **Scope:** local application server, upload/path handling, process execution, viewer security and documentation.
 
 This backlog tracks security work that is larger than a documentation correction. It is intentionally separate from map-analysis research. No item here authorizes a change to game files or game processes.
