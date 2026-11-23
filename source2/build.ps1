@@ -43,7 +43,8 @@ Write-Host ("Built {0} ({1:N0} bytes)" -f $exe, $size)
 Write-Host "SHA-256 $hash"
 
 if ($Install) {
-    $target = Join-Path (Split-Path -Parent (Split-Path -Parent $root)) "tools\bin\source2"
+    $repoRoot = Split-Path -Parent $root
+    $target = Join-Path $repoRoot "tools\bin\source2"
     New-Item -ItemType Directory -Force -Path $target | Out-Null
     Copy-Item -LiteralPath $exe -Destination (Join-Path $target "cs2mb-source2.exe") -Force
     Write-Host "Installed to $target"
