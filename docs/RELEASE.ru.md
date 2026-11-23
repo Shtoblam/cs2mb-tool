@@ -91,4 +91,4 @@ Source Resource Inspector**, портативный Python 3.13 runtime, launche
 ## История релизов
 
 Ранние 2.x notes остаются в [releases/](releases/). Старый standalone
-`source2-v1.0.0` удаляется после проверки полного релиза.
+`source2-v1.0.0` и его тег удалены после публикации и проверки полного релиза.

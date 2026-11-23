@@ -17,8 +17,9 @@
   current application screenshots.
 - Added a complete Windows package with SRI, portable Python 3.13, launchers,
   checksums and SPDX SBOM.
-- Remaining release gate: publish and verify the complete package, then retire
-  the old standalone engine release.
+- Published and verified: complete package, GitHub pre-release, checksums,
+  SPDX SBOM and Pages deployment; the old standalone engine release and tag
+  were removed.
 
 ## Historical: internal Source 2 engine — completed 2026-11-23
 

@@ -94,5 +94,5 @@ launchers, documentation, checksums and an SPDX SBOM.
 ## Historical release notes
 
 Earlier 2.x notes remain under [releases/](releases/). The old standalone
-`source2-v1.0.0` component release is retired after this complete release is
-verified.
+`source2-v1.0.0` component release and tag were removed after this complete
+release was published and verified.

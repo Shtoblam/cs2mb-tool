@@ -26,13 +26,15 @@
   launchers, docs, `SHA256SUMS.txt` and SPDX SBOM.
 - Test suite: **88 tests discovered / 87 executed / 1 real-map test gated**.
   Local engine-backed tests, endpoint security tests and process-tree tests pass.
-- Current application version: `v1.0.0-pre.1`. The old standalone
-  `source2-v1.0.0` release is retired only after the complete release is
-  verified.
+- Current application version: `v1.0.0-pre.1`. The complete release is
+  published at <https://github.com/Shtoblam/cs2mb-tool/releases/tag/v1.0.0-pre.1>.
+  The old standalone `source2-v1.0.0` release and tag were removed after the
+  complete package was published and verified.
 - Complete package: `CS2MB-v1.0.0-pre.1-win-x64.zip`, with a release
   `SHA256SUMS.txt`. Clean extraction, 142 checksums, launcher, SRI detection,
   automatic Dust2 preparation and upload-mode generation were verified locally.
-- Release target: `v1.0.0-pre.1`.
+- Release: `v1.0.0-pre.1`, published as a pre-release with package, checksums
+  and SPDX SBOM.
 
 ---
 
