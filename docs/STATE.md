@@ -28,12 +28,19 @@
   test gated by `CS2MB_TEST_GAME` when run without a game); Python compilation
   and security scan pass. CI builds the engine and runs engine-backed tests on
   Windows.
-- Current engine artifact: self-contained Windows x64, about 17.7 MB;
-  SHA-256 `f61a83401de1a09d4dc905d4a832dfc0a4e16e737a097767c1dcc8574a97adca`
-  for the curved-primitive build. The binary is ignored by Git and is intended
-  for a release asset with checksums and third-party notices.
-- Remaining work: publish the engine release asset, finish README/site/logo and
-  social-preview presentation, then record final commit/push evidence.
+- Current engine artifact: self-contained Windows x64, about 17.7 MB. Release
+  `source2-v1.0.0` publishes `cs2mb-source2-win-x64.zip` (7,611,911 bytes) and
+  `SHA256SUMS.txt`. Executable SHA-256
+  `47ce196dc61e64128e2588c664ea37303592ca21ec9c324f067a0cab85edf28c`;
+  archive SHA-256
+  `10cd89467d259059d1bd42b1726e9c73b0d058ce069c627a401730d071a403df`.
+  The application version remains `pre-alpha v1.0`; this is a component asset.
+- Presentation: vector logo family, compact mark, favicon, 1280×640 social
+  preview, original engine/navigation/collision/local illustrations, redesigned
+  bilingual READMEs and website, and a refreshed real app screenshot.
+- Remaining work: upload the social preview in GitHub repository settings
+  (no public API for that field) and revalidate after a future CS2 or
+  ValveResourceFormat format change.
 
 ---
 
