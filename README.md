@@ -205,8 +205,9 @@ The complete documentation index is **[docs/README.md](docs/README.md)**.
 - [Changelog](CHANGELOG.md)
 
 > **Repository vs published website:** links in this README point to files in the
-> GitHub repository. The static project site publishes only a subset of those
-> files, so some documentation links open on GitHub but not on the Pages copy.
+> GitHub repository. The included static-site workflow is not enabled by
+> default; if it is enabled, it publishes only a subset of those files, so some
+> documentation links open on GitHub but not on the Pages copy.
 
 ## Development and testing
 

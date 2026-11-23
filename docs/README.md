@@ -74,11 +74,11 @@ validation of the current CS2 build.
 
 ## Published-site note
 
-The GitHub Pages workflow publishes the READMEs, security documents, website
-assets and selected images, but not the complete `docs/` tree. Links in this index
-are repository links and resolve on GitHub; some will not resolve on the published
-Pages copy of the README. The workflow is intentionally outside this
-documentation-maintenance scope.
+The included GitHub Pages workflow is not enabled by default. If it is enabled,
+it publishes the READMEs, security documents, website assets and selected images,
+but not the complete `docs/` tree. Links in this index are repository links and
+resolve on GitHub; some will not resolve on the published Pages copy of the README.
+The workflow is intentionally outside this documentation-maintenance scope.
 
 ## Documentation conventions
 
