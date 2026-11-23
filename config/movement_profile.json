@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "game": {
+    "client_version": "2000933",
+    "buildid": "25966348",
+    "patch_version": "1.41.9.1"
+  },
+  "source": "Local CS2 listen server, de_dust2, 2026-10-19",
+  "units": "Hammer units and seconds",
+  "method": [
+    "console convars read from the running game",
+    "cl_showpos steady-state runs on a flat upper-tunnel segment",
+    "weapon max speeds cross-checked with scripts/weapons.vdata_c"
+  ],
+  "global": {
+    "sv_accelerate": 5.5,
+    "sv_friction": 5.2,
+    "sv_stopspeed": 80.0,
+    "sv_maxspeed": 320.0,
+    "sv_airaccelerate": 12.0,
+    "sv_air_max_wishspeed": 30.0,
+    "sv_gravity": 800.0,
+    "sv_jump_impulse": 301.993,
+    "sv_ladder_scale_speed": 0.78,
+    "sv_staminamax": 80.0
+  },
+  "modifiers": {
+    "walk": 0.52,
+    "crouch": 0.34
+  },
+  "measured_steady_state": {
+    "weapon_ak47": 215.0,
+    "weapon_knife": 250.0,
+    "weapon_awp": 200.0,
+    "weapon_ak47_walk": 111.8,
+    "weapon_ak47_crouch": 73.1
+  },
+  "derived": {
+    "jump_airtime_seconds": 0.7549825,
+    "jump_height_units": 56.9999
+  },
+  "uncertainty": "Single steady-state run per condition; cl_showpos rounds to 0.01. Repeat with demo tick data before treating times as calibrated.",
+  "notes": [
+    "Weapon max speed is taken from scripts/weapons.vdata_c.",
+    "Walk/crouch modifiers are measured as 111.8/215 and 73.1/215.",
+    "sv_maxspeed is a server cap; weapon max speed is lower for all measured weapons.",
+    "Do not use a fixed crouch speed of 85 for all weapons: 85 is knife 250 * 0.34."
+  ]
+}

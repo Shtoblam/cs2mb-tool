@@ -1,0 +1,69 @@
+# Secrets and local configuration
+.env
+.env.*
+*.key
+*.pem
+secrets/
+local.settings.json
+config/paths.local.json
+
+# Optional local binaries
+tools/bin/*
+!tools/bin/README.md
+
+# Python
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+dist/
+build/
+
+# User-provided map inputs (never commit game resources)
+inputs/*
+!inputs/README.md
+
+# Extracted game resources and large derived data
+data/
+extracted/
+exports/
+cache/
+archives/
+artifacts/
+*.vpk
+*.vpk.*
+*.nav
+*.ain
+*.dem
+*.bsp
+*.vmap_c
+*.vmdl_c
+*.vtex_c
+*.vwrld_c
+*.vents_c
+*.vphys_c
+*.vmesh_c
+*.vmat_c
+*.vsmart_c
+
+# Temporary files and logs
+*.log
+*.tmp
+tmp/
+temp/
+
+# IDE / OS
+.vscode/
+.idea/
+Thumbs.db
+Desktop.ini
+
+# Local agent environment (installed separately; never part of the project)
+.agents/

@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#19191c">
+  <meta name="description" content="CS2 Map Balance — a local Counter-Strike 2 map analysis tool for navigation, routes, geometry and collision inspection.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="CS2 Map Balance — Map Analysis Toolkit">
+  <meta property="og:description" content="Understand Counter-Strike 2 maps through navigation, route timing and geometry. Local-first, read-only analysis.">
+  <meta property="og:image" content="docs/assets/banner.svg">
+  <title>CS2 Map Balance — Map Analysis Toolkit</title>
+  <link rel="icon" href="logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="logo.png">
+  <link rel="stylesheet" href="site.css">
+  <script src="site.js" defer></script>
+</head>
+<body>
+  <div class="site-shell">
+    <header class="site-header">
+      <a class="brand" href="#overview" aria-label="CS2 Map Balance home" data-page="overview">
+        <img src="logo.png" alt="" width="34" height="34">
+        <span>CS2 <b>MAP BALANCE</b></span>
+      </a>
+      <nav class="primary-nav" role="tablist" aria-label="Project pages">
+        <button class="nav-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="page-overview" data-page="overview" data-ru="Обзор" data-en="Overview">Обзор</button>
+        <button class="nav-tab" type="button" role="tab" aria-selected="false" aria-controls="page-features" data-page="features" data-ru="Возможности" data-en="Features">Возможности</button>
+        <button class="nav-tab" type="button" role="tab" aria-selected="false" aria-controls="page-maps" data-page="maps" data-ru="Карты" data-en="Maps">Карты</button>
+        <button class="nav-tab" type="button" role="tab" aria-selected="false" aria-controls="page-safety" data-page="safety" data-ru="Безопасность" data-en="Safety">Безопасность</button>
+        <button class="nav-tab" type="button" role="tab" aria-selected="false" aria-controls="page-setup" data-page="setup" data-ru="Установка" data-en="Setup">Установка</button>
+        <button class="nav-tab" type="button" role="tab" aria-selected="false" aria-controls="page-faq" data-page="faq">FAQ</button>
+      </nav>
+      <div class="header-actions">
+        <button class="language-button" id="language-toggle" type="button" aria-label="Switch language">EN</button>
+        <a class="github-button" href="https://github.com/Shtoblam/cs2mb-tool" target="_blank" rel="noopener" aria-label="Open GitHub repository">GitHub <span>↗</span></a>
+        <a class="header-download" href="https://github.com/Shtoblam/cs2mb-tool/archive/refs/heads/main.zip" target="_blank" rel="noopener"><span data-ru="Скачать" data-en="Download">Скачать</span><span>↗</span></a>
+      </div>
+    </header>
+
+    <main id="main-content">
+      <div class="page-view is-active" id="page-overview" data-page-panel="overview" aria-hidden="false">
+        
+<section class="hero-section">
+  <div class="hero-copy">
+    <div class="eyebrow"><span class="eyebrow-mark"></span><span data-ru="ИНСТРУМЕНТ ДЛЯ АНАЛИЗА КАРТ CS2" data-en="COUNTER-STRIKE 2 MAP ANALYSIS TOOL">ИНСТРУМЕНТ ДЛЯ АНАЛИЗА КАРТ CS2</span><span class="eyebrow-version">PRE-ALPHA v1.0</span></div>
+    <h1 data-ru="Увидеть карту <em>глубже радара.</em>" data-en="See the map <em>beyond the radar.</em>">Увидеть карту <em>глубже радара.</em></h1>
+    <p class="hero-description" data-ru="CS2 Map Balance превращает ресурсы карты в понятную картину: навигация, маршруты CT/T, геометрия и коллизии. Всё работает локально — твои данные остаются на твоём компьютере." data-en="CS2 Map Balance turns map resources into a clearer picture of navigation, CT/T routes, geometry and collision. It runs locally — your data stays on your machine.">CS2 Map Balance превращает ресурсы карты в понятную картину: навигация, маршруты CT/T, геометрия и коллизии. Всё работает локально — твои данные остаются на твоём компьютере.</p>
+    <div class="hero-actions">
+      <a class="button button-primary" href="https://github.com/Shtoblam/cs2mb-tool/archive/refs/heads/main.zip" target="_blank" rel="noopener"><span data-ru="Скачать исходники" data-en="Get source">Скачать исходники</span><span class="button-arrow">↗</span></a>
+      <button class="button button-secondary" type="button" data-page="features"><span data-ru="Посмотреть возможности" data-en="Explore the product">Посмотреть возможности</span><span class="button-arrow">→</span></button>
+    </div>
+    <div class="hero-footnote"><span class="hero-footnote-dot"></span><span data-ru="Windows 10/11 · Python 3.13 · Без облака и телеметрии" data-en="Windows 10/11 · Python 3.13 · No cloud or telemetry">Windows 10/11 · Python 3.13 · Без облака и телеметрии</span></div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="visual-glow"></div>
+    <div class="product-window">
+      <div class="product-window-header">
+        <div class="window-brand"><img src="logo.png" alt="" width="22" height="22"><span>CS2 <b>MAP BALANCE</b></span></div>
+        <div class="window-path"><span class="window-path-dot"></span> MAP ANALYSIS <span class="window-path-slash">/</span> <b id="demo-map-name">DE_MIRAGE</b></div>
+        <div class="window-header-right"><span class="window-status"><i></i> LOCAL</span><span class="window-header-menu">···</span></div>
+      </div>
+      <div class="product-window-body">
+        <aside class="preview-sidebar">
+          <div class="preview-label" data-ru="БИБЛИОТЕКА КАРТ" data-en="MAP LIBRARY">БИБЛИОТЕКА КАРТ</div>
+          <div class="preview-map-list">
+            <button class="preview-map" type="button" data-demo-map="dust2"><span class="map-thumb map-thumb-dust"></span><span><b>de_dust2</b><small>90 ROUTES</small></span></button>
+            <button class="preview-map is-active" type="button" data-demo-map="mirage"><span class="map-thumb map-thumb-mirage"></span><span><b>de_mirage</b><small>99 ROUTES</small></span></button>
+            <button class="preview-map" type="button" data-demo-map="nuke"><span class="map-thumb map-thumb-nuke"></span><span><b>de_nuke</b><small>80 ROUTES</small></span></button>
+          </div>
+          <div class="preview-sidebar-rule"></div>
+          <div class="preview-sidebar-info"><span class="preview-label" data-ru="ИСТОЧНИК" data-en="SOURCE">ИСТОЧНИК</span><b>LOCAL FILES</b><small data-ru="Только чтение" data-en="Read only">Только чтение</small></div>
+        </aside>
+        <div class="preview-main">
+          <div class="preview-main-top">
+            <div><span class="preview-overline" data-ru="СВОДКА КАРТЫ" data-en="MAP OVERVIEW">СВОДКА КАРТЫ</span><b id="demo-map-title">de_mirage</b></div>
+            <div class="preview-tabs" role="tablist" aria-label="Preview modes">
+              <button type="button" class="preview-tab is-active" role="tab" aria-selected="true" aria-controls="demo-map-stage" data-demo-view="routes" aria-pressed="true" data-ru="МАРШРУТЫ" data-en="ROUTES">МАРШРУТЫ</button>
+              <button type="button" class="preview-tab" role="tab" aria-selected="false" aria-controls="demo-map-stage" data-demo-view="geometry" aria-pressed="false" data-ru="ГЕОМЕТРИЯ" data-en="GEOMETRY">ГЕОМЕТРИЯ</button>
+            </div>
+          </div>
+          <div class="map-preview-stage" id="demo-map-stage">
+            <div class="map-preview-caption"><span>SCHEMATIC PREVIEW</span><span class="map-preview-coords">X 1240 <i>·</i> Y −860</span></div>
+            <svg class="map-preview-svg" viewBox="0 0 660 360" role="img" aria-label="Illustrative top-down map route diagram">
+              <defs>
+                <pattern id="map-grid" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="#8b9397" stroke-opacity=".13" stroke-width="1"/></pattern>
+                <linearGradient id="map-zone" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#535b60" stop-opacity=".68"/><stop offset="1" stop-color="#30363b" stop-opacity=".7"/></linearGradient>
+                <filter id="route-soft"><feGaussianBlur stdDeviation="3.5"/></filter>
+              </defs>
+              <rect width="660" height="360" fill="url(#map-grid)"/>
+              <g class="map-geometry">
+                <path d="M45 62H195V112H247V45H405V95H584V170H520V218H620V305H460V263H342V322H182V269H45Z" fill="url(#map-zone)" stroke="#778187" stroke-opacity=".55" stroke-width="1.4"/>
+                <path d="M86 96H169V150H221V203H145V245H82Z M275 78H380V130H333V183H259V128Z M420 115H520V158H475V204H393V168Z M215 230H305V291H215Z M390 238H468V288H390Z" fill="#242a2e" stroke="#7c858a" stroke-opacity=".35"/>
+                <path d="M45 62H195V112 M247 45V95H405 M520 170H584 M520 218H620 M460 263V305H342 M182 269V322H45" fill="none" stroke="#a3adb1" stroke-opacity=".22" stroke-width="2"/>
+                <path d="M195 112L247 95M221 203L259 183M333 183L393 168M305 260L390 260M468 288L520 218" fill="none" stroke="#b0b8bc" stroke-opacity=".2" stroke-dasharray="3 5"/>
+              </g>
+              <g class="map-nav-lines">
+                <path d="M70 286L140 246L190 248L237 203L282 203L330 161L381 161L425 120L500 120L570 78" fill="none" stroke="#e2e6e7" stroke-opacity=".18" stroke-width="1.3" stroke-dasharray="2 6"/>
+                <path d="M88 85L144 132L190 132L237 203L282 203L330 241L390 260L450 260L520 218L590 218" fill="none" stroke="#e2e6e7" stroke-opacity=".18" stroke-width="1.3" stroke-dasharray="2 6"/>
+              </g>
+              <g class="map-routes">
+                <path class="route-halo" d="M70 286L140 246L190 248L237 203L282 203L330 161L381 161L425 120L500 120L570 78" filter="url(#route-soft)"/>
+                <path class="route-main" d="M70 286L140 246L190 248L237 203L282 203L330 161L381 161L425 120L500 120L570 78"/>
+                <path class="route-secondary" d="M88 85L144 132L190 132L237 203L282 203L330 241L390 260L450 260L520 218L590 218"/>
+              </g>
+              <g class="map-nodes">
+                <circle cx="70" cy="286" r="7"/><circle cx="570" cy="78" r="7"/><circle cx="88" cy="85" r="6" class="node-blue"/><circle cx="590" cy="218" r="6" class="node-blue"/>
+                <circle cx="330" cy="161" r="4" class="node-center"/><circle cx="237" cy="203" r="3.5" class="node-center"/><circle cx="425" cy="120" r="3.5" class="node-center"/>
+              </g>
+              <g class="map-labels">
+                <text x="41" y="311">T SPAWN</text><text x="530" y="59">A SITE</text><text x="42" y="72" class="label-blue">CT SPAWN</text><text x="545" y="241" class="label-blue">B SITE</text><text x="342" y="147">MID</text>
+              </g>
+            </svg>
+            <div class="map-legend"><span><i class="legend-red"></i>T APPROACH</span><span><i class="legend-blue"></i>CT APPROACH</span><span><i class="legend-grey"></i>NAV GRAPH</span></div>
+          </div>
+          <div class="preview-metrics" id="demo-preview-metrics">
+            <div class="preview-metric primary-metric"><span class="preview-label" data-ru="ИНДИКАТОР ВРЕМЕНИ" data-en="ROUTE-TIME INDICATOR">ИНДИКАТОР ВРЕМЕНИ</span><b id="demo-metric-primary">CT <strong>+6.4s</strong></b><small data-ru="Предварительная оценка" data-en="Preliminary estimate">Предварительная оценка</small></div>
+            <div class="preview-metric"><span class="preview-label">NAV AREAS</span><b id="demo-metric-areas">2,544</b><small data-ru="Навигационных областей" data-en="Navigation areas">Навигационных областей</small></div>
+            <div class="preview-metric"><span class="preview-label">ROUTES</span><b id="demo-metric-routes">99</b><small data-ru="Spawn → target" data-en="Spawn → target">Spawn → target</small></div>
+          </div>
+        </div>
+      </div>
+      <div class="product-window-footer"><span><i class="footer-ready-dot"></i><span data-ru="ДАННЫЕ ОСТАЮТСЯ ЛОКАЛЬНО" data-en="DATA STAYS ON YOUR MACHINE">ДАННЫЕ ОСТАЮТСЯ ЛОКАЛЬНО</span></span><span>PRE-ALPHA v1.0 <b>·</b> READ ONLY</span></div>
+    </div>
+    <div class="preview-caption" data-ru="Схематичная демонстрация анализа · показатели взяты из тестовой выборки" data-en="Illustrative analysis preview · figures taken from the test dataset">Схематичная демонстрация анализа · показатели взяты из тестовой выборки</div>
+  </div>
+</section>
+        <section class="signal-strip">
+      <div class="wrap signal-grid">
+        <div><strong>9</strong><span data-ru="протестированных карт" data-en="maps tested">протестированных карт</span></div>
+        <div><strong>700+</strong><span data-ru="маршрутов в тестовой выборке" data-en="routes in the test set">маршрутов в тестовой выборке</span></div>
+        <div><strong>56</strong><span data-ru="автоматических тестов" data-en="automated tests">автоматических тестов в pre-alpha v1.0</span></div>
+        <div><strong>0</strong><span data-ru="обращений к процессу игры" data-en="game-process interactions">обращений к процессу игры</span></div>
+      </div>
+    </section>
+        <div class="page-width">
+          <section class="section wrap" id="overview">
+      <div class="section-kicker"><span>01</span><span data-ru="КОНЦЕПЦИЯ" data-en="THE IDEA">КОНЦЕПЦИЯ</span></div>
+      <div class="section-heading">
+        <h2 data-ru="Не очередной радар.<br><em>Инструмент анализа.</em>" data-en="Not another radar.<br><em>A map analysis tool.</em>">Не очередной радар.<br><em>Инструмент анализа.</em></h2>
+        <p data-ru="Проект помогает изучать карту как систему: где проходят маршруты, как устроена навигационная сеть, что происходит с коллизией и насколько отличаются времена подхода CT и T." data-en="The project treats a map as a system: where routes run, how the navigation graph is structured, what the collision geometry looks like, and how CT and T approach times compare.">Проект помогает изучать карту как систему: где проходят маршруты, как устроена навигационная сеть, что происходит с коллизией и насколько отличаются времена подхода CT и T.</p>
+      </div>
+      <div class="overview-grid">
+        <article class="overview-card overview-large">
+          <div class="card-number">01 — MAP INTAKE</div>
+          <div class="map-graphic" aria-hidden="true">
+            <svg viewBox="0 0 700 280" role="presentation">
+              <g class="map-lines"><path d="M20 42H185V96H285V30H440V110H660M20 210H130V155H255V235H390V178H520V235H660M95 20V90H150V155M350 30V110H440V178M570 110V180H660"/></g>
+              <path class="route route-orange" d="M52 210 C130 210 145 120 225 120 S330 60 405 90 S525 200 640 50"/>
+              <path class="route route-blue" d="M70 45 C160 70 200 220 310 220 S460 150 630 210"/>
+              <g class="nodes"><circle cx="52" cy="210" r="7"/><circle cx="640" cy="50" r="7"/><circle cx="70" cy="45" r="6"/><circle cx="630" cy="210" r="6"/></g>
+              <g class="map-labels"><text x="35" y="238">SPAWN T</text><text x="565" y="32">BOMB A</text><text x="580" y="240">BOMB B</text></g>
+            </svg>
+          </div>
+          <h3 data-ru="От файлов — к картине карты" data-en="From map files to map intelligence">От файлов — к картине карты</h3>
+          <p data-ru="Навигация, entities и physics collision проходят локальную проверку и превращаются в единый набор данных." data-en="Navigation, entities and physics collision are validated locally and turned into one coherent dataset.">Навигация, entities и physics collision проходят локальную проверку и превращаются в единый набор данных.</p>
+        </article>
+        <article class="overview-card">
+          <div class="card-number">02 — ROUTE MODEL</div>
+          <div class="metric-art"><span class="metric-line"></span><b>CT <i>+6.4s</i></b><b>T <i>—</i></b><small>MEDIAN LOW / TARGET A</small></div>
+          <h3 data-ru="Маршруты и время" data-en="Routes & timing">Маршруты и время</h3>
+          <p data-ru="Сравнение подходов от спавнов к целям, диапазоны времени и отдельный учёт вертикальных переходов." data-en="Compare spawn-to-target approaches, timing ranges and vertical transitions separately.">Сравнение подходов от спавнов к целям, диапазоны времени и отдельный учёт вертикальных переходов.</p>
+        </article>
+        <article class="overview-card">
+          <div class="card-number">03 — MAP LIBRARY</div>
+          <div class="library-art"><div><span>de_dust2</span><b>CT +8.9s</b></div><div><span>de_mirage</span><b>CT +6.4s</b></div><div><span>de_nuke</span><b>CT +5.2s</b></div></div>
+          <h3 data-ru="Библиотека и сравнение" data-en="Library & comparison">Библиотека и сравнение</h3>
+          <p data-ru="Сохраняй результаты генераций и сравнивай карты по навигации, коллизии, проходам и времени маршрутов." data-en="Keep generated results and compare maps by navigation, collision, clearances and route timing.">Сохраняй результаты генераций и сравнивай карты по навигации, коллизии, проходам и времени маршрутов.</p>
+        </article>
+      </div>
+    </section>
+          <section class="workflow-band">
+            <div class="workflow-heading">
+              <div class="section-kicker"><span>01 / HOW IT WORKS</span><span data-ru="ПРОСТОЙ ПУТЬ ОТ ФАЙЛОВ К ДАННЫМ" data-en="FROM FILES TO INSIGHT">ПРОСТОЙ ПУТЬ ОТ ФАЙЛОВ К ДАННЫМ</span></div>
+              <h2 data-ru="Не нужно верить на слово.<br><em>Посмотри, что внутри.</em>" data-en="No need to take our word for it.<br><em>See what's inside.</em>">Не нужно верить на слово.<br><em>Посмотри, что внутри.</em></h2>
+            </div>
+            <div class="workflow-steps">
+              <article><span>01</span><b data-ru="Подготовь данные" data-en="Prepare data">Подготовь данные</b><p data-ru="Извлеки nav, entities и physics из установленной CS2 или загрузи готовые файлы." data-en="Extract nav, entities and physics from CS2 or upload prepared files.">Извлеки nav, entities и physics из установленной CS2 или загрузи готовые файлы.</p></article>
+              <article><span>02</span><b data-ru="Собери картину" data-en="Build the picture">Собери картину</b><p data-ru="Проверь навигационный граф, геометрию и маршруты от спавнов к целям." data-en="Inspect the navigation graph, geometry and spawn-to-target routes.">Проверь навигационный граф, геометрию и маршруты от спавнов к целям.</p></article>
+              <article><span>03</span><b data-ru="Сравни и проверь" data-en="Compare and validate">Сравни и проверь</b><p data-ru="Изучи viewer, сравнивай карты и проверяй гипотезы в реальной игре." data-en="Explore the viewer, compare maps and validate hypotheses in actual gameplay.">Изучи viewer, сравнивай карты и проверяй гипотезы в реальной игре.</p></article>
+            </div>
+            <button type="button" class="inline-link" data-page="features"><span data-ru="Подробнее о возможностях" data-en="Explore the feature set">Подробнее о возможностях</span> <b>↗</b></button>
+          </section>
+          <section class="notice-wrap" aria-label="Pre-alpha status notice">
+    <div class="early-notice">
+      <div class="notice-icon" aria-hidden="true">!</div>
+      <div class="notice-copy">
+        <div class="notice-kicker" data-ru="ВАЖНО · ПРЕДВАРИТЕЛЬНЫЕ РЕЗУЛЬТАТЫ" data-en="IMPORTANT · PRELIMINARY RESULTS">ВАЖНО · ПРЕДВАРИТЕЛЬНЫЕ РЕЗУЛЬТАТЫ</div>
+        <h2 class="notice-title" data-ru="Это ориентир для тестирования, а не вердикт о балансе." data-en="A testing reference — not a verdict on map balance.">Это ориентир для тестирования, а не вердикт о балансе.</h2>
+        <p class="notice-body" data-ru="В текущей alpha модель оценивает теоретическое время перемещения по nav-маршруту от стартовой точки (спавна) до цели — условно, путь «из A в B». Она не симулирует встречи и столкновения с противниками, перестрелки, utility, видимость или решения игроков. Поэтому показатели CT/T приблизительны и не описывают реальный ход матча или win rate." data-en="In this pre-alpha build, the model estimates theoretical travel time along a navigation route from a starting point (spawn) to a target — essentially, a path from A to B. It does not simulate enemy encounters, firefights, utility, line of sight, or player decisions. CT/T figures are therefore approximate and do not describe actual match flow or win rate.">В текущей alpha модель оценивает теоретическое время перемещения по nav-маршруту от стартовой точки (спавна) до цели — условно, путь «из A в B». Она не симулирует встречи и столкновения с противниками, перестрелки, utility, видимость или решения игроков. Поэтому показатели CT/T приблизительны и не описывают реальный ход матча или win rate.</p>
+        <p class="notice-foot" data-ru="Но протестировать проект всё равно стоит: изучай маршруты в viewer, находи подозрительные различия и проверяй гипотезы в реальных матчах CS2. Делись результатами и расхождениями — это поможет улучшить модель." data-en="It is still worth testing: inspect routes in the viewer, look for suspicious differences, and validate hypotheses in real CS2 games. Share results and mismatches to help improve the model.">Но протестировать проект всё равно стоит: изучай маршруты в viewer, находи подозрительные различия и проверяй гипотезы в реальных матчах CS2. Делись результатами и расхождениями — это поможет улучшить модель.</p>
+      </div>
+    </div>
+  </section>
+        </div>
+      </div>
+
+      <div class="page-view" id="page-features" data-page-panel="features" aria-hidden="true">
+        <div class="page-intro page-width">
+          <div class="section-kicker"><span>PRODUCT / 02</span><span data-ru="ВОЗМОЖНОСТИ" data-en="CAPABILITIES">ВОЗМОЖНОСТИ</span></div>
+          <h1 data-ru="Разбирай карту <em>по слоям.</em>" data-en="Understand a map <em>layer by layer.</em>">Разбирай карту <em>по слоям.</em></h1>
+          <p data-ru="Не одна цифра и не красивый вердикт. CS2 Map Balance показывает структуру данных, на которых строится анализ, и помогает добраться до причины различий." data-en="Not a single score or a flashy verdict. CS2 Map Balance exposes the underlying map data and helps you investigate where differences come from.">Не одна цифра и не красивый вердикт. CS2 Map Balance показывает структуру данных, на которых строится анализ, и помогает добраться до причины различий.</p>
+        </div>
+        <section class="section section-dark" id="features">
+      <div class="wrap">
+        <div class="section-kicker"><span>02</span><span data-ru="ВОЗМОЖНОСТИ" data-en="CAPABILITIES">ВОЗМОЖНОСТИ</span></div>
+        <div class="section-heading">
+          <h2 data-ru="Что находится<br><em>под капотом.</em>" data-en="What’s under<br><em>the hood.</em>">Что находится<br><em>под капотом.</em></h2>
+          <p data-ru="Pre-alpha v1.0 сфокусирована на измеримых данных карты. Это не симулятор матча и не предсказатель победителя." data-en="Pre-alpha v1.0 focuses on measurable map data. It is not a match simulator or a winner predictor.">Pre-alpha v1.0 сфокусирована на измеримых данных карты. Это не симулятор матча и не предсказатель победителя.</p>
+        </div>
+        <div class="feature-grid">
+          <article class="feature"><span class="feature-icon">⌁</span><div><h3 data-ru="Навигационная сеть" data-en="Navigation graph">Навигационная сеть</h3><p data-ru="Подсчёт nav areas и связей, анализ структуры и построение репрезентативных маршрутов." data-en="Count nav areas and edges, inspect graph structure and build representative routes.">Подсчёт nav areas и связей, анализ структуры и построение репрезентативных маршрутов.</p></div><span class="feature-id">F_01</span></article>
+          <article class="feature"><span class="feature-icon">⌖</span><div><h3 data-ru="Маршруты CT / T" data-en="CT / T routes">Маршруты CT / T</h3><p data-ru="Все spawn → target маршруты, шесть основных сценариев, временные диапазоны и слой All routes." data-en="All spawn-to-target routes, six representative scenarios, timing ranges and an All routes layer.">Все spawn → target маршруты, шесть основных сценариев, временные диапазоны и слой All routes.</p></div><span class="feature-id">F_02</span></article>
+          <article class="feature"><span class="feature-icon">▧</span><div><h3 data-ru="Геометрия и коллизии" data-en="Geometry & collision">Геометрия и коллизии</h3><p data-ru="Проверка соответствия пола, wall flags, узких мест и низких потолков." data-en="Inspect floor matching, wall flags, narrow passages and low ceilings.">Проверка соответствия пола, wall flags, узких мест и низких потолков.</p></div><span class="feature-id">F_03</span></article>
+          <article class="feature"><span class="feature-icon">◫</span><div><h3 data-ru="Сравнение карт" data-en="Map comparison">Сравнение карт</h3><p data-ru="Сводные показатели нескольких карт рядом: areas, edges, collision и время подхода." data-en="Side-by-side summaries across maps: areas, edges, collision and approach timing.">Сводные показатели нескольких карт рядом: areas, edges, collision и время подхода.</p></div><span class="feature-id">F_04</span></article>
+          <article class="feature"><span class="feature-icon">◎</span><div><h3 data-ru="Воспроизводимые результаты" data-en="Reproducible output">Воспроизводимые результаты</h3><p data-ru="Manifest с SHA-256, входными данными и отдельным glTF binary sidecar." data-en="A manifest with SHA-256 hashes, input details and the separate glTF binary sidecar.">Manifest с SHA-256, входными данными и отдельным glTF binary sidecar.</p></div><span class="feature-id">F_05</span></article>
+          <article class="feature"><span class="feature-icon">⌘</span><div><h3 data-ru="Локальная обработка" data-en="Local processing">Локальная обработка</h3><p data-ru="Данные остаются на компьютере. Viewer генерируется локально и не требует облачного аккаунта." data-en="Data stays on your machine. The viewer is generated locally and requires no cloud account.">Данные остаются на компьютере. Viewer генерируется локально и не требует облачного аккаунта.</p></div><span class="feature-id">F_06</span></article>
+        </div>
+        <div class="scope-note"><span class="scope-mark">!</span><p><b data-ru="Границы pre-alpha v1.0" data-en="Pre-alpha v1.0 scope">Границы pre-alpha v1.0</b><span data-ru="Это упрощённый расчёт маршрута от спавна до цели, а не симуляция раунда. Пока не моделируются встречи и столкновения с противниками, перестрелки, utility, видимость и решения игроков; CT/T — предварительный индикатор времени, а не вывод о реальном балансе." data-en="This is a simplified spawn-to-target route estimate, not a round simulation. Enemy encounters, firefights, utility, line of sight and player decisions are not modeled; CT/T is a preliminary timing indicator, not a conclusion about real match balance.">Пока нет combat-модели, win-rate prediction, detection/encounter timing или полноценной 3D-визуализации. Вердикт баланса основан только на времени маршрутов.</span></p></div>
+      </div>
+    </section>
+        <div class="page-width feature-story">
+          <div class="feature-story-copy">
+            <div class="section-kicker"><span>PIPELINE / 03</span><span data-ru="КАК ЭТО УСТРОЕНО" data-en="HOW IT FITS TOGETHER">КАК ЭТО УСТРОЕНО</span></div>
+            <h2 data-ru="От исходных файлов<br><em>к проверяемому результату.</em>" data-en="From raw files<br><em>to inspectable results.</em>">От исходных файлов<br><em>к проверяемому результату.</em></h2>
+            <p data-ru="Рабочий процесс разделяет подготовку ресурсов, анализ и просмотр. Файлы не отправляются в облако, а результаты можно сохранить и сравнить позже." data-en="The workflow separates resource preparation, analysis and inspection. Files are not sent to the cloud, and results can be saved and compared later.">Рабочий процесс разделяет подготовку ресурсов, анализ и просмотр. Файлы не отправляются в облако, а результаты можно сохранить и сравнить позже.</p>
+          </div>
+          <div class="pipeline-visual">
+            <div class="pipeline-node"><span class="pipeline-icon">01</span><b>MAP FILES</b><small>.nav · entities · physics</small></div>
+            <div class="pipeline-connector"><i></i></div>
+            <div class="pipeline-node"><span class="pipeline-icon">02</span><b>LOCAL ANALYSIS</b><small>graph · routes · collision</small></div>
+            <div class="pipeline-connector"><i></i></div>
+            <div class="pipeline-node pipeline-node-highlight"><span class="pipeline-icon">03</span><b>VIEWER + LIBRARY</b><small>inspect · compare · validate</small></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-view" id="page-maps" data-page-panel="maps" aria-hidden="true">
+        <div class="page-intro page-width">
+          <div class="section-kicker"><span>DATASET / 03</span><span data-ru="ТЕСТОВАЯ ВЫБОРКА" data-en="TEST DATASET">ТЕСТОВАЯ ВЫБОРКА</span></div>
+          <h1 data-ru="Данные, а не <em>догадки.</em>" data-en="Data, not <em>guesswork.</em>">Данные, а не <em>догадки.</em></h1>
+          <p data-ru="Ниже — фактическая тестовая выборка pre-alpha v1.0: навигационные области, связи, качество сопоставления пола, wall flags и число маршрутов." data-en="The pre-alpha v1.0 test batch: navigation areas, graph edges, floor matching, wall flags and route counts.">Ниже — фактическая тестовая выборка pre-alpha v1.0: навигационные области, связи, качество сопоставления пола, wall flags и число маршрутов.</p>
+        </div>
+        <section class="section wrap" id="maps">
+      <div class="section-kicker"><span>03</span><span data-ru="ТЕСТОВАЯ ВЫБОРКА" data-en="TESTED MAPS">ТЕСТОВАЯ ВЫБОРКА</span></div>
+      <div class="section-heading">
+        <h2 data-ru="Проверено на<br><em>реальных картах.</em>" data-en="Tested on<br><em>real maps.</em>">Проверено на<br><em>реальных картах.</em></h2>
+        <p data-ru="В pre-alpha v1.0 проверялись девять карт. Показатель CT/T — эвристика времени маршрута, а не утверждение о соревновательном балансе." data-en="Nine maps were exercised in pre-alpha v1.0. The CT/T figure is a route-time heuristic, not a claim about competitive balance.">В pre-alpha v1.0 проверялись девять карт. Показатель CT/T — эвристика времени маршрута, а не утверждение о соревновательном балансе.</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th data-ru="КАРТА" data-en="MAP">КАРТА</th><th>AREAS</th><th>EDGES</th><th>FLOOR MATCH</th><th>WALL FLAGS</th><th>ROUTES</th><th>ROUTE-TIME INDICATOR</th></tr></thead>
+          <tbody>
+            <tr><td><span class="map-dot"></span>de_dust2</td><td>2,242</td><td>6,275</td><td>98.77%</td><td>2 / 6,091</td><td>90</td><td class="verdict">CT +8.9s</td></tr>
+            <tr><td><span class="map-dot"></span>de_nuke</td><td>3,040</td><td>7,676</td><td>99.27%</td><td>0 / 7,334</td><td>80</td><td class="verdict">CT +5.2s</td></tr>
+            <tr><td><span class="map-dot"></span>de_train</td><td>2,154</td><td>5,454</td><td>99.39%</td><td>30 / 5,229</td><td>56</td><td class="verdict">CT +10.5s</td></tr>
+            <tr><td><span class="map-dot"></span>de_vertigo</td><td>2,105</td><td>5,321</td><td>99.45%</td><td>4 / 5,131</td><td>60</td><td class="verdict">CT +7.0s</td></tr>
+            <tr><td><span class="map-dot"></span>de_mirage</td><td>2,544</td><td>6,381</td><td>99.06%</td><td>4 / 6,069</td><td>99</td><td class="verdict">CT +6.4s</td></tr>
+            <tr><td><span class="map-dot"></span>de_inferno</td><td>2,738</td><td>7,068</td><td>99.54%</td><td>2 / 6,922</td><td>120</td><td class="verdict">CT +8.0s</td></tr>
+            <tr><td><span class="map-dot"></span>de_ancient</td><td>1,969</td><td>5,085</td><td>98.73%</td><td>0 / 5,009</td><td>72</td><td class="verdict">CT +8.5s</td></tr>
+            <tr><td><span class="map-dot"></span>de_anubis</td><td>2,633</td><td>6,877</td><td>97.34%</td><td>2 / 6,750</td><td>96</td><td class="verdict">CT +7.3s</td></tr>
+            <tr><td><span class="map-dot"></span>de_overpass</td><td>3,938</td><td>10,016</td><td>97.71%</td><td>0 / 9,859</td><td>88</td><td class="verdict">CT +14.0s</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="table-footnote" data-ru="Примечание: full clearance запускался для Dust2 и Nuke; остальные карты в этой выборке проходили с Skip clearance. CT +Ns — упрощённая оценка времени подхода по маршруту от спавна к цели. Она не учитывает встречи с противниками, перестрелки, utility, видимость и решения игроков; это не прогноз win rate и не доказательство преимущества стороны." data-en="Note: full clearance ran on Dust2 and Nuke; the remaining maps in this batch used Skip clearance. CT +Ns is a simplified spawn-to-target route-time estimate. It does not account for enemy encounters, firefights, utility, line of sight or player decisions; it is neither a win-rate prediction nor proof of a side advantage.">Примечание: full clearance запускался для Dust2 и Nuke; остальные карты в этой выборке проходили с Skip clearance. CT +Ns — медианная разница нижней оценки времени маршрута по общим целям. Это не прогноз win rate.</p>
+    </section>
+      </div>
+
+      <div class="page-view" id="page-safety" data-page-panel="safety" aria-hidden="true">
+        <div class="page-intro page-width">
+          <div class="section-kicker"><span>TRUST / 04</span><span data-ru="ПРИВАТНОСТЬ И БЕЗОПАСНОСТЬ" data-en="PRIVACY & SAFETY">ПРИВАТНОСТЬ И БЕЗОПАСНОСТЬ</span></div>
+          <h1 data-ru="Локально по замыслу.<br><em>Прозрачно по коду.</em>" data-en="Local by design.<br><em>Transparent by code.</em>">Локально по замыслу.<br><em>Прозрачно по коду.</em></h1>
+          <p data-ru="Приложение анализирует файлы карты, а не игровой процесс. Ниже — границы текущей реализации и ссылка на подробный аудит." data-en="The application analyzes map files, not live gameplay. Here are the boundaries of the current implementation and a link to the full audit.">Приложение анализирует файлы карты, а не игровой процесс. Ниже — границы текущей реализации и ссылка на подробный аудит.</p>
+        </div>
+        <section class="section section-dark" id="safety">
+      <div class="wrap safety-layout">
+        <div>
+          <div class="section-kicker"><span>04</span><span data-ru="ПРИВАТНОСТЬ И БЕЗОПАСНОСТЬ" data-en="PRIVACY & SAFETY">ПРИВАТНОСТЬ И БЕЗОПАСНОСТЬ</span></div>
+          <h2 data-ru="Твой компьютер.<br><em>Твои файлы.</em>" data-en="Your machine.<br><em>Your files.</em>">Твой компьютер.<br><em>Твои файлы.</em></h2>
+          <p data-ru="CS2 Map Balance — локальный анализатор файлов, а не модификация игры. Он не подключается к процессу CS2 и не взаимодействует с матчами или античитом." data-en="CS2 Map Balance is a local file analyzer, not a game modification. It does not attach to the CS2 process or interact with matches or anti-cheat.">CS2 Map Balance — локальный анализатор файлов, а не модификация игры. Он не подключается к процессу CS2 и не взаимодействует с матчами или античитом.</p>
+          <a class="text-link" href="docs/SECURITY.ru.md" data-ru="Читать полный аудит безопасности ↗" data-en="Read the full security audit ↗">Читать полный аудит безопасности ↗</a>
+        </div>
+        <div class="safety-panel">
+          <div class="safety-row"><span class="check">✓</span><span data-ru="Локальная обработка файлов" data-en="Local file processing">Локальная обработка файлов</span><b>YES</b></div>
+          <div class="safety-row"><span class="check">✓</span><span data-ru="Чтение памяти игры" data-en="Game memory access">Чтение памяти игры</span><b>NO</b></div>
+          <div class="safety-row"><span class="check">✓</span><span data-ru="Инъекции, хуки и оверлеи" data-en="Injection, hooks or overlays">Инъекции, хуки и оверлеи</span><b>NO</b></div>
+          <div class="safety-row"><span class="check">✓</span><span data-ru="Телеметрия и отправка файлов" data-en="Telemetry or file uploads">Телеметрия и отправка файлов</span><b>NO</b></div>
+          <div class="safety-row"><span class="check">✓</span><span data-ru="Изменение файлов CS2" data-en="Modifying CS2 files">Изменение файлов CS2</span><b>NO</b></div>
+          <div class="safety-caption" data-ru="Результат аудита текущего кода. Это не гарантия будущих решений Valve." data-en="Audit result for the current code. This is not a guarantee of future Valve policy.">Результат аудита текущего кода. Это не гарантия будущих решений Valve.</div>
+        </div>
+      </div>
+    </section>
+        <div class="page-width safety-details">
+          <a href="docs/SECURITY.ru.md" data-href-ru="docs/SECURITY.ru.md" data-href-en="docs/SECURITY.md" class="button button-secondary"><span data-ru="Полный аудит безопасности" data-en="Full security audit">Полный аудит безопасности</span><span>↗</span></a>
+          <p data-ru="Аудит описывает текущий код. Он не является гарантией будущих решений Valve или заменой осторожного использования сторонних инструментов." data-en="The audit describes the current code. It is not a guarantee of future Valve policy or a substitute for careful use of third-party tools.">Аудит описывает текущий код. Он не является гарантией будущих решений Valve или заменой осторожного использования сторонних инструментов.</p>
+        </div>
+      </div>
+
+      <div class="page-view" id="page-setup" data-page-panel="setup" aria-hidden="true">
+        <div class="page-intro page-width">
+          <div class="section-kicker"><span>GET STARTED / 05</span><span data-ru="НАЧАТЬ РАБОТУ" data-en="GET STARTED">НАЧАТЬ РАБОТУ</span></div>
+          <h1 data-ru="Первый viewer — <em>без лишнего.</em>" data-en="Your first viewer, <em>without the fuss.</em>">Первый viewer — <em>без лишнего.</em></h1>
+          <p data-ru="Подготовь среду, запусти локальный сервер и передай программе данные карты. В основном runtime не требуется устанавливать зависимости через pip." data-en="Prepare the environment, start the local server and provide map resources. The core runtime does not require pip dependencies.">Подготовь среду, запусти локальный сервер и передай программе данные карты. В основном runtime не требуется устанавливать зависимости через pip.</p>
+        </div>
+        <section class="section wrap" id="start">
+      <div class="section-kicker"><span>05</span><span data-ru="НАЧАТЬ РАБОТУ" data-en="GET STARTED">НАЧАТЬ РАБОТУ</span></div>
+      <div class="section-heading">
+        <h2 data-ru="От установки<br><em>до первого viewer.</em>" data-en="From setup<br><em>to your first viewer.</em>">От установки<br><em>до первого viewer.</em></h2>
+        <p data-ru="Pre-alpha v1.0 рассчитана на Windows 10/11 x64. Основной runtime использует стандартную библиотеку Python — pip install не нужен." data-en="Pre-alpha v1.0 targets Windows 10/11 x64. The core runtime uses the Python standard library — no pip install required.">Pre-alpha v1.0 рассчитана на Windows 10/11 x64. Основной runtime использует стандартную библиотеку Python — pip install не нужен.</p>
+      </div>
+      <div class="steps">
+        <article><span>01</span><h3 data-ru="Подготовь среду" data-en="Prepare the environment">Подготовь среду</h3><p data-ru="Установи Python 3.13 x64 и скачай архив проекта." data-en="Install Python 3.13 x64 and download the project archive.">Установи Python 3.13 x64 и скачай архив проекта.</p></article>
+        <article><span>02</span><h3 data-ru="Запусти локальный сервер" data-en="Start the local server">Запусти локальный сервер</h3><p data-ru="В корне проекта выполни команду запуска и открой 127.0.0.1:8765." data-en="Run the start command from the project folder and open 127.0.0.1:8765.">В корне проекта выполни команду запуска и открой 127.0.0.1:8765.</p></article>
+        <article><span>03</span><h3 data-ru="Добавь данные карты" data-en="Add map data">Добавь данные карты</h3><p data-ru="Используй авто-подготовку из CS2 или загрузи nav, entities, glTF и bin." data-en="Use automatic extraction from CS2 or upload nav, entities, glTF and bin files.">Используй авто-подготовку из CS2 или загрузи nav, entities, glTF и bin.</p></article>
+        <article><span>04</span><h3 data-ru="Изучи результат" data-en="Explore the result">Изучи результат</h3><p data-ru="Открой viewer, проверь маршруты и сравни карту с другими генерациями." data-en="Open the viewer, inspect routes and compare the map with other generated results.">Открой viewer, проверь маршруты и сравни карту с другими генерациями.</p></article>
+      </div>
+      <div class="requirements">
+        <div><span data-ru="СИСТЕМА" data-en="SYSTEM">СИСТЕМА</span><b>Windows 10/11 · x64</b></div>
+        <div><span>RUNTIME</span><b>Python 3.13 x64</b></div>
+        <div><span data-ru="ДОПОЛНИТЕЛЬНО" data-en="OPTIONAL">ДОПОЛНИТЕЛЬНО</span><b>Source2Viewer-CLI 20.1</b></div>
+      </div>
+      <div class="download-panel">
+        <div><span class="download-kicker">CS2 MAP BALANCE / PRE-ALPHA v1.0</span><h3 data-ru="Готов изучить свою карту?" data-en="Ready to inspect a map?">Готов изучить свою карту?</h3><p data-ru="Скачай актуальный архив исходников и открой инструкцию по установке." data-en="Get the latest source archive and follow the installation guide.">Начни с релиза и подробного руководства по установке.</p></div>
+        <div class="download-actions"><a class="button button-primary" href="https://github.com/Shtoblam/cs2mb-tool/archive/refs/heads/main.zip" target="_blank" rel="noopener" data-ru="Скачать исходники ↗" data-en="Download source ↗">Скачать исходники ↗</a><a class="button button-ghost" href="README.ru.md" data-href-ru="README.ru.md" data-href-en="README.md" data-ru="Инструкция ↗" data-en="Documentation ↗">Инструкция ↗</a></div>
+      </div>
+    </section>
+        <div class="page-width install-preview">
+          <div class="install-preview-copy"><span class="section-kicker">IN-APP GUIDE / 06</span><h2 data-ru="Инструкция находится и внутри приложения." data-en="The guide is also built into the app.">Инструкция находится и внутри приложения.</h2><p data-ru="В приложении есть пошаговый onboarding: Python, запуск сервера, Source2Viewer-CLI и подготовка первой карты." data-en="The app includes step-by-step onboarding for Python, server startup, Source2Viewer-CLI and preparing your first map.">В приложении есть пошаговый onboarding: Python, запуск сервера, Source2Viewer-CLI и подготовка первой карты.</p><a class="inline-link" href="README.ru.md" data-href-ru="README.ru.md" data-href-en="README.md"><span data-ru="Открыть полное руководство" data-en="Open the full guide">Открыть полное руководство</span> <b>↗</b></a></div>
+          <a class="install-preview-image" href="docs/assets/app-tutorial.png" target="_blank" rel="noopener"><img src="docs/assets/app-tutorial.png" alt="CS2 Map Balance in-app installation guide screenshot"><span data-ru="ОТКРЫТЬ СКРИНШОТ ↗" data-en="OPEN SCREENSHOT ↗">ОТКРЫТЬ СКРИНШОТ ↗</span></a>
+        </div>
+      </div>
+
+      <div class="page-view" id="page-faq" data-page-panel="faq" aria-hidden="true">
+        <div class="page-intro page-width">
+          <div class="section-kicker"><span>HELP / 06</span><span>FAQ</span></div>
+          <h1 data-ru="Вопросы, которые <em>важно задать.</em>" data-en="The questions worth <em>asking.</em>">Вопросы, которые <em>важно задать.</em></h1>
+          <p data-ru="О точности оценок, безопасной работе с файлами CS2 и текущих ограничениях alpha." data-en="About estimate accuracy, safe handling of CS2 files and the current pre-alpha limitations.">О точности оценок, безопасной работе с файлами CS2 и текущих ограничениях alpha.</p>
+        </div>
+        <section class="faq-section">
+      <div class="wrap faq-layout">
+        <div><div class="section-kicker"><span>06</span><span>FAQ</span></div><h2 data-ru="Коротко<br><em>о главном.</em>" data-en="The essentials<br><em>at a glance.</em>">Коротко<br><em>о главном.</em></h2></div>
+        <div class="faq-list">
+          <details><summary data-ru="Это мод или чит для CS2?" data-en="Is this a CS2 mod or cheat?">Это мод или чит для CS2?</summary><p data-ru="Нет. Программа анализирует файлы карты локально и не взаимодействует с игровым процессом, памятью или матчами." data-en="No. It analyzes map files locally and does not interact with gameplay, process memory or matches.">Нет. Программа анализирует файлы карты локально и не взаимодействует с игровым процессом, памятью или матчами.</p></details>
+          <details><summary data-ru="Нужно ли запускать CS2 вместе с программой?" data-en="Does CS2 need to run alongside it?">Нужно ли запускать CS2 вместе с программой?</summary><p data-ru="Нет. Для автоматического извлечения рекомендуется закрыть CS2, чтобы VPK не был заблокирован." data-en="No. For automatic extraction, close CS2 so the VPK is not locked.">Нет. Для автоматического извлечения рекомендуется закрыть CS2, чтобы VPK не был заблокирован.</p></details>
+          <details><summary data-ru="Что означает CT +8.9s?" data-en="What does CT +8.9s mean?">Что означает CT +8.9s?</summary><p data-ru="Это time-only эвристика: медианное преимущество CT по нижней оценке времени маршрута к общим целям. Она не учитывает перестрелки, utility, win rate или поведение игроков." data-en="It is a time-only heuristic: the median CT advantage in low route-time estimates to common targets. It does not account for fights, utility, win rate or player behavior.">Это time-only эвристика: медианное преимущество CT по нижней оценке времени маршрута к общим целям. Она не учитывает перестрелки, utility, win rate или поведение игроков.</p></details>
+          <details><summary data-ru="Можно ли считать CT +8.9s доказательством преимущества CT?" data-en="Does CT +8.9s prove that CT has an advantage?">Можно ли считать CT +8.9s доказательством преимущества CT?</summary><p data-ru="Нет. Это только предварительная оценка времени маршрута от спавна к цели. Она не симулирует встречи с противниками, перестрелки, utility и поведение игроков. Проверяй такие гипотезы в реальных матчах." data-en="No. It is only a preliminary spawn-to-target route-time estimate. It does not simulate enemy encounters, firefights, utility or player behavior. Validate such hypotheses in real matches.">Нет. Это только предварительная оценка времени маршрута от спавна к цели. Она не симулирует встречи с противниками, перестрелки, utility и поведение игроков. Проверяй такие гипотезы в реальных матчах.</p></details>
+          <details><summary data-ru="Обязательно ли устанавливать Source2Viewer-CLI?" data-en="Is Source2Viewer-CLI required?">Обязательно ли устанавливать Source2Viewer-CLI?</summary><p data-ru="Только для автоматического экспорта collision из CS2. В режиме загрузки можно предоставить готовые glTF и .bin." data-en="Only for automatic collision export from CS2. In upload mode, you can provide ready-made glTF and .bin files.">Только для автоматического экспорта collision из CS2. В режиме загрузки можно предоставить готовые glTF и .bin.</p></details>
+          <details><summary data-ru="Где посмотреть исходный код?" data-en="Where can I find the source code?">Где посмотреть исходный код?</summary><p data-ru="В публичном GitHub-репозитории проекта. Там же доступны релизы, документация, тесты и отчёты." data-en="In the project's public GitHub repository. Releases, documentation, tests and reports are available there too.">В публичном GitHub-репозитории проекта. Там же доступны релизы, документация, тесты и отчёты.</p></details>
+        </div>
+      </div>
+    </section>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-top">
+        <a class="brand footer-brand" href="#overview" data-page="overview"><img src="logo.png" alt="" width="30" height="30"><span>CS2 <b>MAP BALANCE</b></span></a>
+        <p data-ru="Изучай структуру. Проверяй гипотезы. Делись результатами." data-en="Explore the structure. Test your hypotheses. Share what you find.">Изучай структуру. Проверяй гипотезы. Делись результатами.</p>
+        <div class="footer-links"><a href="https://github.com/Shtoblam/cs2mb-tool" target="_blank" rel="noopener">GitHub ↗</a><a href="https://github.com/Shtoblam/cs2mb-tool/archive/refs/heads/main.zip" target="_blank" rel="noopener">Source ↗</a><a href="README.ru.md" data-href-ru="README.ru.md" data-href-en="README.md">Docs ↗</a></div>
+      </div>
+      <div class="footer-bottom"><span>© 2026 CS2 MAP BALANCE</span><span data-ru="НЕЗАВИСИМЫЙ ПРОЕКТ · НЕ СВЯЗАН С VALVE" data-en="INDEPENDENT PROJECT · NOT AFFILIATED WITH VALVE">НЕЗАВИСИМЫЙ ПРОЕКТ · НЕ СВЯЗАН С VALVE</span><span>PRE-ALPHA v1.0 · LOCAL FIRST</span></div>
+    </footer>
+  </div>
+</body>
+</html>

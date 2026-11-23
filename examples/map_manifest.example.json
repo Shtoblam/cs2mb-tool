@@ -1,0 +1,13 @@
+{
+  "map": "de_example",
+  "inputs": {
+    "nav": "inputs/de_example/de_example.nav",
+    "entities": "inputs/de_example/entities.txt",
+    "collision_gltf": "inputs/de_example/world_physics_physics.gltf",
+    "collision_bin": "inputs/de_example/world_physics_physics.bin"
+  },
+  "options": {
+    "skip_clearance": false,
+    "dry_run": false
+  }
+}

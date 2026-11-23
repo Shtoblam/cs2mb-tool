@@ -1,0 +1,42 @@
+name: Bug report
+description: Something in map intake, viewer or library is broken
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not attach game assets, VPK/nav/glTF/bin, demos, tokens or personal paths.
+  - type: input
+    id: version
+    attributes:
+      label: Version / commit
+      placeholder: pre-alpha v1.0 or commit hash
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - upload / drop
+        - generation pipeline
+        - viewer
+        - map library
+        - security
+        - documentation
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log excerpt
+      description: Redact local paths and personal data.

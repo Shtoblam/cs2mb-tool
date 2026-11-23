@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="360" viewBox="0 0 1280 360" role="img" aria-labelledby="title desc">
+  <title id="title">CS2 Map Balance — инструмент анализа карт</title>
+  <desc id="desc">Локальный инструмент анализа навигации, маршрутов, геометрии и коллизий карт Counter-Strike 2.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#19191c"/><stop offset=".58" stop-color="#242126"/><stop offset="1" stop-color="#190f15"/></linearGradient>
+    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#cf2c40"/><stop offset=".55" stop-color="#8f1732"/><stop offset="1" stop-color="#4a0822"/></linearGradient>
+    <pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse"><path d="M36 0H0V36" fill="none" stroke="#454047" stroke-width="1" opacity=".45"/></pattern>
+    <radialGradient id="glow"><stop offset="0" stop-color="#94132f" stop-opacity=".34"/><stop offset="1" stop-color="#94132f" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="1280" height="360" fill="url(#bg)"/>
+  <rect width="1280" height="360" fill="url(#grid)"/>
+  <ellipse cx="1050" cy="170" rx="330" ry="270" fill="url(#glow)"/>
+  <g transform="translate(745 15)" fill="none" stroke="#655b63" stroke-width="1.5" opacity=".66">
+    <path d="M38 58H196V108H266V32H438V107H604V205H544V260H642V326H430V284H292V338H142V273H38Z"/>
+    <path d="M82 93H164V153H221V209H146V250H80ZM293 73H403V126H353V181H278V124ZM448 128H546V173H498V218H414V180ZM218 232H306V292H218ZM408 242H493V291H408Z" stroke-opacity=".52"/>
+    <path d="M38 108H196M266 108H438M544 205H604M544 260H642M430 284H292M142 273V338"/>
+  </g>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M780 302C846 262 896 290 956 222S1055 117 1197 72" stroke="url(#brand)" stroke-width="10" opacity=".22"/>
+    <path d="M780 302C846 262 896 290 956 222S1055 117 1197 72" stroke="#e45468" stroke-width="4.4"/>
+    <path d="M782 83C866 113 884 174 974 184S1085 217 1220 302" stroke="#79b6d1" stroke-width="2.7" stroke-dasharray="7 10" opacity=".88"/>
+    <path d="M832 326C900 255 1008 253 1075 183S1138 112 1222 55" stroke="#ce5264" stroke-width="2" stroke-dasharray="3 10" opacity=".54"/>
+  </g>
+  <g fill="#e65a6c"><circle cx="780" cy="302" r="6"/><circle cx="1197" cy="72" r="6"/></g>
+  <g fill="#79b6d1"><circle cx="782" cy="83" r="5"/><circle cx="1220" cy="302" r="5"/></g>
+  <image href="../../logo.png" x="54" y="44" width="62" height="62" preserveAspectRatio="xMidYMid slice"/>
+  <text x="137" y="83" font-family="Segoe UI, sans-serif" font-size="30" font-weight="700" fill="#f4eff1">CS2 Map Balance</text>
+  <text x="137" y="108" font-family="Consolas, monospace" font-size="12" fill="#a9a1a8" letter-spacing="2">ЛОКАЛЬНЫЙ ИНСТРУМЕНТ АНАЛИЗА КАРТ</text>
+  <text x="54" y="181" font-family="Segoe UI, sans-serif" font-size="36" font-weight="650" fill="#f5f0f2">Смотри на карту <tspan fill="#e45468">глубже радара.</tspan></text>
+  <text x="56" y="221" font-family="Segoe UI, sans-serif" font-size="17" fill="#b9b0b7">Навигация · маршруты CT/T · геометрия · коллизии</text>
+  <rect x="56" y="254" width="112" height="29" rx="7" fill="url(#brand)"/>
+  <text x="112" y="273" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#fff">PRE-ALPHA v1.0</text>
+  <text x="1224" y="332" text-anchor="end" font-family="Consolas, monospace" font-size="10" fill="#8d858d">ЛОКАЛЬНО · READ ONLY · БЕЗ ТЕЛЕМЕТРИИ</text>
+</svg>

@@ -1,0 +1,33 @@
+name: Feature request
+description: Suggest an intake, viewer, comparison or security improvement
+title: "[feature] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What is difficult or missing?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+    validations:
+      required: true
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Scope
+      options:
+        - 2.x map intake / viewer
+        - 2.x security / reliability
+        - future detection/encounter
+        - future combat
+        - documentation
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence / references
+      description: Tests, docs, measurements or reproducible examples. No game assets.

@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="238" viewBox="0 0 1280 238" role="img" aria-labelledby="title desc">
+  <title id="title">CS2 Map Balance - локальный pipeline</title>
+  <desc id="desc">Файлы проходят валидацию, затем появляются viewer и library.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#171a1d"/><stop offset="1" stop-color="#24292e"/>
+    </linearGradient>
+    <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse">
+      <path d="M 28 0 L 0 0 0 28" fill="none" stroke="#343b42" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1280" height="238" fill="url(#bg)"/>
+  <rect width="1280" height="238" fill="url(#grid)" opacity=".5"/>
+  <text x="48" y="40" font-family="Consolas, monospace" font-size="12" fill="#ff9a6b" letter-spacing="2">ЛОКАЛЬНЫЙ PIPELINE</text>
+  <g font-family="Segoe UI, sans-serif">
+    <g>
+      <rect x="48" y="62" width="252" height="126" rx="3" fill="#1d2226" stroke="#3d464e"/>
+      <text x="70" y="92" font-size="18" font-weight="700" fill="#f0f2f4">Файлы CS2</text>
+      <text x="70" y="120" font-family="Consolas, monospace" font-size="11" fill="#9da6ae">nav · entities · vmdl</text>
+      <text x="70" y="145" font-family="Consolas, monospace" font-size="10" fill="#707980">чтение VPK</text>
+      <text x="70" y="166" font-family="Consolas, monospace" font-size="10" fill="#ff9a6b">БЕЗ ЗАПУСКА ИГРЫ</text>
+    </g>
+    <g>
+      <rect x="342" y="62" width="252" height="126" rx="3" fill="#1d2226" stroke="#3d464e"/>
+      <text x="364" y="92" font-size="18" font-weight="700" fill="#f0f2f4">Валидация</text>
+      <text x="364" y="120" font-family="Consolas, monospace" font-size="11" fill="#9da6ae">floor · wall · clearance</text>
+      <text x="364" y="145" font-family="Consolas, monospace" font-size="10" fill="#707980">локальные проверки</text>
+      <text x="364" y="166" font-family="Consolas, monospace" font-size="10" fill="#62c6dd">БЕЗ СЕТИ</text>
+    </g>
+    <g>
+      <rect x="636" y="62" width="252" height="126" rx="3" fill="#1d2226" stroke="#3d464e"/>
+      <text x="658" y="92" font-size="18" font-weight="700" fill="#f0f2f4">Viewer + summary</text>
+      <text x="658" y="120" font-family="Consolas, monospace" font-size="11" fill="#9da6ae">routes · manifest</text>
+      <text x="658" y="145" font-family="Consolas, monospace" font-size="10" fill="#707980">self-contained HTML</text>
+      <text x="658" y="166" font-family="Consolas, monospace" font-size="10" fill="#75c98a">БЕЗ EXTERNAL JS</text>
+    </g>
+    <g>
+      <rect x="930" y="62" width="302" height="126" rx="3" fill="#1d2226" stroke="#3d464e"/>
+      <text x="952" y="92" font-size="18" font-weight="700" fill="#f0f2f4">Library</text>
+      <text x="952" y="120" font-family="Consolas, monospace" font-size="11" fill="#9da6ae">verdict · compare</text>
+      <text x="952" y="145" font-family="Consolas, monospace" font-size="10" fill="#707980">time-only route balance</text>
+      <text x="952" y="166" font-family="Consolas, monospace" font-size="10" fill="#ffb35c">БЕЗ COMBAT / WIN-RATE</text>
+    </g>
+  </g>
+  <g stroke="#ff6b35" stroke-width="2" fill="none" opacity=".8">
+    <path d="M300 125h40"/><path d="M594 125h40"/><path d="M888 125h40"/>
+    <path d="M336 121l8 4-8 4"/><path d="M630 121l8 4-8 4"/><path d="M924 121l8 4-8 4"/>
+  </g>
+  <text x="1232" y="220" text-anchor="end" font-family="Consolas, monospace" font-size="9" fill="#707980">127.0.0.1 · READ-ONLY · TELEMETRY OFF</text>
+</svg>

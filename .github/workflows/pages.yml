@@ -1,0 +1,74 @@
+name: Deploy project site to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "index.html"
+      - "logo.png"
+      - "site.css"
+      - "site.js"
+      - "README.md"
+      - "README.ru.md"
+      - "docs/SECURITY.md"
+      - "docs/SECURITY.ru.md"
+      - "docs/assets/banner.svg"
+      - "docs/assets/banner.ru.svg"
+      - "docs/assets/app-tutorial.png"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Assemble the public site
+        run: |
+          mkdir -p _site/docs/assets
+          cp index.html site.css site.js README.md README.ru.md _site/
+          cp docs/SECURITY.md docs/SECURITY.ru.md _site/docs/
+          cp docs/assets/banner.svg docs/assets/banner.ru.svg docs/assets/app-tutorial.png _site/docs/assets/
+          cp logo.png _site/
+          touch _site/.nojekyll
+      - name: Validate published files
+        run: |
+          test -s _site/index.html
+          test -s _site/site.css
+          test -s _site/site.js
+          test -s _site/logo.png
+          test -s _site/docs/SECURITY.md
+          test -s _site/docs/SECURITY.ru.md
+          test -s _site/docs/assets/banner.svg
+          test -s _site/docs/assets/banner.ru.svg
+          test -s _site/docs/assets/app-tutorial.png
+      - name: Upload site artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      # Pages must be enabled once in Settings → Pages → Build and deployment → Source → GitHub Actions.
+      # This action only reads the existing Pages configuration; it does not try to create the site.
+      - name: Configure Pages
+        uses: actions/configure-pages@v6
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
