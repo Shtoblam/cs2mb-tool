@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">CS2 Map Balance logo</title>
+  <desc id="desc">Crimson square mark with an italic CS2MB wordmark and a subtle navigation-grid motif.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#d23448"/>
+      <stop offset=".46" stop-color="#a51b36"/>
+      <stop offset="1" stop-color="#4b0922"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ff8494" stop-opacity=".22"/>
+      <stop offset="1" stop-color="#ff8494" stop-opacity="0"/>
+    </linearGradient>
+    <pattern id="mesh" width="64" height="56" patternUnits="userSpaceOnUse">
+      <path d="M0 0L32 18L64 0M0 56L32 38L64 56M32 18V38" fill="none" stroke="#fff" stroke-width="1" opacity=".08"/>
+    </pattern>
+  </defs>
+  <rect width="512" height="512" rx="74" fill="url(#bg)"/>
+  <rect width="512" height="512" rx="74" fill="url(#mesh)"/>
+  <ellipse cx="256" cy="92" rx="250" ry="150" fill="url(#glow)"/>
+  <path d="M54 392H458" stroke="#fff" stroke-width="2" opacity=".16"/>
+  <path d="M74 402L132 370L206 384L282 348L370 360L438 326" fill="none" stroke="#fff" stroke-width="2.6" opacity=".24" stroke-linejoin="round"/>
+  <g fill="#fff" opacity=".5">
+    <circle cx="132" cy="370" r="4"/><circle cx="282" cy="348" r="4"/><circle cx="438" cy="326" r="4"/>
+  </g>
+  <text x="256" y="286" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="142" font-style="italic" font-weight="900" letter-spacing="-12" fill="#fff">CS2MB</text>
+  <text x="256" y="342" text-anchor="middle" font-family="Consolas, monospace" font-size="17" letter-spacing="7" fill="#fff" opacity=".72">MAP BALANCE</text>
+</svg>

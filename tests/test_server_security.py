@@ -111,6 +111,24 @@ class ServerSecurityTests(unittest.TestCase):
                 Handler._missing_gltf_sidecars(gltf)[0].startswith("../outside.bin")
             )
 
+    def test_config_reports_internal_engine_not_external_cli(self) -> None:
+        server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+        worker = Thread(target=server.serve_forever, daemon=True)
+        worker.start()
+        try:
+            url = f"http://127.0.0.1:{server.server_port}/api/config"
+            with urlopen(url, timeout=10) as response:
+                self.assertEqual(response.status, 200)
+                data = json.loads(response.read().decode("utf-8"))
+            self.assertIn("source2_ready", data)
+            self.assertIn("source2", data)
+            self.assertNotIn("s2v_cli", data)
+            self.assertNotIn("s2v_ready", data)
+        finally:
+            server.shutdown()
+            server.server_close()
+            worker.join(timeout=5)
+
 
 if __name__ == "__main__":
     unittest.main()

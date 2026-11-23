@@ -1,28 +1,30 @@
-# Установка и troubleshooting
+# Установка и устранение неполадок
 
-Это руководство устанавливает локальное приложение CS2 Map Balance в Windows
-и объясняет, как собрать карту из установленной CS2 или из загруженных файлов.
+Это руководство устанавливает локальное приложение CS2 Map Balance на Windows
+и объясняет, как получить карту из установленной CS2 или из загруженных файлов.
 
-Приложение — локальный анализатор файлов. Оно не запускает CS2/Steam, не читает
-память игры и не взаимодействует с anti-cheat. Локальный сервер должен
-оставаться на `127.0.0.1`.
+Приложение — локальный анализатор файлов только для чтения. Оно не запускает
+CS2 или Steam, не читает память игры и не взаимодействует с античитом. Сервер
+должен оставаться на `127.0.0.1`.
 
-## 1. Что нужно
+## 1. Требования
 
 - Windows 10/11 **x64**.
-- **Python 3.13 x64** — тестируемая версия. Шаг `pip install` не нужен.
-- Папка проекта или source ZIP из ветки `main`.
-- Установленная CS2 — если нужен режим **Prepare + Generate from installed CS2**.
-- **Source2Viewer-CLI 20.1** — для автоматического экспорта physics collision.
-  Не нужен, если у вас уже есть physics glTF + `.bin`.
+- **Python 3.13 x64** — проверенная версия. Шаг `pip install` не нужен.
+- Папка проекта или ZIP исходников из `main`.
+- Установленная CS2 для режима **Prepare + Generate from installed CS2**.
+- Компонент **cs2mb-source2** для автоматического разбора PHYS и EntityLump.
+  Это собственный self-contained компонент CS2MB. .NET runtime,
+  Source2Viewer-CLI и `resourceinfo.exe` не требуются.
 
-Права администратора, установка в систему и изменение файлов игры не нужны.
+Права администратора, общесистемная установка и изменение файлов игры не
+нужны.
 
-## 2. Установить Python 3.13
+## 2. Установка Python 3.13
 
 1. Откройте <https://www.python.org/downloads/windows/>.
 2. Скачайте **Windows installer (64-bit)** для Python 3.13.
-3. Включите **Add python.exe to PATH** и нажмите **Install Now**.
+3. Включите **Add python.exe to PATH** и выберите **Install Now**.
 4. Откройте **новое** окно PowerShell и проверьте:
 
 ```powershell
@@ -31,35 +33,81 @@ python --version
 ```
 
 Если `python` открывает Microsoft Store или не найден, используйте `py -3.13`
-во всех командах ниже либо переустановите Python с PATH.
+во всех командах ниже либо переустановите Python с включённым PATH.
 
-## 3. Получить проект
+## 3. Получение проекта
 
-Репозиторий публичный.
+Репозиторий публичный: <https://github.com/Shtoblam/cs2mb-tool>.
 
-Вариант A — source ZIP:
+Вариант A — ZIP исходников:
 
 1. Скачайте <https://github.com/Shtoblam/cs2mb-tool/archive/refs/heads/main.zip>.
 2. Распакуйте в обычную пользовательскую папку, например
-   `%USERPROFILE%\Documents\cs2mapbalance`.
+   `%USERPROFILE%\Documents\cs2mb-tool`.
 
-Вариант B — Git clone:
+Вариант B — Git:
 
 ```powershell
 git clone https://github.com/Shtoblam/cs2mb-tool.git
-cd cs2mapbalance
+cd cs2mb-tool
 ```
 
-**Не** распаковывайте проект внутрь папки CS2/Steam.
+Не распаковывайте проект внутрь папки CS2/Steam.
 
-Проверьте, что в корне проекта есть `app`, `tools`, `docs`, `config` и
-`README.md`:
+## 4. Установка внутреннего Source 2 engine
+
+Автоматический режим использует `cs2mb-source2.exe`, собранный из `source2/`
+в этом репозитории. Он подключает MIT-библиотеку ValveResourceFormat
+непосредственно в процессе и не запускает сторонний CLI.
+
+1. Откройте страницу релизов CS2MB:
+   <https://github.com/Shtoblam/cs2mb-tool/releases/latest>.
+2. Скачайте `cs2mb-source2-win-x64.zip`.
+3. Сверьте архив с `SHA256SUMS.txt` из того же релиза.
+4. Распакуйте `cs2mb-source2.exe` в:
+
+```text
+<PROJECT>\tools\bin\source2\cs2mb-source2.exe
+```
+
+5. Проверьте установку из корня проекта:
 
 ```powershell
-Get-ChildItem
+& ".\tools\bin\source2\cs2mb-source2.exe" --version
+py -3.13 tools\source2.py --status
+Get-FileHash ".\tools\bin\source2\cs2mb-source2.exe" -Algorithm SHA256
 ```
 
-## 4. Запустить локальное приложение
+Ожидаемый статус: `"ready": true` и версия `cs2mb-source2 1.0.0`. Исполняемый
+файл игнорируется Git. Не кладите его в установку CS2/Steam, `C:\Windows` или
+недоверенный путь.
+
+Компонент self-contained. .NET runtime, Source2Viewer-CLI, `resourceinfo.exe`
+и настройка `S2V_CLI` не используются. Дополнительные места поиска:
+
+- переменная окружения `CS2MB_SOURCE2`;
+- `tools\bin\cs2mb-source2.exe`;
+- `source2\bin\win-x64\cs2mb-source2.exe`;
+- `--source2 <path>` для ручного запуска `tools/prepare_map.py`.
+
+Явный путь или `CS2MB_SOURCE2` имеют приоритет: устаревшее значение приводит
+к ошибке, а не к молчаливому запуску другого файла.
+
+### Сборка engine из исходников (необязательно)
+
+Обычным пользователям этот шаг не нужен. Для сборки требуется .NET SDK 10.0.x;
+опубликованный exe не требует SDK или runtime.
+
+```powershell
+source2\build.ps1
+source2\build.ps1 -Install   # копирует в tools\bin\source2\
+```
+
+Версии закреплены в `source2/global.json`, `source2/Cs2mb.Source2/Cs2mb.Source2.csproj`
+и `packages.lock.json`. См. `source2/README.md` и
+`source2/THIRD_PARTY_NOTICES.md`.
+
+## 5. Запуск приложения
 
 Из корня проекта:
 
@@ -67,14 +115,8 @@ Get-ChildItem
 py -3.13 app\server.py --port 8765
 ```
 
-Или, если `python` указывает на Python 3.13:
-
-```powershell
-python app\server.py --port 8765
-```
-
-Откройте <http://127.0.0.1:8765/>. Первый запуск откроет tutorial; кнопка
-**? Установка** откроет его снова. `Ctrl+C` в PowerShell останавливает сервер.
+Откройте <http://127.0.0.1:8765/>. При первом запуске открывается обучение;
+кнопка обучения открывает его снова. Остановка — `Ctrl+C` в PowerShell.
 
 Если порт 8765 занят:
 
@@ -84,7 +126,7 @@ py -3.13 app\server.py --port 8766
 
 Затем откройте `http://127.0.0.1:8766/`. Не выставляйте сервер в интернет.
 
-## 5. Собрать карту
+## 6. Генерация карты
 
 ### Автоматический режим (рекомендуется)
 
@@ -92,196 +134,82 @@ py -3.13 app\server.py --port 8766
 2. Укажите **CS2 game folder** — корень установки CS2.
 3. Укажите **Map name**, например `de_mirage` или `de_dust2`.
 4. Нажмите **Prepare + Generate**.
-5. Дождитесь ссылки `viewer` и новой строки в `Map library`.
+5. Дождитесь ссылки на viewer и новой строки в Map library.
 
 В выбранной папке должны быть:
 
 ```text
 game\csgo\maps\<map>.vpk
 game\csgo\gameinfo.gi
-game\bin\win64\resourceinfo.exe
 ```
 
-Найти её можно в Steam: **Библиотека → Counter-Strike 2 → Управление →
-Просмотреть локальные файлы**. Приложение отклонит папку без структуры CS2.
+Найти её: Steam → **Библиотека → Counter-Strike 2 → Управление → Просмотреть
+локальные файлы**. Папка игры используется только для чтения; извлечённые
+ресурсы и результаты пишутся в `artifacts/`.
+
+Индикатор показывает `engine ready` и версию компонента. `engine not
+installed` означает, что exe отсутствует или путь неверен.
 
 ### Режим файлов (без доступа к папке CS2)
 
-1. Получите четыре файла по [инструкции](GETTING_FILES.ru.md).
+1. Подготовьте четыре файла по
+   [GETTING_FILES.ru.md](GETTING_FILES.ru.md).
 2. Укажите **Map name**.
 3. Перетащите `.nav`, entity `.txt`, `.gltf` и `.bin` в drop zone.
 4. Нажмите **Generate map**.
 
-`Skip clearance` занимает около 20 секунд на Dust2; полный clearance job —
-около 2.5 минут на записанной тестовой машине. Viewer и строка library
-появятся после завершения.
+`Skip clearance` занимает около 20 секунд на Dust2; полная проверка — около
+2.5 минут на тестовой машине. Viewer и строка library появляются после job.
 
-## 6. Source2Viewer-CLI
-
-Source2Viewer-CLI — отдельный **MIT-инструмент** проекта
-[ValveResourceFormat](https://github.com/ValveResourceFormat/ValveResourceFormat).
-Он не входит в репозиторий, не скачивается автоматически и не нужен для
-upload-режима.
-
-Он конвертирует уже извлечённый `world_physics.vmdl_c` в:
+## 7. Что делает внутренний engine
 
 ```text
-world_physics_physics.gltf
-world_physics_physics.bin
+map VPK (read-only)
+   ├─ <map>.nav                  → существующий Python NAV parser
+   ├─ default_ents.vents_c       → cs2mb-source2 entities → entity dump
+   └─ world_physics.vmdl_c       → cs2mb-source2 phys     → glTF + .bin
 ```
 
-Именно эти файлы читает анализатор. Source2Viewer не загружается в CS2, не
-является anti-cheat и не работает с процессом игры.
+- `cs2mb-source2 entities` разбирает скомпилированный EntityLump и пишет
+  построчный dump для существующего parser. Сохраняются classname, origin,
+  angles, targetname, callouts и остальные свойства.
+- `cs2mb-source2 phys` разбирает PHYS, выдаёт collision-треугольники с
+  группировкой по collision attribute и surface property и сохраняет
+  `InteractAs`. Координаты остаются в Hammer units и Source axes (`x`, `y`,
+  `z-up`); устаревшая glTF node matrix не применяется.
+- Существующие collision loader, movement model, routing и balance logic не
+  изменены.
 
-### Скачать
+Конвертер не подменяет physics geometry рендер-геометрией: читается именно
+`world_physics.vmdl_c`.
 
-Официальная страница релиза:
+## 8. Устранение неполадок
 
-<https://github.com/ValveResourceFormat/ValveResourceFormat/releases/tag/20.1>
-
-Для Windows x64 скачайте:
-
-```text
-cli-windows-x64.zip
-```
-
-Прямая ссылка:
-<https://github.com/ValveResourceFormat/ValveResourceFormat/releases/download/20.1/cli-windows-x64.zip>
-
-Не скачивайте `Source2Viewer.exe` для авто-режима — это GUI. Не используйте
-Linux/macOS assets на Windows. В архиве:
-
-```text
-Source2Viewer-CLI.exe
-libSkiaSharp.dll
-spirv-cross.dll
-```
-
-Проверенные артефакты 20.1 (записано 2026-10-20):
-
-```text
-cli-windows-x64.zip
-SHA-256 67AAF8A67A85CA60FD09FF343E62103A4CDF3A2D177FC656231D7D734C5B3AA3
-
-Source2Viewer-CLI.exe (после распаковки)
-SHA-256 EF9F6FB3943C30B73F0991BCE6654128727B0807968F7997A6BB014EFBEC8830
-```
-
-Это хэши проверенных артефактов, а не гарантия для будущих релизов. Сверяйте
-источник и hash; **не отключайте Windows Defender** ради неизвестного exe.
-
-### Куда положить для авто-режима
-
-Распакуйте **все три файла** в `tools\bin` проекта:
-
-```text
-cs2mapbalance\
-  app\
-  config\
-  docs\
-  tools\
-    bin\
-      Source2Viewer-CLI.exe
-      libSkiaSharp.dll
-      spirv-cross.dll
-```
-
-Точный путь к executable:
-
-```text
-<PROJECT>\tools\bin\Source2Viewer-CLI.exe
-```
-
-Не кладите файлы:
-
-- в `game\bin\win64` — не меняйте установку CS2;
-- в папку Steam;
-- в `C:\Windows`;
-- в недоверенный каталог.
-
-Exe и DLL игнорируются Git и не должны коммититься.
-
-### Альтернатива: CLI вне проекта
-
-Порядок поиска:
-
-- при ручном запуске `tools/prepare_map.py`: `--s2v-cli`, затем переменная
-  окружения `S2V_CLI`, затем `tools\bin\Source2Viewer-CLI.exe`;
-- в локальном приложении: `S2V_CLI` либо `s2v_cli` из
-  `config\paths.local.json`, затем `tools\bin\Source2Viewer-CLI.exe`. Сервер
-  передаёт найденный путь в `prepare_map.py` как `--s2v-cli`.
-
-Если держите CLI отдельно, все три файла должны лежать вместе:
-
-```powershell
-$env:S2V_CLI = "C:\Tools\Source2Viewer\Source2Viewer-CLI.exe"
-py -3.13 app\server.py --port 8765
-```
-
-Или скопируйте шаблон и отредактируйте локальный конфиг:
-
-```powershell
-Copy-Item config\paths.example.json config\paths.local.json
-notepad config\paths.local.json
-```
-
-Пример JSON (двойные обратные слеши обязательны):
-
-```json
-{
-  "cs2_game": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Counter-Strike Global Offensive",
-  "s2v_cli": "C:\\Tools\\Source2Viewer\\Source2Viewer-CLI.exe"
-}
-```
-
-`config/paths.local.json` игнорируется Git. Это только локальное удобство.
-
-### Проверка
-
-```powershell
-& ".\tools\bin\Source2Viewer-CLI.exe" --help
-Get-FileHash ".\tools\bin\Source2Viewer-CLI.exe" -Algorithm SHA256
-```
-
-Перезапустите приложение и откройте <http://127.0.0.1:8765/>. В панели intake
-должно появиться **S2V ready**. Если **S2V not configured**:
-
-- exe называется точно `Source2Viewer-CLI.exe`;
-- все три файла лежат в одной папке;
-- приложение запущено из корня проекта;
-- сервер перезапущен после изменения env/config.
-
-### Если CLI не нужен
-
-Загрузите готовый glTF + `.bin` или используйте Source2Viewer GUI
-(`Source2Viewer.exe`), экспортировав `world_physics.vmdl_c` как
-**glTF Separate**. Upload-режиму нужны только четыре файла карты.
-
-## 7. Troubleshooting
-
-| Проблема | Решение |
+| Симптом | Действие |
 |---|---|
-| `python` не найден / открывает Store | Используйте `py -3.13`; переустановите Python 3.13 с **Add python.exe to PATH**. |
-| `ModuleNotFoundError` при запуске | Запускайте из корня проекта, не из `app\`; `pip install` не нужен. |
-| `S2V not configured` | Положите все три файла CLI в `tools\bin` или задайте `S2V_CLI` / `config\paths.local.json`; перезапустите приложение. |
-| Нет `libSkiaSharp.dll` | Распакуйте весь `cli-windows-x64.zip`, а не только exe. |
-| `invalid CS2 game folder` | Выберите корень установки CS2 с `game\csgo\maps`, а не саму папку `maps`. |
-| Map VPK не найден | Установите карту или используйте upload для workshop/нестандартных карт. |
+| `python not found` | Используйте `py -3.13`; переустановите Python с PATH. |
+| `engine not installed` | Распакуйте `cs2mb-source2.exe` в `tools\bin\source2\`; перезапустите сервер. |
+| `cs2mb-source2 failed` | Проверьте `artifacts/.../prepared/source2.log`; убедитесь, что файл относится к поддерживаемой сборке CS2. |
+| Large collision output | Карты с большим числом треугольников (например Inferno) дают крупный `.bin` и обрабатываются дольше; это ожидаемо. |
+| `invalid CS2 folder` | Выберите корень CS2 с `game\csgo\maps`, а не папку `maps`. |
 | Порт занят | Запустите с `--port 8766` и откройте новый URL. |
-| VPK заблокирован | Закройте CS2 на время авто-извлечения. |
-| В viewer нет collision | Загрузите `.gltf` **и** `.bin`; sidecar обязателен. |
-| Пустые route cards | Нужны стандартные callouts `BombsiteA`, `BombsiteB`, `Middle`; nav/collision при этом могут отрисоваться. |
-| Windows Defender предупреждает о CLI | Не отключайте Defender; проверьте официальный источник и SHA-256 либо используйте upload. |
+| `no .bin` | Загружайте/экспортируйте `.gltf` и `.bin` вместе. |
 
-## 8. Остановить и удалить
+## 9. Безопасность и ограничения
 
-Нажмите `Ctrl+C` в PowerShell. Программа не ставит службу, драйвер, запись в
-реестр или что-либо в CS2. Удалите папку проекта; `tools\bin` удалите отдельно,
-если CLI больше не нужен.
+- Сервер по умолчанию только loopback; не выставляйте его в LAN или интернет.
+- Ограничения upload, allow-list путей, проверка Origin, таймауты job и
+  security-заголовки сохранены.
+- Нет телеметрии, внешних загрузок, доступа к процессу игры, инъекций и
+  взаимодействия с античитом.
+- Engine — локальный доверенный компонент. Сверяйте SHA-256 с релизом. Он
+  обрабатывает недоверенные бинарные ресурсы и сообщает контролируемые ошибки.
+- Текущий конвертер выдаёт mesh и convex hull collision напрямую, а
+  sphere/capsule примитивы тесселирует с ограниченным числом колец. Кривые
+  поверхности — приближение для анализа, а не точная аналитическая collision.
+- Поддержка entity и physics проверена на установленной сборке CS2 из
+  [STATE.md](STATE.md); будущее изменение формата Valve может потребовать
+  обновления engine.
 
-## 9. Связанная документация
-
-- [Получение файлов](GETTING_FILES.ru.md) — ручные команды и форматы файлов.
-- [Безопасность](SECURITY.ru.md) — модель угроз и контроли.
-- [Индекс документации](README.md) — все документы проекта.
-- [Setup in English](SETUP.md).
+Engine реализован независимо для CS2MB. ValveResourceFormat — MIT-библиотека
+сообщества, а не продукт Valve и не официальный CS2 SDK.

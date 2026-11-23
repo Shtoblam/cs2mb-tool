@@ -3,6 +3,45 @@
 **Принцип:** каждый слой проверяется независимо; ошибка парсера не должна
 маскироваться ошибкой данных, а ошибка данных — ошибкой алгоритма.
 
+## 0. Internal Source 2 engine validation (2026-11-23)
+
+**Reference environment:** installed CS2 build `2000948`, patch `1.42.0.0`,
+version date `2026-11-19`; Windows x64; Python 3.13.3; `cs2mb-source2 1.0.0`
+built against ValveResourceFormat `20.1.7467`.
+
+**Procedure:** extract `<map>.nav`, `default_ents.vents_c` and
+`world_physics.vmdl_c` from each map VPK, convert entities and PHYS with the
+internal engine, load the glTF with `tools/gltf_collision.py`, run
+`tools/collision_floor_test.py` against the same NAV, and compare entity output
+with the local `resourceinfo.exe -all` dump. The Valve dump is a
+development-only reference; it is not a runtime dependency.
+
+| Map | Primitives | Exported vertices | Triangles | Floor agreement | Median dz |
+|---|---:|---:|---:|---:|---:|
+| de_dust2 | 39 | 1,306,947 | 435,649 | 98.77% | 3.78 |
+| de_mirage | 41 | 399,399 | 133,133 | 99.06% | 4.0 |
+| de_nuke | 32 | 574,884 | 191,628 | 99.27% | 4.0 |
+| de_inferno | 52 | 8,200,830 | 2,733,610 | 99.54% | 4.0 |
+| de_ancient | 15 | 2,903,334 | 967,778 | 98.73% | 4.0 |
+| de_train | 40 | 4,722,660 | 1,574,220 | 99.39% | 4.0 |
+| de_vertigo | 37 | 631,788 | 210,596 | 99.45% | 4.0 |
+| de_anubis | 34 | 2,147,526 | 715,842 | 97.34% | 4.0 |
+| de_overpass | 36 | 2,654,325 | 884,775 | 97.71% | 4.0 |
+
+Entity comparison: identical entity counts and class distributions for all nine
+maps; spawn/callout/bombsite origins match after 0.01-unit text rounding. Dust2
+has 415 entities, 15 T spawns, 15 CT spawns and 43 callouts.
+
+**Synthetic cases:** empty file, garbage bytes, minimal valid header, truncated
+block table, oversized declared size, unsupported header version, missing input.
+All produce a controlled non-zero exit with a `cs2mb-source2:` message and no
+stack trace. These run in the normal test suite when the engine is installed.
+
+**Limits:** the real-game comparison is local and not part of CI; CI validates
+the component build, synthetic resources and the Python contract. Sphere and
+capsule collision is a bounded tessellation, not an exact analytic surface. A
+future CS2 or ValveResourceFormat change may require revalidation.
+
 ## 1. Уровни валидации
 
 | Уровень | Что проверяем | Критерий |

@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title id="title">Local and read-only analysis boundary</title>
+  <desc id="desc">Original diagram of a loopback-only analysis boundary with read-only game input, local artifacts and no external network.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#171a1d"/><stop offset="1" stop-color="#232a30"/></linearGradient>
+    <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="#343d45" stroke-width="1" opacity=".6"/></pattern>
+    <linearGradient id="shield" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#75c98a"/><stop offset="1" stop-color="#3e9d5a"/></linearGradient>
+  </defs>
+  <rect width="640" height="360" fill="url(#bg)"/>
+  <rect width="640" height="360" fill="url(#grid)"/>
+  <text x="30" y="38" font-family="Consolas, monospace" font-size="11" letter-spacing="2" fill="#75c98a">LOCAL BY DESIGN</text>
+  <text x="30" y="65" font-family="Segoe UI, Arial, sans-serif" font-size="21" font-weight="700" fill="#f2f4f6">The boundary is the machine.</text>
+  <text x="30" y="88" font-family="Segoe UI, Arial, sans-serif" font-size="12" fill="#9da7af">Read-only game input · loopback server · no telemetry</text>
+
+  <circle cx="350" cy="210" r="126" fill="none" stroke="#4b565f" stroke-width="1.4" stroke-dasharray="4 7"/>
+  <circle cx="350" cy="210" r="92" fill="#1b2126" stroke="#75c98a" stroke-width="2"/>
+  <circle cx="350" cy="210" r="58" fill="#202a2c" stroke="#75c98a" stroke-width="1.2" opacity=".7"/>
+
+  <g transform="translate(322 158)">
+    <path d="M28 0L54 11V33C54 53 42 67 28 74C14 67 2 53 2 33V11Z" fill="url(#shield)" opacity=".2" stroke="#75c98a" stroke-width="2"/>
+    <path d="M15 35L24 44L42 24" fill="none" stroke="#75c98a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="350" y="256" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#b9c5c5">127.0.0.1</text>
+  <text x="350" y="271" text-anchor="middle" font-family="Consolas, monospace" font-size="9" fill="#7f8d8d">NO EXTERNAL API</text>
+
+  <g font-family="Consolas, monospace" font-size="9">
+    <text x="30" y="140" fill="#75c98a">✓ READ-ONLY GAME FILES</text>
+    <text x="30" y="160" fill="#75c98a">✓ LOOPBACK SERVER</text>
+    <text x="30" y="180" fill="#75c98a">✓ SHA-256 MANIFEST</text>
+    <text x="30" y="200" fill="#75c98a">✓ NO GAME PROCESS</text>
+    <text x="30" y="220" fill="#75c98a">✓ NO TELEMETRY</text>
+    <text x="30" y="240" fill="#75c98a">✓ NO ADMIN RIGHTS</text>
+  </g>
+
+  <g>
+    <rect x="458" y="292" width="152" height="40" rx="3" fill="#1a1f24" stroke="#3e4952"/>
+    <text x="472" y="309" font-family="Consolas, monospace" font-size="9" fill="#9da7af">INPUT</text>
+    <text x="472" y="322" font-family="Consolas, monospace" font-size="9" fill="#f2f4f6">CS2 install → artifacts/</text>
+  </g>
+  <text x="610" y="340" text-anchor="end" font-family="Consolas, monospace" font-size="9" fill="#707b83">CS2MB · ILLUSTRATIVE DIAGRAM</text>
+</svg>

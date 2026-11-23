@@ -39,7 +39,7 @@ clearance и видимости.
 
 ## ADR-003. Не писать полный парсер Source 2
 
-**Статус:** accepted.
+**Статус:** superseded by ADR-018 (2026-11-23). Историческое решение сохранено.
 
 **Контекст:** Source 2 resource formats сложны; VRF уже покрывает VPK,
 vmap/vmdl/vents/PHYS, glTF.
@@ -56,7 +56,8 @@ vmap/vmdl/vents/PHYS, glTF.
 
 ## ADR-004. Python + stdlib для исследования, Source2Viewer — внешний импорт
 
-**Статус:** accepted.
+**Статус:** superseded by ADR-018 (2026-11-23). Python + stdlib остаётся для
+анализа; внешний Source2Viewer больше не является runtime-зависимостью.
 
 **Контекст:** нужна быстрая итерация; nav-граф мал (2–4 тыс. узлов).
 
@@ -224,7 +225,7 @@ Dust2 тоже содержит stacked-области (7/561 sampled, max 2 ban
 
 ## ADR-014. Source2Viewer CLI 20.1 и 3D
 
-**Статус:** accepted.
+**Статус:** superseded by ADR-018 (2026-11-23). Историческое решение сохранено.
 
 **Контекст:** для collision нужен PHYS → glTF; Source2Viewer CLI — проверенный
 путь. 3D-визуализация полезна, но не приоритет.
@@ -291,3 +292,115 @@ steady-state через `cl_showpos`; сохранить
 - измерения одиночные, нужна повторная серия по demo ticks;
 - time применим только к прямой; повороты/лестницы/рампы ещё не учтены;
 - нельзя использовать фиксированные 85 для crouch всех оружий.
+
+## ADR-018. First-party internal Source 2 engine instead of a runtime CLI
+
+**Статус:** accepted (2026-11-23). Supersedes ADR-003, ADR-004 and ADR-014.
+
+**Контекст:** automatic map processing required Source2Viewer-CLI for PHYS →
+glTF and `resourceinfo.exe` for the entity dump. Both are external runtime
+utilities; a fresh installation could not process a map without them.
+
+**Решение:** build a first-party `cs2mb-source2` component from `source2/`.
+It links the pinned MIT ValveResourceFormat 20.1.7467 library in-process for
+binary KV3, Zstandard/LZ4, PHYS and EntityLump decoding and exposes a small
+CS2MB-specific command line (`phys`, `entities`, `inspect`, `phys-summary`).
+The Python application reaches it through `tools/source2.py` with argument
+arrays, explicit paths and timeouts. The component is published as a
+self-contained Windows x64 executable; no .NET runtime or external CLI is
+required at runtime.
+
+**Последствия:**
+
+- Source2Viewer-CLI and `resourceinfo.exe` are no longer runtime dependencies;
+- the Python analysis layer remains stdlib-only;
+- the component is a trusted local executable and must be hash-verified;
+- a future Valve resource-format change may require rebuilding the component;
+- upstream MIT attribution and license notices are shipped with the asset.
+
+## ADR-019. Preserve the existing collision and coordinate contract
+
+**Статус:** accepted (2026-11-23).
+
+**Контекст:** the existing collision loader expects glTF accessor positions in
+Hammer units and Source axes, ignores the node matrix, and filters primitives by
+material/InteractAs. A new exporter could silently double-transform geometry.
+
+**Решение:** emit one primitive per collision-attribute × surface-property
+group; write positions in Hammer units/Source axes (`x`, `y`, `z-up`); apply
+the PHYS bind pose once; omit the legacy render-time `meters/Y-up` node matrix.
+Preserve `InteractAs`, `SurfaceProperty` and `CollisionGroup` metadata and the
+existing material naming semantics.
+
+**Последствия:**
+
+- `tools/gltf_collision.py` and all downstream algorithms remain unchanged;
+- the historical Dust2 totals are reproduced exactly (39 primitives,
+  1,306,947 exported vertices, 435,649 triangles);
+- floor agreement remains 98.77% at the historical tolerance;
+- the converter must be revalidated if the coordinate contract changes.
+
+## ADR-020. Keep the entity dump text contract
+
+**Статус:** accepted (2026-11-23).
+
+**Контекст:** the project already has a line-oriented entity-dump parser used by
+navigation, spawn and callout logic. Replacing it with a new JSON contract would
+expand the change surface and risk behavioural drift.
+
+**Решение:** `cs2mb-source2 entities` emits the existing text shape with
+`key = value`, quoted strings, array values and the classname/targetname/
+place_name/origin keys ordered first. All entity properties and connections are
+preserved, not only the currently displayed fields.
+
+**Последствия:**
+
+- existing `parse_entity_points` and auto-generation consumers stay unchanged;
+- Dust2 entity output matches the local `resourceinfo` dump semantically
+  (415 entities, 15 T/15 CT spawns, 43 callouts, identical origins);
+- the text contract is a compatibility boundary and needs golden tests.
+
+## ADR-021. Bounded tessellation for curved collision primitives
+
+**Статус:** accepted (2026-11-23; revised after nine-map validation).
+
+**Контекст:** the first implementation rejected spheres and capsules to avoid
+silent geometry loss. Nine-map validation showed that `de_anubis` (52 capsules)
+and `de_overpass` (13 spheres, 524 capsules) use them, so rejection made two
+supported maps unprocessable.
+
+**Решение:** tessellate sphere and capsule primitives with bounded, deterministic
+ring counts (16 radial segments; 10 sphere rings; 5 hemisphere rings per capsule
+end), transform the generated points once by the part bind pose, skip degenerate
+triangles, and keep mesh/convex-hull geometry exact. Invalid centers/radii are
+reported as controlled errors. Curved surfaces are analysis approximations, not
+exact analytic collision.
+
+**Последствия:**
+
+- all nine active-duty maps process successfully;
+- curved primitives add triangles but no silent loss of collision shapes;
+- the approximation is documented in setup, architecture and security docs;
+- future work may replace tessellation with exact distance queries if the
+  collision layer needs them.
+
+## ADR-022. Component distribution and provenance
+
+**Статус:** accepted (2026-11-23).
+
+**Контекст:** the component is a binary and must not be committed to Git or
+downloaded automatically at map-processing time.
+
+**Решение:** publish a versioned `cs2mb-source2-win-x64.zip` release asset with
+the executable, MIT license and third-party notices, plus `SHA256SUMS.txt`.
+Users install it into `tools/bin/source2/` or set `CS2MB_SOURCE2`. The
+preparation manifest records the engine path, version and SHA-256. Normal
+processing is offline; the application does not fetch updates.
+
+**Последствия:**
+
+- the binary stays out of Git;
+- installation requires one explicit download from the CS2MB release page;
+- users can reproduce the build with `source2/build.ps1` and the pinned SDK and
+  package versions;
+- a stale override fails loudly instead of falling back silently.

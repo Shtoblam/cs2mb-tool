@@ -3,56 +3,56 @@
 </p>
 
 <p align="center">
-  <img src="docs/assets/banner.svg" alt="CS2 Map Balance — map intake, navigation routes, collision checks and comparison" width="100%">
+  <img src="docs/assets/logo.svg" width="92" alt="CS2 Map Balance logo">
+</p>
+
+<p align="center">
+  <img src="docs/assets/banner.svg" alt="CS2 Map Balance — Source 2 geometry, navigation and route analysis" width="100%">
 </p>
 
 <h1 align="center">CS2 Map Balance</h1>
 
 <p align="center">
-  A local, read-only research tool for Counter-Strike 2 map geometry, navigation,
-  collision, route timing and reproducible map comparison.
+  A local, read-only engineering tool for Counter-Strike 2 map geometry,
+  navigation, collision, route timing and reproducible map comparison.
 </p>
 
 <p align="center">
-  <a href="https://github.com/Shtoblam/cs2mb-tool/archive/refs/heads/main.zip"><img alt="Version pre-alpha v1.0" src="https://img.shields.io/badge/release-pre--alpha%20v1.0-ff6b35?style=flat-square"></a>
+  <a href="https://github.com/Shtoblam/cs2mb-tool/archive/refs/heads/main.zip"><img alt="Version pre-alpha v1.0" src="https://img.shields.io/badge/release-pre--alpha%20v1.0-e45468?style=flat-square"></a>
   <img alt="Python 3.13" src="https://img.shields.io/badge/python-3.13-3776AB?style=flat-square&logo=python&logoColor=white">
-  <a href="https://github.com/Shtoblam/cs2mb-tool/actions/workflows/tests.yml"><img alt="Tests and security checks" src="https://github.com/Shtoblam/cs2mb-tool/actions/workflows/tests.yml/badge.svg?branch=main"></a>
-  <img alt="Local only, no telemetry" src="https://img.shields.io/badge/local--only-no%20telemetry-62c6dd?style=flat-square">
-  <a href="docs/SECURITY.md"><img alt="No game process or memory access" src="https://img.shields.io/badge/audit-no%20game%20process-75c98a?style=flat-square"></a>
+  <a href="https://github.com/Shtoblam/cs2mb-tool/actions/workflows/tests.yml"><img alt="Tests, engine build and security checks" src="https://github.com/Shtoblam/cs2mb-tool/actions/workflows/tests.yml/badge.svg?branch=main"></a>
+  <img alt="Internal Source 2 engine" src="https://img.shields.io/badge/engine-internal%20Source%202-79b6d1?style=flat-square">
+  <img alt="Local only, no telemetry" src="https://img.shields.io/badge/local--only-no%20telemetry-75c98a?style=flat-square">
 </p>
 
 <p align="center">
   <a href="https://shtoblam.github.io/cs2mb-tool/"><strong>Project website ↗</strong></a> ·
+  <a href="https://github.com/Shtoblam/cs2mb-tool/releases/latest"><strong>Engine release ↗</strong></a> ·
   <a href="https://github.com/Shtoblam/cs2mb-tool">GitHub repository ↗</a> ·
-  <a href="https://github.com/Shtoblam/cs2mb-tool/archive/refs/heads/main.zip">Latest source ZIP</a> ·
   <a href="README.ru.md">Русская версия</a>
 </p>
 
-<p align="center">
-  <a href="https://shtoblam.github.io/cs2mb-tool/"><img src="docs/assets/site-overview.png" alt="CS2 Map Balance project website overview" width="100%"></a>
-</p>
-
 > [!WARNING]
-> **The current CT/T indicator is a preliminary route-time signal, not a competitive balance verdict.**
+> **The CT/T indicator is a preliminary route-time signal, not a competitive balance verdict.**
 > It compares estimated travel time along navigation routes from spawns to common targets. It does
 > **not** simulate enemy encounters, firefights, utility, line of sight, player decisions, rotations
 > under pressure or round outcomes. A value such as `CT +8.9s` is a reason to investigate, not proof
 > that a map is CT-sided or a prediction of win rate.
 
-## What this project is
+## About CS2MB
 
-CS2 Map Balance turns read-only Counter-Strike 2 map resources into validated,
+CS2 Map Balance turns read-only Counter-Strike 2 resources into validated,
 inspectable data and uses that data for route, movement and comparison analysis.
+It is intentionally **not** a map viewer, a shortest-path demo or a competitive
+predictor.
 
-It is intentionally **not merely** a map viewer, a shortest-path demo or a
-competitive predictor. The project separates seven layers that must not be treated as
-interchangeable:
+The project separates seven layers that must not be treated as interchangeable:
 
 | Layer | What the project uses |
 |---|---|
 | Visual | Render assets, optional reference only |
 | Geometric | Coordinates, polygons and triangles |
-| Collision | `world_physics` glTF, floors, walls, clearance |
+| Collision | `world_physics` geometry, floors, walls, clearance |
 | Navigation | Directed nav areas, connections, one-way links, components |
 | Movement | Measured speeds and a calibrated straight-line model |
 | Scenarios | Spawn-to-target rush and split time envelopes |
@@ -62,32 +62,89 @@ Every result should be read with the layer that produced it in mind. See
 [docs/PROJECT.md](docs/PROJECT.md) for definitions and
 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full architecture.
 
-## Current capabilities
+## What makes it different
 
-- Read-only VPK, NAV and entity extraction from a local CS2 installation.
-- Browser upload/drop of `.nav`, entity `.txt`, physics `.gltf` and `.bin` files.
-- Directed navigation graph with one-way links, components and z-aware lookup.
-- Generated self-contained viewer with representative and all spawn-to-target routes.
-- Collision floor, wall and clearance reports.
-- `AK a-b s` route-time range, vertical-transition and `J+` jump-budget indicators.
-- Local map library with a preliminary CT/T route-time indicator and side-by-side comparison.
-- `manifest.json` with SHA-256 input and glTF sidecar hashes.
-- Loopback-only local server with upload limits, path allow-listing, origin checks and job timeout.
+### Source 2 resources decoded internally
+
+The automatic pipeline no longer requires Source2Viewer-CLI or
+`resourceinfo.exe`. The first-party **cs2mb-source2** component reads the
+compiled PHYS and EntityLump resources directly and emits the existing CS2MB
+contracts.
 
 <p align="center">
-  <img src="docs/assets/pipeline.svg" alt="Local pipeline: CS2 map files, validation, viewer and library; no game process and no network" width="100%">
+  <img src="docs/assets/engine.svg" alt="Internal Source 2 engine: map VPK, cs2mb-source2, stable contracts and existing analysis" width="100%">
 </p>
 
-## How the pipeline works
+- `world_physics.vmdl_c` → PHYS → glTF + `.bin`
+- `default_ents.vents_c` → EntityLump → entity text
+- binary KV3, Zstandard and LZ4 decoding from the pinned MIT
+  ValveResourceFormat library
+- self-contained Windows x64 component; no .NET runtime for the user
+- engine path, version and SHA-256 recorded in the preparation manifest
+
+### Navigation and collision are separate evidence
+
+<p align="center">
+  <img src="docs/assets/navmesh.svg" alt="Navigation mesh with directed edges, one-way links and z-aware lookup" width="49%">
+  <img src="docs/assets/collision.svg" alt="Physics collision triangles, surface metadata and player clearance" width="49%">
+</p>
+
+- Navigation is directed where the source requires it; one-way links,
+  disconnected components, ladders and vertical relationships are preserved.
+- Collision comes from `world_physics`, not from render geometry.
+- A route can be valid in NAV and blocked by collision; that is reported as a
+  diagnostic, not ignored.
+- Floor, wall and clearance checks use the existing collision loader and
+  Hammer-unit/Source-axis contract.
+
+### Local by design
+
+<p align="center">
+  <img src="docs/assets/local.svg" alt="Local read-only boundary: no game process, no telemetry, loopback server" width="72%">
+</p>
+
+- the server binds `127.0.0.1` by default;
+- the game installation is opened read-only;
+- no game process, memory access, injection, gameplay automation or VAC
+  interaction;
+- no telemetry, external uploads or runtime internet dependency;
+- prepared inputs and outputs carry SHA-256 provenance.
+
+## Current capabilities
+
+- Read-only VPK, NAV, EntityLump and PHYS extraction from a local CS2 install.
+- Internal Source 2 engine for compiled entity and physics resources.
+- Browser upload/drop of `.nav`, entity `.txt`, physics `.gltf` and `.bin`.
+- Directed navigation graph with one-way links, components and z-aware lookup.
+- Generated self-contained viewer with representative and all spawn-to-target
+  routes.
+- Collision floor, wall and clearance reports.
+- `AK a-b s` route-time range, vertical-transition and `J+` jump-budget
+  indicators.
+- Local map library with a preliminary CT/T route-time indicator and
+  side-by-side comparison.
+- `manifest.json` with SHA-256 input, output and engine hashes.
+- Loopback-only server with upload limits, path allow-listing, origin checks and
+  job timeout.
+
+## Pipeline
+
+<p align="center">
+  <img src="docs/assets/pipeline.svg" alt="Local pipeline: CS2 install, internal engine, contracts, analysis, viewer and library" width="100%">
+</p>
 
 ```text
 CS2 installation (read-only)
-  map VPK -> nav / entities / world_physics.vmdl_c
-          -> resourceinfo.exe (entity dump)
-          -> Source2Viewer-CLI (physics glTF + .bin)
-          -> local validation (nav, floor, wall, clearance)
-          -> viewer + summary + SHA-256 manifest
-          -> local map library / comparison
+  map VPK
+    ├─ <map>.nav              -> existing Python NAV parser
+    ├─ default_ents.vents_c   -> cs2mb-source2 entities -> entity dump
+    └─ world_physics.vmdl_c   -> cs2mb-source2 phys     -> glTF + .bin
+                                     |
+                                     v
+                    existing NAV / collision / movement analysis
+                                     |
+                                     v
+                    viewer + summary + SHA-256 manifest + library
 ```
 
 The same pipeline is available from the local web app and from the command line
@@ -95,22 +152,75 @@ The same pipeline is available from the local web app and from the command line
 it does not silently re-read game files. Visualization never changes analytical
 results.
 
-## Implementation status
+## Installation
 
-| Area | Status |
-|---|---|
-| Map intake, NAV parsing, entities, viewer, map library | Implemented and exercised on nine maps |
-| Collision floor/wall/clearance diagnostics | Implemented; several anomaly classes remain under triage |
-| Straight-line movement model and route-time range | Implemented from single-run in-game measurements; not demo-tick calibrated |
-| Rush and split time envelopes | Implemented as time-only scenarios; no blocking or encounters |
-| Line of sight, detection and encounter timing | Not implemented (Release 2.2) |
-| Combat, utility, economy and win-rate prediction | Not implemented; deliberately deferred |
-| Full 3D visualization | Not implemented; the viewer is 2.5D/SVG |
-| Internal Entity/PHYS parsers | Research (Release 3.0); external tools remain in the main path |
+Requirements: **Windows 10/11 x64**, **Python 3.13 x64**, and the internal engine
+asset. No `pip install`, .NET runtime, Source2Viewer-CLI or `resourceinfo.exe` is
+required. CS2 is optional for the upload path.
 
-The current application version is [`pre-alpha v1.0`](VERSION). This is a
-fresh repository baseline under the `cs2mb-tool` name; the historical release
-notes remain in [docs/releases/](docs/releases/) as project history.
+```powershell
+git clone https://github.com/Shtoblam/cs2mb-tool.git
+cd cs2mb-tool
+
+# Download cs2mb-source2-win-x64.zip from the release page and extract:
+# tools\bin\source2\cs2mb-source2.exe
+
+py -3.13 tools\source2.py --status
+py -3.13 app\server.py --port 8765
+```
+
+Open <http://127.0.0.1:8765/>. Keep the server on loopback.
+
+For full installation and troubleshooting, read
+**[docs/SETUP.md](docs/SETUP.md)**. For manual file preparation, read
+**[docs/GETTING_FILES.md](docs/GETTING_FILES.md)**.
+
+<p align="center">
+  <img src="docs/assets/app-tutorial.png" alt="Actual first-run setup tutorial in the local CS2 Map Balance application" width="92%">
+</p>
+
+<p align="center"><sub>Actual application screenshot: the first-run setup guide.</sub></p>
+
+### Build the engine from source (optional)
+
+Normal users do not need this. Building requires the .NET SDK 10.0.x.
+
+```powershell
+source2\build.ps1
+source2\build.ps1 -Install
+```
+
+The build is pinned by `source2/global.json`, the package version in
+`source2/Cs2mb.Source2/Cs2mb.Source2.csproj` and `packages.lock.json`. See
+[source2/README.md](source2/README.md) and
+[source2/THIRD_PARTY_NOTICES.md](source2/THIRD_PARTY_NOTICES.md).
+
+## Current validation
+
+Reference environment: CS2 build `2000948` (2026-11-19), Windows x64,
+Python 3.13.3, `cs2mb-source2 1.0.0`, ValveResourceFormat `20.1.7467`.
+
+| Map | NAV areas | Collision primitives | Triangles | Floor agreement |
+|---|---:|---:|---:|---:|
+| de_dust2 | 2242 | 39 | 435,649 | 98.77% |
+| de_mirage | 2544 | 41 | 133,133 | 99.06% |
+| de_nuke | 3040 | 32 | 191,628 | 99.27% |
+| de_inferno | 2739 | 52 | 2,733,610 | 99.54% |
+| de_ancient | 1969 | 15 | 967,778 | 98.73% |
+| de_train | 2154 | 40 | 1,574,220 | 99.39% |
+| de_vertigo | 2105 | 37 | 210,596 | 99.45% |
+| de_anubis | 2633 | 34 | 715,842 | 97.34% |
+| de_overpass | 3938 | 36 | 884,775 | 97.71% |
+
+Entity output matches the local `resourceinfo` reference semantically for all
+nine maps: identical entity counts, class distributions and origins (one Inferno
+spawn differs by 0.01 units from text rounding). Dust2 still reproduces the
+historical collision totals exactly: 39 primitives, 1,306,947 exported vertices
+and 435,649 triangles.
+
+The values are local integration evidence, not a claim that every future CS2
+build is covered. See [docs/VALIDATION.md](docs/VALIDATION.md) for methodology
+and [docs/STATE.md](docs/STATE.md) for the current evidence record.
 
 ## Important limitations
 
@@ -118,59 +228,14 @@ notes remain in [docs/releases/](docs/releases/) as project history.
 - Route distance is not travel time, and travel time is not match balance.
 - The movement model covers straight-line ground motion only; turning, stairs,
   ramps, landing, ladders and air movement are not calibrated.
-- Collision extraction may miss static props, dynamic doors and breakables.
+- Collision extraction follows the physics resource; it does not simulate
+  dynamic doors, breakables or every gameplay entity.
+- Sphere and capsule collision is tessellated for analysis, not an exact
+  analytic surface.
 - The route-time indicator has no confidence interval, encounter model or
   win-rate meaning.
-- The nine-map table below is historical evidence from the recorded alpha batch,
-  not a fresh validation of every resource on the current game build.
-
-## Quick start
-
-Requirements: **Windows 10/11 x64**, **Python 3.13 x64**, no `pip install` step.
-CS2 is optional for the upload path; Source2Viewer-CLI is optional if you already
-have a physics glTF + `.bin`.
-
-```powershell
-git clone https://github.com/Shtoblam/cs2mb-tool.git
-cd cs2mb-tool
-py -3.13 app\server.py --port 8765
-```
-
-Open <http://127.0.0.1:8765/>. Keep the server on loopback.
-
-For the complete installation, Source2Viewer-CLI setup and troubleshooting guide,
-read **[docs/SETUP.md](docs/SETUP.md)**. To extract map files manually, read
-**[docs/GETTING_FILES.md](docs/GETTING_FILES.md)**.
-
-<p align="center">
-  <img src="docs/assets/app-tutorial.png" alt="First-run setup tutorial in the local CS2 Map Balance application" width="92%">
-</p>
-
-## Tested map batch
-
-These values were recorded during the alpha batch on CS2 build `25966348`
-(October 2026). They are preserved as historical evidence; they are not a claim
-that every map resource has been revalidated on the current build.
-
-| Map | Areas | Edges | Floor | Wall flags | Routes | Route-time indicator* |
-|---|---:|---:|---:|---:|---:|---|
-| de_dust2 | 2242 | 6275 | 98.77% | 2/6091 | 90 | CT +8.9s |
-| de_nuke | 3040 | 7676 | 99.27% | 0/7334 | 80 | CT +5.2s |
-| de_train | 2154 | 5454 | 99.39% | 30/5229 | 56 | CT +10.5s |
-| de_vertigo | 2105 | 5321 | 99.45% | 4/5131 | 60 | CT +7.0s |
-| de_mirage | 2544 | 6381 | 99.06% | 4/6069 | 99 | CT +6.4s |
-| de_inferno | 2738 | 7068 | 99.54% | 2/6922 | 120 | CT +8.0s |
-| de_ancient | 1969 | 5085 | 98.73% | 0/5009 | 72 | CT +8.5s |
-| de_anubis | 2633 | 6877 | 97.34% | 2/6750 | 96 | CT +7.3s |
-| de_overpass | 3938 | 10016 | 97.71% | 0/9859 | 88 | CT +14.0s |
-
-`*` Time-only heuristic based on median low route estimates across common
-targets. Positive CT means only that the estimated CT approach is faster under
-the current assumptions. It is **not** proof of a side advantage.
-
-Full clearance was exercised on Dust2 and Nuke; the other maps in the batch used
-`Skip clearance`. See [docs/MAP_DATA.md](docs/MAP_DATA.md) and
-[docs/VALIDATION.md](docs/VALIDATION.md) for methodology and anomaly notes.
+- Full clearance was exercised on Dust2 and Nuke; other maps used
+  `Skip clearance` in the recorded batch.
 
 ## Security and privacy
 
@@ -183,6 +248,7 @@ contact game servers or anti-cheat, or send telemetry.
 - POST requests have an origin guard; jobs have a timeout.
 - The generated viewer is self-contained and is served with a restrictive CSP.
 - The intake UI sends a CSP response header and matching meta policy, with framing and MIME protections.
+- The engine is a trusted local binary; its SHA-256 is recorded per preparation.
 - Generated map data, uploads and extracted resources stay out of Git.
 
 <p align="center">
@@ -191,7 +257,26 @@ contact game servers or anti-cheat, or send telemetry.
 
 Read the full model in [docs/SECURITY.md](docs/SECURITY.md) (also available in
 Russian: [docs/SECURITY.ru.md](docs/SECURITY.ru.md)). No tool can promise Valve's
-future policy; these statements describe this code and its documented dependencies.
+future policy; these statements describe this code and its documented
+dependencies.
+
+## Architecture
+
+| Component | Responsibility |
+|---|---|
+| `tools/vpk_read.py` | read-only VPK listing and extraction |
+| `tools/prepare_map.py` | map VPK intake and engine orchestration |
+| `tools/source2.py` | engine resolution, argument arrays, timeouts, status |
+| `source2/` | first-party PHYS and EntityLump converter |
+| `tools/nav_inspect.py` | NAV parsing and graph summary |
+| `tools/gltf_collision.py` | collision loading, floor/wall/clearance queries |
+| `movement/` | speed profile and route-time model |
+| `simulation/` | rush/split time envelopes and balance comparison |
+| `prototype/dust2_viewer.py` | self-contained viewer generation |
+| `app/server.py` | local intake UI, uploads, jobs, library |
+
+The Python analysis layer remains standard-library only. The engine is the only
+packaged binary component and is isolated behind `tools/source2.py`.
 
 ## Documentation
 
@@ -199,24 +284,22 @@ The complete documentation index is **[docs/README.md](docs/README.md)**.
 
 - [Setup and troubleshooting](docs/SETUP.md) · [Настройка](docs/SETUP.ru.md)
 - [Getting map files](docs/GETTING_FILES.md) · [Получение файлов](docs/GETTING_FILES.ru.md)
-- [Architecture](docs/ARCHITECTURE.md) (Russian)
-- [Project definitions and limits](docs/PROJECT.md) (Russian)
-- [Movement measurements](docs/MOVEMENT.md) (Russian)
-- [Validation methodology](docs/VALIDATION.md) (Russian)
+- [Internal engine](source2/README.md)
+- [Architecture](docs/ARCHITECTURE.md)
+- [Decisions](docs/DECISIONS.md)
+- [Research](docs/RESEARCH.md)
+- [Validation](docs/VALIDATION.md)
 - [Security](docs/SECURITY.md) · [Безопасность](docs/SECURITY.ru.md)
-- [Roadmap](docs/ROADMAP.md) (Russian)
+- [Roadmap](docs/ROADMAP.md)
 - [Current project state](docs/STATE.md)
 - [Release notes](docs/RELEASE.md) and [release archive](docs/releases/)
 - [Changelog](CHANGELOG.md)
 
 > **Repository vs published website:** links in this README point to files in the
-> GitHub repository. The enabled static-site workflow publishes only a subset of
-> those files, so some documentation links open on GitHub but not on the Pages
-> copy.
+> GitHub repository. The static-site workflow publishes only a subset of those
+> files, so some documentation links open on GitHub but not on the Pages copy.
 
 ## Development and testing
-
-The runtime uses the Python standard library. There is no `pip install` step.
 
 ```powershell
 py -3.13 -m unittest discover -s tests -v
@@ -224,25 +307,26 @@ py -3.13 tools\security_scan.py
 py -3.13 -m compileall -q app tools movement simulation prototype
 ```
 
-The current suite contains **56 unit tests** at this repository revision. CI
-runs compilation, the unit suite and the repository hygiene scan on every push.
-The Pages workflow builds the
-static project site from website files only; deployment requires a one-time
-owner-side Pages enablement. Tests are synthetic and unit-level: passing them is
-not proof that geometry, collision, navigation or movement are correct in game.
-See [docs/VALIDATION.md](docs/VALIDATION.md).
+The current suite is **76 tests discovered / 75 executed / 1 real-map test
+gated** by `CS2MB_TEST_GAME`. CI runs the Python suite, the engine build and
+engine-backed tests on Windows. Tests are synthetic and unit-level: passing them
+is not proof that geometry, collision, navigation or movement are correct in
+game. See [docs/VALIDATION.md](docs/VALIDATION.md).
 
 ## Roadmap
 
-- **pre-alpha v1.0** — clean repository baseline, map auto-extraction, uploaded files, route-time indicator, comparison.
+- **pre-alpha v1.0** — clean repository baseline, internal Source 2 engine,
+  map auto-extraction, uploaded files, route-time indicator, comparison.
 - **2.2** — line of sight, detection and encounter timing.
 - **2.3** — encounter/combat model only after demo calibration.
-- **3.0 research** — internal Entity/PHYS parsers with golden comparison and fallback.
+- **3.0 research** — broader resource-format coverage and golden comparison
+  across future CS2 builds.
 
 Priorities and dependencies are maintained in [docs/ROADMAP.md](docs/ROADMAP.md).
 
 ## License and independence
 
 MIT. See [LICENSE](LICENSE). This project is not affiliated with Valve.
-Extracted game resources remain Valve property and must not be committed or
-redistributed.
+ValveResourceFormat is an MIT-licensed community library, not a Valve product or
+an official CS2 SDK. Extracted game resources remain Valve property and must not
+be committed or redistributed.

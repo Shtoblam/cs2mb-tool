@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">CS2MB favicon</title>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#cf2c40"/><stop offset="1" stop-color="#4b0922"/></linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="13" fill="url(#bg)"/>
+  <path d="M15 46V22L32 12L50 22V46L32 55Z" fill="none" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M10 53L26 40L36 44L55 25" fill="none" stroke="#ff9a6b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <g fill="#fff"><circle cx="26" cy="40" r="3"/><circle cx="55" cy="25" r="3"/></g>
+</svg>

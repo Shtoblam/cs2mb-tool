@@ -24,9 +24,11 @@
 
 ## Проверка
 
-Текущая проверка включает 56 unit tests, компиляцию Python, repository hygiene
-scan, проверку Markdown-ссылок/якорей/блоков и целостности assets. См.
-[STATE.md](STATE.md).
+Текущая проверка включает 76 tests discovered (75 executed, 1 real-map test
+gated), компиляцию Python, repository hygiene scan, проверку
+Markdown-ссылок/якорей/блоков, целостность assets, сборку engine на Windows и
+локальную интеграционную валидацию девяти карт. См. [STATE.md](STATE.md) и
+[VALIDATION.md](VALIDATION.md).
 
 ## Исторические release notes
 

@@ -1,3 +1,42 @@
+## Internal Source 2 engine — 2026-11-23
+
+- Added the first-party `cs2mb-source2` component under `source2/`. It links
+  ValveResourceFormat `20.1.7467` in-process for binary KV3, Zstandard/LZ4,
+  PHYS and EntityLump decoding and exposes `phys`, `entities`, `inspect` and
+  `phys-summary` commands. It is not a renamed or wrapped Source2Viewer-CLI.
+- `tools/prepare_map.py` now extracts the three map resources and calls the
+  internal engine. Runtime resolution of `S2V_CLI`, `--s2v-cli`,
+  `tools/bin/Source2Viewer-CLI.exe` and `resourceinfo.exe` was removed.
+  `app/server.py` reports `source2_ready`/`source2_version` and requires the
+  packaged engine instead of an external CLI.
+- Added `tools/source2.py` with explicit-path/`CS2MB_SOURCE2` priority, argument
+  arrays, timeouts and SHA-256 status. A stale override fails loudly.
+- The preparation manifest now records input/output hashes plus engine path,
+  version and SHA-256.
+- Collision output keeps Hammer units/Source axes and omits the legacy node
+  matrix. Existing `gltf_collision.py`, routing, movement, simulation and
+  balance code was not changed.
+- Entity output keeps the existing line-oriented text contract and all entity
+  properties/connections.
+- Sphere and capsule primitives are tessellated with bounded ring counts so all
+  nine active-duty maps process; mesh and convex-hull geometry stays exact.
+- Current local validation: CS2 build `2000948` (2026-11-19), nine maps,
+  97.34–99.54% floor agreement, Dust2 historical totals reproduced exactly
+  (39 primitives, 1,306,947 exported vertices, 435,649 triangles). Entity counts
+  and class distributions match the local `resourceinfo` dump for all nine maps.
+- Current suite: **76 tests discovered / 75 executed / 1 skipped** (real-map
+  test gated by `CS2MB_TEST_GAME` when run without a game); Python compilation
+  and security scan pass. CI builds the engine and runs engine-backed tests on
+  Windows.
+- Current engine artifact: self-contained Windows x64, about 17.7 MB;
+  SHA-256 `f61a83401de1a09d4dc905d4a832dfc0a4e16e737a097767c1dcc8574a97adca`
+  for the curved-primitive build. The binary is ignored by Git and is intended
+  for a release asset with checksums and third-party notices.
+- Remaining work: publish the engine release asset, finish README/site/logo and
+  social-preview presentation, then record final commit/push evidence.
+
+---
+
 ## pre-alpha v1.0 repository baseline — 2026-11-23
 
 - Fresh `cs2mb-tool` repository baseline created from the sanitized project tree.

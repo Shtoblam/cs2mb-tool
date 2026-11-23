@@ -16,7 +16,7 @@ world_physics_physics.bin
 
 Если не хочется запускать команды вручную:
 
-1. Положить `Source2Viewer-CLI.exe` в `tools/bin/` или задать `S2V_CLI`.
+1. Установить `cs2mb-source2.exe` в `tools/bin/source2/` или задать `CS2MB_SOURCE2`.
 2. Запустить приложение.
 3. Указать `CS2 game folder` и map name.
 4. Нажать **Prepare + Generate**.
@@ -24,35 +24,24 @@ world_physics_physics.bin
 Приложение выполнит те же шаги внутри. Ручной путь ниже — fallback и для
 диагностики.
 
-## Source2Viewer-CLI
+## Внутренний Source 2 engine
 
-Для авто-генерации скачайте официальный Windows x64 CLI-архив со
-[страницы ValveResourceFormat 20.1](https://github.com/ValveResourceFormat/ValveResourceFormat/releases/tag/20.1):
-
-```text
-cli-windows-x64.zip
-```
-
-Распакуйте **все три файла** в папку проекта:
+Скачайте `cs2mb-source2-win-x64.zip` со
+[страницы релизов CS2MB](https://github.com/Shtoblam/cs2mb-tool/releases/latest)
+и распакуйте self-contained exe:
 
 ```text
-cs2mapbalance\tools\bin\Source2Viewer-CLI.exe
-cs2mapbalance\tools\bin\libSkiaSharp.dll
-cs2mapbalance\tools\bin\spirv-cross.dll
+cs2mb-tool\tools\bin\source2\cs2mb-source2.exe
 ```
 
-Не кладите их в папку игры или Steam. Git их игнорирует. Альтернатива — держать
-их вместе в другом месте и задать `S2V_CLI` на полный путь к exe либо прописать
-`s2v_cli` в `config\paths.local.json`.
-
-Проверка:
+.NET runtime, Source2Viewer-CLI и `resourceinfo.exe` не нужны. Проверка:
 
 ```powershell
-& ".\tools\bin\Source2Viewer-CLI.exe" --help
-Get-FileHash ".\tools\bin\Source2Viewer-CLI.exe" -Algorithm SHA256
+& ".\tools\bin\source2\cs2mb-source2.exe" --version
+Get-FileHash ".\tools\bin\source2\cs2mb-source2.exe" -Algorithm SHA256
 ```
 
-После перезапуска приложения в intake должно быть `S2V ready`. Полный гайд:
+После перезапуска приложения в intake должно быть `engine ready`. Полный гайд:
 **[SETUP.ru.md](SETUP.ru.md)**.
 
 ## 1. Переменные
@@ -83,24 +72,19 @@ python tools\vpk_read.py "$CS2\game\csgo\maps\$MAP.vpk" `
 ## 4. Entity dump
 
 ```powershell
-& "$CS2\game\bin\win64\resourceinfo.exe" `
-  -game "$CS2\game\csgo" `
-  -i "$TEMP\default_ents.vents_c" -all `
-  > "$TEMP\entities.txt"
+& ".\tools\bin\source2\cs2mb-source2.exe" entities `
+  --input "$TEMP\default_ents.vents_c" `
+  --output "$TEMP\entities.txt"
 ```
 
-PowerShell может записать файл в UTF-16. Приложение принимает UTF-8,
-UTF-8 BOM и UTF-16 LE/BE.
+Файл пишется в UTF-8. Приложение также принимает UTF-8 BOM и UTF-16 LE/BE.
 
 ## 5. Physics glTF
 
 ```powershell
-& "<S2V>\Source2Viewer-CLI.exe" `
-  -i "$TEMP\world_physics.vmdl_c" `
-  -o "$TEMP\world_physics.gltf" `
-  -d --gltf_export_format gltf `
-  --gltf_export_materials `
-  --game "$CS2\game\csgo\gameinfo.gi"
+& ".\tools\bin\source2\cs2mb-source2.exe" phys `
+  --input "$TEMP\world_physics.vmdl_c" `
+  --output "$TEMP\world_physics_physics.gltf"
 ```
 
 Появятся:
@@ -110,8 +94,7 @@ UTF-8 BOM и UTF-16 LE/BE.
 <TEMP>\world_physics_physics.bin
 ```
 
-`.bin` обязателен. Source2Viewer-CLI можно положить в `tools/bin/` или
-указать через `S2V_CLI`.
+Координаты остаются в Hammer units/Source axes. `.bin` обязателен.
 
 ## 6. Загрузка
 

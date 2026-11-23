@@ -29,8 +29,14 @@ from urllib.parse import parse_qs, urlparse
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT / "tools"))
 
 from simulation.balance import time_only_balance  # noqa: E402
+from source2 import (  # noqa: E402
+    Source2Error,
+    resolve_source2,
+    status as source2_status,
+)
 
 APP_DIR = ROOT / "app"
 JOBS_DIR = ROOT / "artifacts" / "auto"
@@ -426,7 +432,7 @@ class Handler(BaseHTTPRequestHandler):
         self,
         map_name: str,
         game: Path,
-        s2v_cli: Path,
+        source2: Path,
         dry_run: bool,
         skip_clearance: bool,
     ) -> str:
@@ -455,8 +461,8 @@ class Handler(BaseHTTPRequestHandler):
             str(out_dir),
             "--generate-out",
             str(out_dir),
-            "--s2v-cli",
-            str(s2v_cli),
+            "--source2",
+            str(source2),
         ]
         if skip_clearance:
             command.append("--skip-clearance")
@@ -498,7 +504,6 @@ class Handler(BaseHTTPRequestHandler):
         required = (
             game / "game" / "csgo" / "maps",
             game / "game" / "csgo" / "gameinfo.gi",
-            game / "game" / "bin" / "win64" / "resourceinfo.exe",
             game / "game" / "csgo" / "maps" / f"{map_name}.vpk",
         )
         if not all(path.exists() for path in required):
@@ -507,29 +512,19 @@ class Handler(BaseHTTPRequestHandler):
                 {"error": "invalid CS2 game folder or map name"},
             )
             return
-        cli_value = str(
-            os.environ.get("S2V_CLI") or paths.get("s2v_cli") or ""
-        ).strip()
-        if not cli_value:
-            candidate = ROOT / "tools" / "bin" / "Source2Viewer-CLI.exe"
-            cli_value = str(candidate) if candidate.is_file() else ""
-        if not cli_value or "<" in cli_value:
+        try:
+            converter = resolve_source2()
+        except Source2Error as error:
             self._json(
                 HTTPStatus.BAD_REQUEST,
-                {
-                    "error": "Source2Viewer-CLI not configured; put it in tools/bin or set S2V_CLI"
-                },
+                {"error": str(error)},
             )
-            return
-        cli = Path(cli_value).expanduser().resolve()
-        if not cli.is_file():
-            self._json(HTTPStatus.BAD_REQUEST, {"error": "Source2Viewer-CLI not found"})
             return
 
         job_id = self._start_game_job(
             map_name,
             game,
-            cli,
+            converter,
             dry_run=payload.get("dry_run") is True
             or str(payload.get("dry_run", "")).lower() == "true",
             skip_clearance=payload.get("skip_clearance") is True
@@ -617,16 +612,15 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/api/config":
             paths = load_local_paths()
             game = os.environ.get("CS2_GAME") or paths.get("cs2_game") or ""
-            cli = os.environ.get("S2V_CLI") or paths.get("s2v_cli") or ""
-            if not cli:
-                candidate = ROOT / "tools" / "bin" / "Source2Viewer-CLI.exe"
-                cli = str(candidate) if candidate.is_file() else ""
+            engine = source2_status()
             self._json(
                 HTTPStatus.OK,
                 {
                     "cs2_game": game,
-                    "s2v_cli": cli,
-                    "s2v_ready": bool(cli and Path(cli).is_file()),
+                    "source2": engine.path,
+                    "source2_ready": engine.ready,
+                    "source2_version": engine.version,
+                    "source2_sha256": engine.sha256,
                 },
             )
             return

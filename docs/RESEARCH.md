@@ -4,6 +4,48 @@
 **Окружение:** Windows, Python 3.13.3, Git 2.55.0, 7-Zip 23.01, установленная
 Counter-Strike 2.
 
+## 0A. Internal Source 2 engine research (2026-11-23)
+
+**FACT — upstream library.** ValveResourceFormat `20.1.7467` is MIT-licensed and
+provides in-process readers for compiled Source 2 resources, binary KV3,
+Zstandard/LZ4, PHYS aggregate data and EntityLump. ValvePak `5.0.2.177` and
+ValveKeyValue `0.70.0.499` are part of the same project. The CS2MB component
+links these libraries; it does not launch Source2Viewer-CLI.
+
+**FACT — observed resource layout.** On CS2 build `2000948` (2026-11-19), the
+extracted `world_physics.vmdl_c` has four blocks: PHYS, CTRL, RED2, DATA. The
+PHYS block is binary KV3 version 5 compressed with Zstandard. The
+`default_ents.vents_c` resource has RED2 and DATA blocks; its DATA block is
+binary KV3 version 5 compressed with LZ4. The PHYS block contains one part and
+6 mesh descriptors plus 10,143 convex hull descriptors on Dust2.
+
+**FACT — geometry and entities.** The internal converter emitted 39 primitives,
+1,306,947 exported vertices and 435,649 triangles for Dust2, exactly matching the
+historical Source2Viewer 20.1 reference. Entity output matched the local
+`resourceinfo.exe -all` dump semantically: 415 entities, 15 T / 15 CT spawns, 43
+callouts and identical origins (0.01-unit text rounding on one Inferno spawn).
+
+**TESTED — nine active-duty maps.** de_dust2, de_mirage, de_nuke, de_inferno,
+de_ancient, de_train, de_vertigo, de_anubis and de_overpass were extracted and
+converted. Collision triangle counts ranged from 133,133 to 2,733,610; floor
+agreement with the same NAV ranged from 97.34% to 99.54%, median absolute dz
+3.78–4.0 Hammer units. Sphere/capsule primitives appear on de_anubis (52
+capsules) and de_overpass (13 spheres, 524 capsules); they are tessellated with
+bounded ring counts. See [VALIDATION.md](VALIDATION.md) for the table.
+
+**INFERENCE — architecture choice.** Reimplementing binary KV3 plus Zstandard,
+LZ4, PHYS and EntityLump in Python would duplicate a tested upstream parser
+without improving the analysis model. A small first-party executable that links
+the library in-process is the lower-risk route and keeps the Python analysis
+layer stdlib-only. The component is self-contained, pinned and shipped with MIT
+notices.
+
+**LIMITS.** The validation is tied to the recorded CS2 build and VRF version.
+CI uses synthetic resources, not the game files. Curved primitives are
+tessellated approximations, not exact analytic collision. A future Valve format
+change can require an engine update; the tool must then be revalidated before
+claims are carried forward.
+
 ## 0. Правила доказательности
 
 В документе используются метки:

@@ -1,5 +1,40 @@
 # Changelog
 
+## Unreleased — Internal Source 2 engine (2026-11-23)
+
+### Processing
+
+- Added the first-party `cs2mb-source2` component under `source2/`, linking
+  ValveResourceFormat `20.1.7467` in-process for PHYS and EntityLump decoding.
+- Removed runtime resolution of `S2V_CLI`, `--s2v-cli`,
+  `tools/bin/Source2Viewer-CLI.exe` and `resourceinfo.exe` from
+  `tools/prepare_map.py` and `app/server.py`.
+- Added `tools/source2.py` with explicit-path/`CS2MB_SOURCE2` priority, argument
+  arrays, timeouts and SHA-256 status.
+- Preparation manifests now record input/output hashes and engine
+  path/version/hash.
+- PHYS output preserves Hammer units/Source axes and existing glTF/entity
+  contracts; sphere/capsule primitives are tessellated with bounded ring counts.
+- No movement, routing, collision-analysis or balance algorithms were changed.
+
+### Verification
+
+- Added wrapper, dependency-removal and synthetic malformed/truncated/oversized
+  resource tests; suite is now 76 tests discovered (75 executed, 1 real-map test
+  gated).
+- Validated all nine active-duty maps against CS2 build `2000948`: floor
+  agreement 97.34–99.54%; Dust2 historical totals reproduced exactly.
+- CI now builds the engine on Windows and runs engine-backed tests.
+
+### Presentation and docs
+
+- Setup now installs the internal engine; Source2Viewer-CLI and resourceinfo
+  instructions were removed from the normal workflow.
+- Architecture, decisions, research, validation, state, roadmap, security and
+  changelog documents were updated.
+- README, website, logo and social-preview presentation work follows in the
+  same unreleased change set.
+
 ## pre-alpha v1.0 — 2026-11-23
 
 ### Fresh repository baseline

@@ -1,50 +1,61 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="238" viewBox="0 0 1280 238" role="img" aria-labelledby="title desc">
-  <title id="title">CS2 Map Balance - local pipeline</title>
-  <desc id="desc">Files go through validation into a viewer and a comparison library.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="286" viewBox="0 0 1280 286" role="img" aria-labelledby="title desc">
+  <title id="title">CS2 Map Balance — internal local pipeline</title>
+  <desc id="desc">A read-only CS2 install feeds the internal Source 2 engine, stable contracts and the existing analysis, viewer and library.</desc>
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#171a1d"/><stop offset="1" stop-color="#24292e"/>
-    </linearGradient>
-    <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse">
-      <path d="M 28 0 L 0 0 0 28" fill="none" stroke="#343b42" stroke-width="1"/>
-    </pattern>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#171a1d"/><stop offset="1" stop-color="#24292e"/></linearGradient>
+    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#e45468"/><stop offset="1" stop-color="#8f1732"/></linearGradient>
+    <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse"><path d="M28 0H0V28" fill="none" stroke="#343b42" stroke-width="1"/></pattern>
   </defs>
-  <rect width="1280" height="238" fill="url(#bg)"/>
-  <rect width="1280" height="238" fill="url(#grid)" opacity=".5"/>
-  <text x="48" y="40" font-family="Consolas, monospace" font-size="12" fill="#ff9a6b" letter-spacing="2">LOCAL PIPELINE</text>
-  <g font-family="Segoe UI, sans-serif">
+  <rect width="1280" height="286" fill="url(#bg)"/>
+  <rect width="1280" height="286" fill="url(#grid)" opacity=".45"/>
+  <text x="48" y="40" font-family="Consolas, monospace" font-size="12" fill="#e45468" letter-spacing="2">LOCAL PIPELINE · INTERNAL ENGINE</text>
+  <text x="1232" y="40" text-anchor="end" font-family="Consolas, monospace" font-size="10" fill="#7f8a92">NO EXTERNAL CONVERTER</text>
+
+  <g font-family="Segoe UI, Arial, sans-serif">
     <g>
-      <rect x="48" y="62" width="252" height="126" rx="3" fill="#1d2226" stroke="#3d464e"/>
-      <text x="70" y="92" font-size="18" font-weight="700" fill="#f0f2f4">CS2 files</text>
-      <text x="70" y="120" font-family="Consolas, monospace" font-size="11" fill="#9da6ae">nav · entities · vmdl</text>
-      <text x="70" y="145" font-family="Consolas, monospace" font-size="10" fill="#707980">read-only VPK access</text>
-      <text x="70" y="166" font-family="Consolas, monospace" font-size="10" fill="#ff9a6b">NO GAME PROCESS</text>
+      <rect x="48" y="64" width="214" height="144" rx="3" fill="#1d2226" stroke="#3d464e"/>
+      <text x="66" y="92" font-size="15" font-weight="700" fill="#f0f2f4">CS2 install</text>
+      <text x="66" y="118" font-family="Consolas, monospace" font-size="10" fill="#9da6ae">read-only VPK</text>
+      <text x="66" y="138" font-family="Consolas, monospace" font-size="10" fill="#9da6ae">nav · vents · vmdl</text>
+      <text x="66" y="166" font-family="Consolas, monospace" font-size="9" fill="#75c98a">NO GAME PROCESS</text>
     </g>
     <g>
-      <rect x="342" y="62" width="252" height="126" rx="3" fill="#1d2226" stroke="#3d464e"/>
-      <text x="364" y="92" font-size="18" font-weight="700" fill="#f0f2f4">Validation</text>
-      <text x="364" y="120" font-family="Consolas, monospace" font-size="11" fill="#9da6ae">floor · wall · clearance</text>
-      <text x="364" y="145" font-family="Consolas, monospace" font-size="10" fill="#707980">local geometric checks</text>
-      <text x="364" y="166" font-family="Consolas, monospace" font-size="10" fill="#62c6dd">NO NETWORK</text>
+      <rect x="280" y="64" width="214" height="144" rx="3" fill="#241a20" stroke="#8f1732"/>
+      <rect x="280" y="64" width="5" height="144" fill="url(#brand)"/>
+      <text x="298" y="92" font-size="15" font-weight="700" fill="#fff">cs2mb-source2</text>
+      <text x="298" y="118" font-family="Consolas, monospace" font-size="10" fill="#e9a0ad">EntityLump · PHYS</text>
+      <text x="298" y="138" font-family="Consolas, monospace" font-size="10" fill="#9da6ae">KV3 · zstd · lz4</text>
+      <text x="298" y="166" font-family="Consolas, monospace" font-size="9" fill="#e45468">SELF-CONTAINED</text>
     </g>
     <g>
-      <rect x="636" y="62" width="252" height="126" rx="3" fill="#1d2226" stroke="#3d464e"/>
-      <text x="658" y="92" font-size="18" font-weight="700" fill="#f0f2f4">Viewer + summary</text>
-      <text x="658" y="120" font-family="Consolas, monospace" font-size="11" fill="#9da6ae">routes · manifest</text>
-      <text x="658" y="145" font-family="Consolas, monospace" font-size="10" fill="#707980">self-contained HTML</text>
-      <text x="658" y="166" font-family="Consolas, monospace" font-size="10" fill="#75c98a">NO EXTERNAL JS</text>
+      <rect x="512" y="64" width="214" height="144" rx="3" fill="#1d2226" stroke="#3d464e"/>
+      <text x="530" y="92" font-size="15" font-weight="700" fill="#f0f2f4">Contracts</text>
+      <text x="530" y="118" font-family="Consolas, monospace" font-size="10" fill="#79b6d1">entities.txt</text>
+      <text x="530" y="138" font-family="Consolas, monospace" font-size="10" fill="#79b6d1">glTF + .bin</text>
+      <text x="530" y="166" font-family="Consolas, monospace" font-size="9" fill="#79b6d1">HAMMER UNITS · SOURCE AXES</text>
     </g>
     <g>
-      <rect x="930" y="62" width="302" height="126" rx="3" fill="#1d2226" stroke="#3d464e"/>
-      <text x="952" y="92" font-size="18" font-weight="700" fill="#f0f2f4">Library</text>
-      <text x="952" y="120" font-family="Consolas, monospace" font-size="11" fill="#9da6ae">verdict · compare</text>
-      <text x="952" y="145" font-family="Consolas, monospace" font-size="10" fill="#707980">time-only route balance</text>
-      <text x="952" y="166" font-family="Consolas, monospace" font-size="10" fill="#ffb35c">NO COMBAT / WIN-RATE</text>
+      <rect x="744" y="64" width="214" height="144" rx="3" fill="#1d2226" stroke="#3d464e"/>
+      <text x="762" y="92" font-size="15" font-weight="700" fill="#f0f2f4">Analysis</text>
+      <text x="762" y="118" font-family="Consolas, monospace" font-size="10" fill="#9da6ae">NAV graph · collision</text>
+      <text x="762" y="138" font-family="Consolas, monospace" font-size="10" fill="#9da6ae">routes · timing</text>
+      <text x="762" y="166" font-family="Consolas, monospace" font-size="9" fill="#75c98a">EXISTING MODEL</text>
+    </g>
+    <g>
+      <rect x="976" y="64" width="256" height="144" rx="3" fill="#1d2226" stroke="#3d464e"/>
+      <text x="994" y="92" font-size="15" font-weight="700" fill="#f0f2f4">Viewer + library</text>
+      <text x="994" y="118" font-family="Consolas, monospace" font-size="10" fill="#9da6ae">self-contained HTML</text>
+      <text x="994" y="138" font-family="Consolas, monospace" font-size="10" fill="#9da6ae">manifest · compare</text>
+      <text x="994" y="166" font-family="Consolas, monospace" font-size="9" fill="#ffb35c">NO EXTERNAL JS</text>
     </g>
   </g>
-  <g stroke="#ff6b35" stroke-width="2" fill="none" opacity=".8">
-    <path d="M300 125h40"/><path d="M594 125h40"/><path d="M888 125h40"/>
-    <path d="M336 121l8 4-8 4"/><path d="M630 121l8 4-8 4"/><path d="M924 121l8 4-8 4"/>
+
+  <g stroke="#e45468" stroke-width="2" fill="none" opacity=".85">
+    <path d="M262 136h18"/><path d="M272 131l8 5-8 5"/>
+    <path d="M494 136h18"/><path d="M504 131l8 5-8 5"/>
+    <path d="M726 136h18"/><path d="M736 131l8 5-8 5"/>
+    <path d="M958 136h18"/><path d="M968 131l8 5-8 5"/>
   </g>
-  <text x="1232" y="220" text-anchor="end" font-family="Consolas, monospace" font-size="9" fill="#707980">127.0.0.1 · READ-ONLY · TELEMETRY OFF</text>
+  <text x="48" y="248" font-family="Segoe UI, Arial, sans-serif" font-size="12" fill="#b7bfc6">The Python analysis layer, movement assumptions and balance calculations stay unchanged.</text>
+  <text x="1232" y="270" text-anchor="end" font-family="Consolas, monospace" font-size="9" fill="#707980">LOOPBACK · READ-ONLY · SHA-256 · TELEMETRY OFF</text>
 </svg>

@@ -1,21 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="250" viewBox="0 0 1280 250" role="img" aria-labelledby="title desc">
-  <title id="title">CS2 Map Balance - safety model</title>
-  <desc id="desc">No game process, no memory access, no telemetry and read-only file access.</desc>
+  <title id="title">CS2 Map Balance — safety model</title>
+  <desc id="desc">Local read-only analysis with no game process, no memory access, no telemetry and an internal Source 2 engine.</desc>
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#15191c"/><stop offset="1" stop-color="#232a2f"/>
-    </linearGradient>
-    <linearGradient id="shield" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#75c98a"/><stop offset="1" stop-color="#3e9d5a"/>
-    </linearGradient>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#15191c"/><stop offset="1" stop-color="#232a2f"/></linearGradient>
+    <linearGradient id="shield" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#75c98a"/><stop offset="1" stop-color="#3e9d5a"/></linearGradient>
   </defs>
   <rect width="1280" height="250" fill="url(#bg)"/>
   <rect x="0" y="0" width="6" height="250" fill="#75c98a"/>
   <g transform="translate(48 48)">
-    <path d="M50 0 L92 17 V52 C92 82 72 103 50 112 C28 103 8 82 8 52 V17 Z" fill="url(#shield)" opacity=".18" stroke="#75c98a" stroke-width="2"/>
-    <path d="M30 54 L44 68 L72 38" fill="none" stroke="#75c98a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M50 0L92 17V52C92 82 72 103 50 112C28 103 8 82 8 52V17Z" fill="url(#shield)" opacity=".18" stroke="#75c98a" stroke-width="2"/>
+    <path d="M30 54L44 68L72 38" fill="none" stroke="#75c98a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
   </g>
-  <g font-family="Segoe UI, sans-serif">
+  <g font-family="Segoe UI, Arial, sans-serif">
     <text x="190" y="58" font-size="28" font-weight="700" fill="#f0f2f4">Safety model: local, read-only, no game process</text>
     <text x="190" y="85" font-family="Consolas, monospace" font-size="12" fill="#75c98a" letter-spacing="1">GREEN LIGHT FOR LOCAL ALPHA TESTING</text>
     <g font-family="Consolas, monospace" font-size="11" fill="#d5dade">
@@ -25,12 +21,12 @@
       <text x="190" y="200">✓ GAME FILES OPENED READ-ONLY</text>
     </g>
     <g font-family="Consolas, monospace" font-size="10" fill="#8f99a2">
-      <text x="650" y="125">The app never connects to a game server or VAC.</text>
-      <text x="650" y="150">Source2Viewer-CLI only reads an extracted vmdl file.</text>
-      <text x="650" y="175">resourceinfo.exe is Valve's read-only diagnostic tool.</text>
-      <text x="650" y="200">Everything runs on 127.0.0.1; no account or token.</text>
+      <text x="650" y="125">cs2mb-source2 decodes extracted PHYS and EntityLump in-process.</text>
+      <text x="650" y="150">No Source2Viewer-CLI or resourceinfo runtime is required.</text>
+      <text x="650" y="175">Everything runs on 127.0.0.1; hashes are recorded per job.</text>
+      <text x="650" y="200">Upload mode still works without a CS2 installation.</text>
     </g>
   </g>
   <rect x="650" y="218" width="530" height="1" fill="#3d464e"/>
-  <text x="1232" y="238" text-anchor="end" font-family="Consolas, monospace" font-size="9" fill="#707980">CS2 MAP BALANCE 2.1 · AUDIT 2026-10-20</text>
+  <text x="1232" y="238" text-anchor="end" font-family="Consolas, monospace" font-size="9" fill="#707980">CS2 MAP BALANCE · PRE-ALPHA v1.0 · AUDIT 2026-11-23</text>
 </svg>

@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title id="title">Navigation mesh and directed routes</title>
+  <desc id="desc">Original diagram of nav polygons, directed edges and a z-aware route through stacked areas.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#171a1d"/><stop offset="1" stop-color="#232a30"/></linearGradient>
+    <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="#343d45" stroke-width="1" opacity=".6"/></pattern>
+    <linearGradient id="route" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#ff9a6b"/><stop offset="1" stop-color="#e45468"/></linearGradient>
+  </defs>
+  <rect width="640" height="360" fill="url(#bg)"/>
+  <rect width="640" height="360" fill="url(#grid)"/>
+  <text x="30" y="38" font-family="Consolas, monospace" font-size="11" letter-spacing="2" fill="#79b6d1">NAVIGATION</text>
+  <text x="30" y="65" font-family="Segoe UI, Arial, sans-serif" font-size="21" font-weight="700" fill="#f2f4f6">Directed areas, not a straight line.</text>
+  <text x="30" y="88" font-family="Segoe UI, Arial, sans-serif" font-size="12" fill="#9da7af">Polygons · connections · one-way links · z-levels</text>
+
+  <g fill="#20272d" stroke="#4b565f" stroke-width="1.5" stroke-linejoin="round">
+    <path d="M62 146L126 118L184 142L170 198L104 210Z"/>
+    <path d="M184 142L246 120L312 148L298 204L170 198Z"/>
+    <path d="M312 148L382 132L436 164L420 218L298 204Z"/>
+    <path d="M436 164L512 146L548 190L506 234L420 218Z"/>
+    <path d="M104 210L170 198L188 252L132 278Z"/>
+    <path d="M298 204L420 218L402 276L330 288Z"/>
+  </g>
+  <g fill="none" stroke="#7e8b95" stroke-width="2">
+    <path d="M126 168L184 158"/><path d="M246 168L298 172"/><path d="M382 176L420 184"/><path d="M512 190L536 202"/>
+    <path d="M132 232L170 224"/><path d="M330 240L402 244"/>
+  </g>
+  <g fill="#e45468">
+    <path d="M184 158l-9-4v8z"/><path d="M298 172l-9-4v8z"/><path d="M420 184l-9-4v8z"/><path d="M536 202l-9-4v8z"/>
+  </g>
+  <g fill="#79b6d1">
+    <path d="M170 224l-9-4v8z"/><path d="M402 244l-9-4v8z"/>
+  </g>
+  <path d="M90 180L150 162L236 174L282 190L342 208L410 232L470 218L520 198" fill="none" stroke="url(#route)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <g fill="#fff"><circle cx="90" cy="180" r="5"/><circle cx="520" cy="198" r="5"/></g>
+  <g fill="#e45468"><circle cx="282" cy="190" r="4"/><circle cx="410" cy="232" r="4"/></g>
+
+  <g>
+    <rect x="430" y="56" width="178" height="78" rx="3" fill="#1b2025" stroke="#3e4952"/>
+    <text x="446" y="78" font-family="Consolas, monospace" font-size="9" letter-spacing="1" fill="#75c98a">LEGEND</text>
+    <path d="M446 96h22" stroke="#e45468" stroke-width="2"/><text x="476" y="100" font-family="Consolas, monospace" font-size="9" fill="#b8c0c7">directed edge</text>
+    <path d="M446 116h22" stroke="#79b6d1" stroke-width="2"/><text x="476" y="120" font-family="Consolas, monospace" font-size="9" fill="#b8c0c7">one-way / drop</text>
+  </g>
+
+  <g font-family="Consolas, monospace" font-size="9" fill="#8d979f">
+    <text x="96" y="306">AREA</text><text x="336" y="312">CONNECTION</text><text x="474" y="270">Z-AWARE LOOKUP</text>
+  </g>
+  <g fill="none" stroke="#50606b" stroke-width="1.4">
+    <path d="M96 284v16h18"/><path d="M336 288v16h18"/><path d="M474 252v10h16"/>
+  </g>
+  <text x="610" y="340" text-anchor="end" font-family="Consolas, monospace" font-size="9" fill="#707b83">CS2MB · ILLUSTRATIVE DIAGRAM</text>
+</svg>

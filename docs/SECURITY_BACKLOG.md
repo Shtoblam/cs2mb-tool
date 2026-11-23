@@ -11,13 +11,14 @@ This backlog tracks security work that is larger than a documentation correction
 - Kept the matching UI CSP/referrer meta policies.
 - Added a regression test for the UI response-header constants.
 - Clarified the security documentation so response headers and meta policies are not conflated.
+- Added the internal `cs2mb-source2` engine with explicit path resolution, argument arrays, timeouts and SHA-256 provenance; removed the Source2Viewer-CLI/resourceinfo runtime path.
 
 ## Open work, highest priority first
 
 | Priority | Item | Current behavior | Acceptance criteria |
 |---|---|---|---|
 | P1 | Bounded job execution | `app/server.py` starts jobs without a concurrency cap and keeps job records in memory for the server lifetime. | A documented limit, controlled rejection/queue behavior, cleanup of old job state, tests for the limit and clean shutdown. |
-| P1 | Process-tree timeout | The 900 s timeout kills the Python child process, but Windows descendants such as `resourceinfo.exe` or Source2Viewer-CLI may survive. | Timeout terminates the full process tree on Windows; equivalent behavior is defined for other platforms; testable without a real game install. |
+| P1 | Process-tree timeout | The 900 s job timeout kills the Python child process, but its descendants may survive on Windows. The internal engine is a direct child; a timeout should terminate the full tree. | Timeout terminates the full process tree on Windows; equivalent behavior is defined for other platforms; testable without a real game install. |
 | P2 | Endpoint-level security tests | Tests cover helper functions and selected routes, but not oversized uploads, malformed multipart bodies, traversal attempts, viewer confinement or timeout behavior. | Runtime tests for each boundary, including negative cases and bounded resource use. |
 | P2 | Host-header and CSRF hardening | POSTs have an Origin check, but no Host allow-list and no CSRF token; requests without an Origin header remain possible. | Explicit loopback Host policy, documented local-client behavior, and tests for allowed/denied cases. |
 | P2 | Remote-binding warning/controls | `--allow-remote` permits a non-loopback bind without authentication. | Strong warning, minimal allow-list, or an explicit authentication gate before remote exposure. |

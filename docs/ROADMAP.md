@@ -6,6 +6,24 @@
 **Текущая версия приложения:** `pre-alpha v1.0`. Это чистый baseline
 репозитория `cs2mb-tool`; исторические release notes сохранены как архив.
 
+## Milestone: internal Source 2 engine — completed 2026-11-23
+
+**Status:** implemented and locally validated.
+
+- First-party `cs2mb-source2` component built from `source2/`; VRF library
+  linked in-process; self-contained Windows x64 artifact.
+- PHYS and EntityLump decoded without Source2Viewer-CLI or `resourceinfo.exe`.
+- Runtime CLI resolution removed from `tools/prepare_map.py` and
+  `app/server.py`; legacy upload mode preserved.
+- All nine active-duty maps converted; floor agreement 97.34–99.54%; Dust2
+  historical totals reproduced exactly.
+- 76 tests discovered (75 executed, 1 real-map test gated), engine CLI synthetic
+  failure tests included, CI builds the engine on Windows.
+
+**Next:** publish the versioned engine release asset with SHA-256, finish the
+README/site/logo/social-preview presentation, and keep the coordinate/format
+validation current when CS2 or ValveResourceFormat changes.
+
 ## Обозначения
 
 - **Core** — обязательное ядро.

@@ -104,9 +104,9 @@ button.secondary:hover { color: var(--accent-soft); border-color: var(--accent);
 button.link { background: none; border: 0; color: var(--accent-soft); padding: 0; font: inherit; }
 .auto-box { border: 1px solid var(--line-soft); background: #1c2024; padding: 10px; border-radius: 3px; margin-top: 11px; }
 .auto-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; color: var(--text); font: 10px var(--mono); text-transform: uppercase; letter-spacing: .06em; }
-.s2v-state { color: var(--faint); font: 9px var(--mono); text-transform: none; letter-spacing: 0; }
-.s2v-state.ready { color: var(--green); }
-.s2v-state.missing { color: var(--accent-soft); }
+.engine-state { color: var(--faint); font: 9px var(--mono); text-transform: none; letter-spacing: 0; }
+.engine-state.ready { color: var(--green); }
+.engine-state.missing { color: var(--accent-soft); }
 .divider { display: flex; align-items: center; gap: 8px; margin: 12px 0 4px; color: var(--faint); font: 9px var(--mono); text-transform: uppercase; letter-spacing: .06em; }
 .divider::before, .divider::after { content: ""; height: 1px; background: var(--line-soft); flex: 1; }
 .drop {
@@ -355,11 +355,11 @@ button.primary:hover:not(:disabled), button.secondary:hover, .ghost:hover { tran
         <summary><span>Автоматически из установленной CS2</span><small>рекомендуется</small></summary>
         <div class="mode-content">
       <div class="auto-box">
-        <div class="auto-head"><b>From installed CS2</b><span id="s2v-state" class="s2v-state">checking…</span></div>
+        <div class="auto-head"><b>From installed CS2</b><span id="engine-state" class="engine-state">checking…</span></div>
         <label for="game">CS2 game folder</label>
         <input id="game" type="text" placeholder="<CS2_GAME>" spellcheck="false" autocomplete="off">
         <button id="generate-from-game" class="primary" type="button" style="margin-top:8px">Prepare + Generate</button>
-        <p class="help" style="margin:5px 0 0">Nav, entities и collision извлекаются внутри программы. CS2 можно не запускать: доступ к папке только read-only. Для авто-режима нужен Source2Viewer-CLI в <span class="mono">tools/bin/</span>, <span class="mono">S2V_CLI</span> или <span class="mono">config/paths.local.json</span>.</p>
+        <p class="help" style="margin:5px 0 0">Nav, entities и collision извлекаются внутри программы. CS2 можно не запускать: доступ к папке только read-only. PHYS и EntityLump читает собственный движок <span class="mono">cs2mb-source2</span>; внешние CLI не нужны.</p>
       </div>
         </div>
       </details>
@@ -458,7 +458,7 @@ button.primary:hover:not(:disabled), button.secondary:hover, .ghost:hover { tran
       <div>
         <div class="eyebrow">Start here · full setup</div>
         <h2 id="tutorial-title">Установка и запуск</h2>
-        <p>Пошагово: Python → проект → Source2Viewer-CLI → запуск → карта. Если CLI нет — останется upload fallback.</p>
+        <p>Пошагово: Python → проект → внутренний Source 2 engine → запуск → карта. Внешние CLI не нужны; останется upload fallback.</p>
       </div>
       <button id="tutorial-close" class="modal-close" type="button" aria-label="Закрыть">×</button>
     </div>
@@ -485,31 +485,28 @@ button.primary:hover:not(:disabled), button.secondary:hover, .ghost:hover { tran
       </div>
 
       <div class="tutorial-step">
-        <h3><span>01</span>Source2Viewer-CLI: скачать и куда положить</h3>
-        <p>Для авто-режима нужен CLI. Скачайте <b>cli-windows-x64.zip</b> со
-          <a href="https://github.com/ValveResourceFormat/ValveResourceFormat/releases/tag/20.1" target="_blank" rel="noopener noreferrer">страницы релиза ValveResourceFormat 20.1</a>
-          (не <span class="mono">Source2Viewer.exe</span> — это GUI).</p>
-        <p>Распакуйте <b>все три файла</b> в папку проекта:</p>
+        <h3><span>01</span>Внутренний Source 2 engine: установка</h3>
+        <p>Авто-режим использует первый собственный конвертер <span class="mono">cs2mb-source2</span>. Он читает PHYS и EntityLump напрямую; Source2Viewer-CLI и resourceinfo не нужны.</p>
+        <p>Скачайте <b>cs2mb-source2-win-x64.zip</b> со
+          <a href="https://github.com/Shtoblam/cs2mb-tool/releases/latest" target="_blank" rel="noopener noreferrer">страницы релизов CS2MB</a>
+          и распакуйте в папку проекта:</p>
         <pre class="code">cs2mb-tool\
   tools\
     bin\
-      Source2Viewer-CLI.exe
-      libSkiaSharp.dll
-      spirv-cross.dll</pre>
-        <p><b>Не</b> кладите их в <span class="mono">game\bin\win64</span>, Steam или
-          <span class="mono">C:\Windows</span>. Файлы игнорируются Git.</p>
-        <pre class="code"><button class="copy" type="button">copy</button>Get-ChildItem .\tools\bin
-&amp; ".\tools\bin\Source2Viewer-CLI.exe" --help
-Get-FileHash ".\tools\bin\Source2Viewer-CLI.exe" -Algorithm SHA256</pre>
-        <p class="help">Приложение должно показать <b>S2V ready</b>. Если <b>S2V not configured</b> — проверьте все три файла, имя exe, запуск из корня проекта и перезапустите сервер. Альтернатива: <span class="mono">S2V_CLI</span> или <span class="mono">config\paths.local.json</span>.</p>
-        <p class="help">Если CLI не нужен — используйте upload готового <span class="mono">.gltf + .bin</span>.</p>
+      source2\
+        cs2mb-source2.exe</pre>
+        <p>Это self-contained сборка Windows x64; .NET runtime и сторонние CLI не требуются. Файл игнорируется Git. Альтернатива: переменная <span class="mono">CS2MB_SOURCE2</span> или флаг <span class="mono">--source2</span>.</p>
+        <pre class="code"><button class="copy" type="button">copy</button>Get-ChildItem .\tools\bin\source2
+&amp; ".\tools\bin\source2\cs2mb-source2.exe" --version
+Get-FileHash ".\tools\bin\source2\cs2mb-source2.exe" -Algorithm SHA256</pre>
+        <p class="help">Приложение покажет <b>engine ready</b> и версию. Если <b>engine not installed</b> — проверьте путь, имя exe и перезапустите сервер. SHA-256 сверяйте с <span class="mono">SHA256SUMS.txt</span> из релиза.</p>
       </div>
 
       <div class="tutorial-step">
         <h3><span>02</span>Карта из установленной CS2</h3>
         <p>В Steam: <b>Библиотека → Counter-Strike 2 → Управление → Просмотреть локальные файлы</b>.
           Укажите этот корень в <span class="mono">CS2 game folder</span>. В нём должны быть
-          <span class="mono">game\csgo\maps</span> и <span class="mono">game\bin\win64\resourceinfo.exe</span>.</p>
+          <span class="mono">game\csgo\maps</span> и <span class="mono">game\csgo\gameinfo.gi</span>.</p>
         <p>Укажите map name, например <span class="mono">de_mirage</span>, и нажмите
           <b>Prepare + Generate</b>. CS2 лучше закрыть, чтобы VPK не был заблокирован.</p>
         <div class="tutorial-grid">
@@ -520,7 +517,7 @@ Get-FileHash ".\tools\bin\Source2Viewer-CLI.exe" -Algorithm SHA256</pre>
       </div>
 
       <div class="tutorial-step">
-        <h3><span>03</span>Upload-режим (если CLI/папка CS2 недоступны)</h3>
+        <h3><span>03</span>Upload-режим (если папка CS2 недоступна)</h3>
         <p>Укажите map name, перетащите четыре файла в drop zone и нажмите <b>Generate map</b>.</p>
         <div class="tutorial-grid">
           <div class="mini"><b>.nav</b><span>Навигационный граф карты: области, связи, спавны.</span></div>
@@ -541,8 +538,8 @@ Get-FileHash ".\tools\bin\Source2Viewer-CLI.exe" -Algorithm SHA256</pre>
         <h3><span>05</span>Быстрый troubleshooting</h3>
         <div class="tutorial-grid">
           <div class="mini"><b>python not found</b><span>Используйте <span class="mono">py -3.13</span>; переустановите Python с PATH.</span></div>
-          <div class="mini"><b>S2V not configured</b><span>Все 3 файла в <span class="mono">tools\bin</span>; перезапустите сервер.</span></div>
-          <div class="mini"><b>libSkiaSharp.dll</b><span>Распакуйте архив целиком, не только exe.</span></div>
+          <div class="mini"><b>engine not installed</b><span>Распакуйте <span class="mono">cs2mb-source2.exe</span> в <span class="mono">tools\bin\source2</span>; перезапустите сервер.</span></div>
+          <div class="mini"><b>engine failed</b><span>Проверьте <span class="mono">prepared/source2.log</span> и сборку CS2.</span></div>
           <div class="mini"><b>invalid CS2 folder</b><span>Нужен корень с <span class="mono">game\csgo\maps</span>, не папка maps.</span></div>
           <div class="mini"><b>port busy</b><span><span class="mono">--port 8766</span> и откройте новый URL.</span></div>
           <div class="mini"><b>no .bin</b><span>Загрузите/экспортируйте <span class="mono">.gltf + .bin</span> вместе.</span></div>
@@ -709,10 +706,12 @@ async function loadConfig() {
     if (!$('game').value && data.cs2_game && !data.cs2_game.includes('<')) {
       $('game').value = data.cs2_game;
     }
-    $('s2v-state').textContent = data.s2v_ready ? 'S2V ready' : 'S2V not configured';
-    $('s2v-state').className = 's2v-state ' + (data.s2v_ready ? 'ready' : 'missing');
+    $('engine-state').textContent = data.source2_ready
+      ? 'engine ready' + (data.source2_version ? ' · ' + data.source2_version.replace('cs2mb-source2 ', '') : '')
+      : 'engine not installed';
+    $('engine-state').className = 'engine-state ' + (data.source2_ready ? 'ready' : 'missing');
   } catch (error) {
-    $('s2v-state').textContent = 'config error';
+    $('engine-state').textContent = 'config error';
   }
 }
 

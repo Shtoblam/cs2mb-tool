@@ -13,7 +13,8 @@ Start with the [project README](../README.md) or the
 | Document | Status | Contents |
 |---|---|---|
 | [STATE.md](STATE.md) | Current | Evolving project state, verified results, active priorities and known gaps |
-| [SETUP.md](SETUP.md) / [SETUP.ru.md](SETUP.ru.md) | Current | Installation, map generation, Source2Viewer-CLI and troubleshooting |
+| [SETUP.md](SETUP.md) / [SETUP.ru.md](SETUP.ru.md) | Current | Installation, internal Source 2 engine, map generation and troubleshooting |
+| [../source2/README.md](../source2/README.md) | Current | Engine architecture, build, commands, license and validation |
 | [GETTING_FILES.md](GETTING_FILES.md) / [GETTING_FILES.ru.md](GETTING_FILES.ru.md) | Current | Manual extraction of `.nav`, entities and physics glTF |
 | [RELEASE.md](RELEASE.md) / [RELEASE.ru.md](RELEASE.ru.md) | Current | Application release summary and verification scope |
 | [SECURITY.md](SECURITY.md) / [SECURITY.ru.md](SECURITY.ru.md) | Current | Threat model, controls, CS2/anti-cheat boundaries and residual risks |

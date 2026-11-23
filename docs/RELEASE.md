@@ -24,9 +24,11 @@ identity and current version.
 
 ## Verification
 
-Current verification covers 56 unit tests, Python compilation, the repository
-hygiene scan, Markdown link/anchor/fence validation and asset integrity checks.
-See [STATE.md](STATE.md).
+Current verification covers 76 tests discovered (75 executed, 1 real-map test
+gated), Python compilation, the repository hygiene scan, Markdown
+link/anchor/fence validation, asset integrity checks, the Windows engine build
+and local nine-map integration validation. See [STATE.md](STATE.md) and
+[VALIDATION.md](VALIDATION.md).
 
 ## Historical release notes
 

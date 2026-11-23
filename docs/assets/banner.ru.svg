@@ -1,34 +1,47 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="360" viewBox="0 0 1280 360" role="img" aria-labelledby="title desc">
-  <title id="title">CS2 Map Balance — инструмент анализа карт</title>
-  <desc id="desc">Локальный инструмент анализа навигации, маршрутов, геометрии и коллизий карт Counter-Strike 2.</desc>
+  <title id="title">CS2 Map Balance — внутренний Source 2 анализ карт</title>
+  <desc id="desc">Идентичность CS2MB, навигационная геометрия и сообщение о внутреннем Source 2 engine.</desc>
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#19191c"/><stop offset=".58" stop-color="#242126"/><stop offset="1" stop-color="#190f15"/></linearGradient>
-    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#cf2c40"/><stop offset=".55" stop-color="#8f1732"/><stop offset="1" stop-color="#4a0822"/></linearGradient>
-    <pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse"><path d="M36 0H0V36" fill="none" stroke="#454047" stroke-width="1" opacity=".45"/></pattern>
-    <radialGradient id="glow"><stop offset="0" stop-color="#94132f" stop-opacity=".34"/><stop offset="1" stop-color="#94132f" stop-opacity="0"/></radialGradient>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#15181b"/><stop offset=".58" stop-color="#22272c"/><stop offset="1" stop-color="#1b1016"/></linearGradient>
+    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#e45468"/><stop offset="1" stop-color="#8f1732"/></linearGradient>
+    <linearGradient id="route" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#ff9a6b"/><stop offset="1" stop-color="#e45468"/></linearGradient>
+    <radialGradient id="glow"><stop offset="0" stop-color="#a51b36" stop-opacity=".34"/><stop offset="1" stop-color="#a51b36" stop-opacity="0"/></radialGradient>
+    <pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse"><path d="M36 0H0V36" fill="none" stroke="#41484f" stroke-width="1" opacity=".5"/></pattern>
   </defs>
   <rect width="1280" height="360" fill="url(#bg)"/>
   <rect width="1280" height="360" fill="url(#grid)"/>
-  <ellipse cx="1050" cy="170" rx="330" ry="270" fill="url(#glow)"/>
-  <g transform="translate(745 15)" fill="none" stroke="#655b63" stroke-width="1.5" opacity=".66">
-    <path d="M38 58H196V108H266V32H438V107H604V205H544V260H642V326H430V284H292V338H142V273H38Z"/>
-    <path d="M82 93H164V153H221V209H146V250H80ZM293 73H403V126H353V181H278V124ZM448 128H546V173H498V218H414V180ZM218 232H306V292H218ZM408 242H493V291H408Z" stroke-opacity=".52"/>
-    <path d="M38 108H196M266 108H438M544 205H604M544 260H642M430 284H292M142 273V338"/>
+  <ellipse cx="1040" cy="160" rx="370" ry="290" fill="url(#glow)"/>
+
+  <g transform="translate(54 44)">
+    <rect width="66" height="66" rx="13" fill="url(#brand)"/>
+    <path d="M14 52V22L33 11L52 22V52L33 62Z" fill="none" stroke="#fff" stroke-width="3.4" stroke-linejoin="round"/>
+    <path d="M6 60L23 45L35 51L57 28" fill="none" stroke="#ff9a6b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <g fill="#fff"><circle cx="23" cy="45" r="3"/><circle cx="57" cy="28" r="3"/></g>
   </g>
-  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M780 302C846 262 896 290 956 222S1055 117 1197 72" stroke="url(#brand)" stroke-width="10" opacity=".22"/>
-    <path d="M780 302C846 262 896 290 956 222S1055 117 1197 72" stroke="#e45468" stroke-width="4.4"/>
-    <path d="M782 83C866 113 884 174 974 184S1085 217 1220 302" stroke="#79b6d1" stroke-width="2.7" stroke-dasharray="7 10" opacity=".88"/>
-    <path d="M832 326C900 255 1008 253 1075 183S1138 112 1222 55" stroke="#ce5264" stroke-width="2" stroke-dasharray="3 10" opacity=".54"/>
+  <text x="138" y="82" font-family="Segoe UI, Arial, sans-serif" font-size="32" font-weight="700" fill="#f4f1f3">CS2 Map Balance</text>
+  <text x="140" y="107" font-family="Consolas, monospace" font-size="12" letter-spacing="3.6" fill="#aaa1a8">ЛОКАЛЬНЫЙ АНАЛИЗ КАРТ</text>
+
+  <text x="54" y="196" font-family="Segoe UI, Arial, sans-serif" font-size="40" font-weight="700" fill="#f5f0f2">Смотрите на карту глубже радара.</text>
+  <text x="56" y="230" font-family="Segoe UI, Arial, sans-serif" font-size="17" fill="#b9b0b7">Навигация · collision · время маршрутов · воспроизводимое сравнение</text>
+  <rect x="56" y="258" width="120" height="30" rx="6" fill="url(#brand)"/>
+  <text x="116" y="278" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#fff">PRE-ALPHA v1.0</text>
+  <rect x="188" y="258" width="246" height="30" rx="6" fill="#1c2227" stroke="#3d474f"/>
+  <text x="311" y="278" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#e9b9c4">ВНУТРЕННИЙ SOURCE 2 ENGINE</text>
+
+  <g transform="translate(760 54)" fill="none" stroke="#5c6872" stroke-width="1.4" stroke-linejoin="round">
+    <path d="M18 74L86 38L158 68L146 138L68 154Z" fill="#202830"/>
+    <path d="M158 68L232 42L310 74L296 146L146 138Z" fill="#202830"/>
+    <path d="M310 74L388 56L444 96L424 170L296 146Z" fill="#202830"/>
+    <path d="M68 154L146 138L168 210L98 238Z" fill="#1d252c"/>
+    <path d="M296 146L424 170L404 244L324 256Z" fill="#1d252c"/>
   </g>
-  <g fill="#e65a6c"><circle cx="780" cy="302" r="6"/><circle cx="1197" cy="72" r="6"/></g>
-  <g fill="#79b6d1"><circle cx="782" cy="83" r="5"/><circle cx="1220" cy="302" r="5"/></g>
-  <image href="../../logo.png" x="54" y="44" width="62" height="62" preserveAspectRatio="xMidYMid slice"/>
-  <text x="137" y="83" font-family="Segoe UI, sans-serif" font-size="30" font-weight="700" fill="#f4eff1">CS2 Map Balance</text>
-  <text x="137" y="108" font-family="Consolas, monospace" font-size="12" fill="#a9a1a8" letter-spacing="2">ЛОКАЛЬНЫЙ ИНСТРУМЕНТ АНАЛИЗА КАРТ</text>
-  <text x="54" y="181" font-family="Segoe UI, sans-serif" font-size="36" font-weight="650" fill="#f5f0f2">Смотри на карту <tspan fill="#e45468">глубже радара.</tspan></text>
-  <text x="56" y="221" font-family="Segoe UI, sans-serif" font-size="17" fill="#b9b0b7">Навигация · маршруты CT/T · геометрия · коллизии</text>
-  <rect x="56" y="254" width="112" height="29" rx="7" fill="url(#brand)"/>
-  <text x="112" y="273" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#fff">PRE-ALPHA v1.0</text>
-  <text x="1224" y="332" text-anchor="end" font-family="Consolas, monospace" font-size="10" fill="#8d858d">ЛОКАЛЬНО · READ ONLY · БЕЗ ТЕЛЕМЕТРИИ</text>
+  <g fill="none" stroke="#78858f" stroke-width="1.8">
+    <path d="M86 108L146 100"/><path d="M232 106L296 114"/><path d="M388 122L424 136"/>
+    <path d="M98 198L146 184"/><path d="M324 198L404 208"/>
+  </g>
+  <g fill="#e45468"><path d="M146 100l-9-4v8z"/><path d="M296 114l-9-4v8z"/><path d="M424 136l-9-4v8z"/></g>
+  <path d="M38 126L100 104L190 114L248 136L304 160L380 190L440 160" fill="none" stroke="url(#route)" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <g fill="#fff"><circle cx="38" cy="126" r="5"/><circle cx="440" cy="160" r="5"/></g>
+  <g fill="#e45468"><circle cx="190" cy="114" r="4"/><circle cx="304" cy="160" r="4"/></g>
+  <text x="1224" y="332" text-anchor="end" font-family="Consolas, monospace" font-size="10" fill="#8d858d">ЛОКАЛЬНО · READ-ONLY · БЕЗ ТЕЛЕМЕТРИИ</text>
 </svg>

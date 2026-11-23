@@ -1,4 +1,4 @@
-name: Python tests and security checks
+name: Python tests, engine build and security checks
 
 on:
   push:
@@ -25,3 +25,31 @@ jobs:
         run: python -m unittest discover -s tests -v
       - name: Run repository hygiene scan
         run: python tools/security_scan.py
+      - name: Validate website JavaScript
+        run: node --check site.js
+
+  source2-engine:
+    runs-on: windows-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+      - name: Build the internal Source 2 engine
+        shell: pwsh
+        run: ./source2/build.ps1
+      - name: Compile the engine project without trimming
+        run: dotnet build source2/Cs2mb.Source2/Cs2mb.Source2.csproj -c Release
+      - name: Run tests against the built engine
+        shell: pwsh
+        run: |
+          $env:CS2MB_SOURCE2 = "${{ github.workspace }}\source2\dist\win-x64\cs2mb-source2.exe"
+          python -m compileall -q app tools movement simulation prototype
+          python -m unittest discover -s tests -v
+          python tools/security_scan.py

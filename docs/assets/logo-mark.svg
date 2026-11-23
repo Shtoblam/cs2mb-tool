@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">CS2MB compact mark</title>
+  <desc id="desc">A triangular navigation mesh with three route nodes and a crimson route line.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#cf2c40"/><stop offset="1" stop-color="#4b0922"/>
+    </linearGradient>
+    <linearGradient id="route" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#ff9a6b"/><stop offset="1" stop-color="#e45468"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="26" fill="url(#bg)"/>
+  <path d="M31 91V43L64 24L98 43V91L64 108Z" fill="none" stroke="#fff" stroke-width="5" stroke-linejoin="round" opacity=".92"/>
+  <path d="M31 43L64 62L98 43M64 62V108" fill="none" stroke="#fff" stroke-width="3" opacity=".34"/>
+  <path d="M22 104L51 80L72 88L108 50" fill="none" stroke="url(#route)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <g fill="#fff">
+    <circle cx="51" cy="80" r="5"/><circle cx="72" cy="88" r="4"/><circle cx="108" cy="50" r="5"/>
+  </g>
+</svg>

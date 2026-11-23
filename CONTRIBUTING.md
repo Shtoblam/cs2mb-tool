@@ -64,7 +64,9 @@ Do not commit:
 - VPK, `.nav`, physics glTF/`.bin`, demos or extracted map assets;
 - `.env`, tokens, API keys, passwords or personal paths;
 - generated `artifacts/`, uploads or large derived data;
-- downloaded executables such as Source2Viewer-CLI.
+- downloaded executables such as Source2Viewer-CLI or the built
+  `cs2mb-source2` engine binary; publish the engine as a hash-verified release
+  asset instead.
 
 Do not modify the CS2/Steam installation, interact with game processes or memory,
 automate gameplay, or connect to game servers/anti-cheat for this project.
@@ -78,6 +80,17 @@ automate gameplay, or connect to game servers/anti-cheat for this project.
   measurements, assumptions or release scope change.
 - Keep English and Russian documentation technically equivalent where both
   versions exist.
+
+## Engine changes
+
+When changing `source2/` or `tools/source2.py`:
+
+- build the self-contained engine with `source2/build.ps1`;
+- run the Python suite with `CS2MB_SOURCE2` set to the built executable;
+- keep the synthetic malformed/truncated/oversized resource tests passing;
+- re-run the nine-map integration validation when physics/entity decoding
+  changes;
+- update `source2/THIRD_PARTY_NOTICES.md` when a dependency changes.
 
 ## Pull requests
 

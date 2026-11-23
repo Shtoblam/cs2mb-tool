@@ -16,7 +16,7 @@ All commands below are read-only with respect to the game.
 
 If you do not want to run these commands manually:
 
-1. Put `Source2Viewer-CLI.exe` in `tools/bin/` or set `S2V_CLI`.
+1. Install `cs2mb-source2.exe` in `tools/bin/source2/` or set `CS2MB_SOURCE2`.
 2. Start the app.
 3. Enter `CS2 game folder` and the map name.
 4. Click **Prepare + Generate**.
@@ -24,37 +24,25 @@ If you do not want to run these commands manually:
 The app runs the same extraction steps internally. The manual path below is a
 fallback and for debugging.
 
-## Source2Viewer-CLI setup
+## Internal Source 2 engine setup
 
-For automatic generation, download the official Windows x64 CLI archive from
-the [ValveResourceFormat 20.1 release](https://github.com/ValveResourceFormat/ValveResourceFormat/releases/tag/20.1):
-
-```text
-cli-windows-x64.zip
-```
-
-Extract **all three files** into the project folder:
+Download `cs2mb-source2-win-x64.zip` from the
+[CS2MB release page](https://github.com/Shtoblam/cs2mb-tool/releases/latest) and
+extract the self-contained executable:
 
 ```text
-cs2mapbalance\tools\bin\Source2Viewer-CLI.exe
-cs2mapbalance\tools\bin\libSkiaSharp.dll
-cs2mapbalance\tools\bin\spirv-cross.dll
+cs2mb-tool\tools\bin\source2\cs2mb-source2.exe
 ```
 
-Do not put them in the game folder or Steam directory. They are ignored by Git.
-Alternatively, keep them together elsewhere and set `S2V_CLI` to the full
-`Source2Viewer-CLI.exe` path, or set `s2v_cli` in
-`config\paths.local.json`.
-
-Verify:
+No .NET runtime, Source2Viewer-CLI or `resourceinfo.exe` is required. Verify:
 
 ```powershell
-& ".\tools\bin\Source2Viewer-CLI.exe" --help
-Get-FileHash ".\tools\bin\Source2Viewer-CLI.exe" -Algorithm SHA256
+& ".\tools\bin\source2\cs2mb-source2.exe" --version
+Get-FileHash ".\tools\bin\source2\cs2mb-source2.exe" -Algorithm SHA256
 ```
 
-The intake panel should show `S2V ready` after restarting the app. Full install
-and troubleshooting guide: **[SETUP.md](SETUP.md)**.
+The intake panel should show `engine ready` after restarting the app. Full
+install and troubleshooting guide: **[SETUP.md](SETUP.md)**.
 
 ## 1. Variables
 
@@ -100,30 +88,26 @@ python tools\vpk_read.py "$CS2\game\csgo\maps\$MAP.vpk" `
 
 ## 4. Dump entities to text
 
-`resourceinfo.exe` ships with CS2:
+Use the internal engine; it decodes the compiled EntityLump directly:
 
 ```powershell
-& "$CS2\game\bin\win64\resourceinfo.exe" `
-  -game "$CS2\game\csgo" `
-  -i "$TEMP\default_ents.vents_c" -all `
-  > "$TEMP\entities.txt"
+& ".\tools\bin\source2\cs2mb-source2.exe" entities `
+  --input "$TEMP\default_ents.vents_c" `
+  --output "$TEMP\entities.txt"
 ```
 
-PowerShell may write this file as UTF-16. The app accepts UTF-8,
-UTF-8 BOM and UTF-16 LE/BE.
+The output is UTF-8 and uses the same `key = value` contract as the former
+diagnostic dump. The app also accepts UTF-8 BOM and UTF-16 LE/BE.
 
 ## 5. Export physics collision to glTF
 
-Use the pinned Source2Viewer-CLI 20.1 or a compatible VRF release. It does not
-need to be installed system-wide.
+Use the internal engine; it reads `world_physics.vmdl_c` and writes the glTF
+plus `.bin` sidecar expected by the collision loader:
 
 ```powershell
-& "<S2V>\Source2Viewer-CLI.exe" `
-  -i "$TEMP\world_physics.vmdl_c" `
-  -o "$TEMP\world_physics.gltf" `
-  -d --gltf_export_format gltf `
-  --gltf_export_materials `
-  --game "$CS2\game\csgo\gameinfo.gi"
+& ".\tools\bin\source2\cs2mb-source2.exe" phys `
+  --input "$TEMP\world_physics.vmdl_c" `
+  --output "$TEMP\world_physics_physics.gltf"
 ```
 
 The exporter creates:
@@ -133,10 +117,8 @@ The exporter creates:
 <TEMP>\world_physics_physics.bin
 ```
 
-The `.bin` is required. Do not upload the `.gltf` alone.
-
-If you use Source2Viewer GUI instead, export the same
-`world_physics.vmdl_c` to **glTF Separate** (`.gltf` + `.bin`).
+Positions remain in Hammer units and Source axes. The `.bin` is required. Do not
+upload the `.gltf` alone.
 
 ## 6. Files to drop into the app
 
@@ -185,10 +167,10 @@ Middle
 The nav/collision viewer can still be generated if a map uses different
 callouts, but route cards may be empty.
 
-### `resourceinfo` output is empty
+### `entities.txt` is empty
 
 Make sure you extracted `default_ents.vents_c`, not a different entity file.
-Re-run with `-all` and redirect to a new text file.
+Re-run `cs2mb-source2 entities` and check the printed entity count.
 
 ### Map has no `world_physics.vmdl_c`
 
