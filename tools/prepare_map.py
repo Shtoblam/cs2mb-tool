@@ -13,7 +13,6 @@ The internal engine is the first-party ``cs2mb-source2`` executable built from
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import re
 import subprocess
