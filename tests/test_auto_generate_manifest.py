@@ -107,23 +107,29 @@ class ManifestSanitizationTests(unittest.TestCase):
 
 
 class SafeUriTests(unittest.TestCase):
-    def test_private_and_parent_components_are_removed(self) -> None:
+    def test_windows_absolute_paths_are_host_independent(self) -> None:
+        self.assertEqual(auto_generate.safe_uri(r"C:\maps\world.bin"), "world.bin")
+        self.assertEqual(auto_generate.safe_uri("C:/maps/world.bin"), "world.bin")
+
+    def test_windows_unc_paths_are_reduced_to_the_file_name(self) -> None:
+        self.assertEqual(auto_generate.safe_uri(r"\\server\share\maps\world.bin"), "world.bin")
+        self.assertEqual(auto_generate.safe_uri("//server/share/maps/world.bin"), "world.bin")
+
+    def test_posix_absolute_paths_are_reduced_to_the_file_name(self) -> None:
+        self.assertEqual(auto_generate.safe_uri("/home/user/maps/world.bin"), "world.bin")
+
+    def test_relative_paths_and_parent_components_are_sanitized(self) -> None:
+        self.assertEqual(auto_generate.safe_uri("sub/world.bin"), "sub/world.bin")
+        self.assertEqual(auto_generate.safe_uri("../private/world.bin"), "private/world.bin")
+        self.assertEqual(auto_generate.safe_uri(r"..\private\world.bin"), "private/world.bin")
+        self.assertEqual(auto_generate.safe_uri(".."), "")
+
+    def test_remote_urls_and_data_uris_are_excluded(self) -> None:
+        self.assertEqual(auto_generate.safe_uri("https://example.invalid/world.bin"), "")
         self.assertEqual(
-            auto_generate.safe_uri(r"C:\maps\world.bin"),
-            "world.bin",
+            auto_generate.safe_uri("data:application/octet-stream;base64,AAAA"), ""
         )
-        self.assertEqual(
-            auto_generate.safe_uri("../private/world.bin"),
-            "private/world.bin",
-        )
-        self.assertEqual(
-            auto_generate.safe_uri("sub/world.bin"),
-            "sub/world.bin",
-        )
-        self.assertEqual(
-            auto_generate.safe_uri("https://example.invalid/world.bin"),
-            "",
-        )
+        self.assertEqual(auto_generate.safe_uri(""), "")
 
 
 if __name__ == "__main__":

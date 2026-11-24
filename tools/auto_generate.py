@@ -22,7 +22,7 @@ import re
 import subprocess
 import sys
 from datetime import datetime, timezone
-from pathlib import Path
+from pathlib import Path, PurePosixPath, PureWindowsPath
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
@@ -56,11 +56,16 @@ def safe_uri(uri: str) -> str:
     """Keep a relative glTF sidecar name without private path components."""
     if not uri or uri.startswith("data:") or "://" in uri:
         return ""
-    path = Path(uri)
-    if path.is_absolute() or re.match(r"^[A-Za-z]:[\\/]", uri):
-        return path.name
-    parts = [part for part in path.parts if part not in (".", "..")]
-    return Path(*parts).as_posix() if parts else path.name
+    windows = PureWindowsPath(uri)
+    if windows.drive or windows.root:
+        return windows.name
+    posix = PurePosixPath(uri)
+    if posix.is_absolute():
+        return posix.name
+    # Normalize both slash styles so parent components cannot survive on a
+    # POSIX host for a Windows-style relative path.
+    parts = [part for part in re.split(r"[\\/]+", uri) if part not in ("", ".", "..")]
+    return PurePosixPath(*parts).as_posix() if parts else ""
 
 
 def display_output(path: Path, out_dir: Path) -> str:
