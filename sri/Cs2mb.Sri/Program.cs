@@ -276,7 +276,7 @@ internal static class Program
             attributes.Add(new CollisionAttributeSummary(
                 i,
                 SafeString(attribute, "m_CollisionGroupString"),
-                SafeArray(attribute, "m_InteractAsStrings", "m_PhysicsTagStrings"),
+                SafeArray(attribute, "m_InteractAsStrings"),
                 SafeArray(attribute, "m_PhysicsTagStrings")));
         }
 
@@ -532,7 +532,7 @@ internal sealed class PhysicsGltfWriter
                 : null;
             var tags = attribute == null
                 ? Array.Empty<string>()
-                : SafeArray(attribute, "m_InteractAsStrings", "m_PhysicsTagStrings");
+                : SafeArray(attribute, "m_InteractAsStrings");
             var groupName = attribute == null ? null : SafeString(attribute, "m_CollisionGroupString");
             var baseName = tags.Length > 0
                 ? "physics_" + string.Join("_", tags)

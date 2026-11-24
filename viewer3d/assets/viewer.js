@@ -1,6 +1,7 @@
 import * as THREE from './vendor/three.module.min.js';
 import { GLTFLoader } from './vendor/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from './vendor/addons/controls/OrbitControls.js';
+import { sceneBounds } from './bounds.js';
 
 const $ = (id) => document.getElementById(id);
 const SETTINGS_KEY = 'cs2mb_viewer3d_v1';
@@ -233,9 +234,9 @@ function resize() {
 }
 
 function addGrid() {
-  const data = state.data;
-  const min = data.bounds.min;
-  const max = data.bounds.max;
+  const bounds = sceneBounds(state.data);
+  if (!bounds) return;
+  const { min, max } = bounds;
   const size = Math.max(max[0] - min[0], max[1] - min[1], 1000) * 1.1;
   const grid = new THREE.GridHelper(size, 20, 0x243640, 0x17252d);
   grid.rotation.x = Math.PI / 2;
@@ -488,7 +489,7 @@ async function loadCollision() {
   const split = data.stats.collision_triangles <= 3000000;
   for (const object of meshes) {
     const materialName = Array.isArray(object.material) ? '' : object.material?.name || '';
-    const meta =
+    const nodeMeta =
       metaByName.get(object.name) ||
       metaByName.get(object.parent?.name) || {
         node: object.name,
@@ -498,6 +499,12 @@ async function loadCollision() {
         collisionGroup: '',
         clip: /clip|sky/i.test(object.name) || /clip|sky/i.test(materialName),
       };
+    const primitiveMeta = Array.isArray(nodeMeta.primitives)
+      ? nodeMeta.primitives.find((item) => item.material === materialName) || nodeMeta.primitives[0]
+      : null;
+    const meta = primitiveMeta
+      ? { ...nodeMeta, ...primitiveMeta, name: primitiveMeta.material || nodeMeta.name }
+      : nodeMeta;
     const geometry = object.geometry.clone();
     geometry.applyMatrix4(object.matrixWorld);
     if (meta.clip) {
@@ -549,9 +556,10 @@ async function loadCollision() {
 }
 
 function fitView() {
-  const data = state.data;
-  const center = new THREE.Vector3(...data.bounds.center);
-  const size = new THREE.Vector3(...data.bounds.size);
+  const bounds = sceneBounds(state.data);
+  if (!bounds) return;
+  const center = new THREE.Vector3(...bounds.center);
+  const size = new THREE.Vector3(...bounds.size);
   const radius = Math.max(50, size.length() * 0.5);
   const distance = radius / Math.sin(THREE.MathUtils.degToRad(48 * 0.5)) * 1.02;
   state.camera.up.set(0, 0, 1);
@@ -564,8 +572,10 @@ function fitView() {
 }
 
 function topView() {
-  const center = new THREE.Vector3(...state.data.bounds.center);
-  const radius = Math.max(50, new THREE.Vector3(...state.data.bounds.size).length() * 0.5);
+  const bounds = sceneBounds(state.data);
+  if (!bounds) return;
+  const center = new THREE.Vector3(...bounds.center);
+  const radius = Math.max(50, new THREE.Vector3(...bounds.size).length() * 0.5);
   const distance = radius / Math.tan(THREE.MathUtils.degToRad(48 * 0.5)) * 1.1;
   state.camera.up.set(0, 0, 1);
   state.controls.target.copy(center);
@@ -575,8 +585,10 @@ function topView() {
 }
 
 function isoView() {
-  const center = new THREE.Vector3(...state.data.bounds.center);
-  const radius = Math.max(50, new THREE.Vector3(...state.data.bounds.size).length() * 0.5);
+  const bounds = sceneBounds(state.data);
+  if (!bounds) return;
+  const center = new THREE.Vector3(...bounds.center);
+  const radius = Math.max(50, new THREE.Vector3(...bounds.size).length() * 0.5);
   const distance = radius / Math.tan(THREE.MathUtils.degToRad(48 * 0.5)) * 1.05;
   state.camera.up.set(0, 0, 1);
   state.controls.target.copy(center);

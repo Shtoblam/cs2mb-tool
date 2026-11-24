@@ -96,7 +96,8 @@ SRI writes a glTF 2.0 mesh set plus a `.bin` sidecar:
 
 - one primitive per collision-attribute × surface-property group;
 - triangle positions in Hammer units and Source axes (`x`, `y`, `z-up`);
-- `InteractAs`, `SurfaceProperty` and `CollisionGroup` in node extras;
+- `InteractAs`, `SurfaceProperty` and `CollisionGroup` in node extras; the PHYS
+  summary keeps `PhysicsTags` separate from `InteractAs`;
 - material names that preserve clip/sky semantics for the existing filters.
 
 The existing collision loader (`tools/gltf_collision.py`) consumes the files
@@ -129,9 +130,20 @@ workflow are preserved. The 2D viewer remains self-contained and offline.
 - `viewer3d/scene.gltf` and `scene.bin` — normalized SRI collision geometry.
 
 The builder rejects external buffer URIs, missing sidecars, mismatched buffer
-lengths and excessive node/accessor/triangle counts. It strips image/texture
+lengths and excessive node/accessor/triangle counts. It writes and validates a
+sibling staging bundle, then swaps it into place; failures preserve the previous
+valid viewer3d directory. It strips image/texture
 references because the viewer needs geometry only. `bufferViews[].buffer` is
 filled when the SRI glTF omits it.
+
+The collision summary records identity and clip/sky state per primitive, not per
+node, so a mesh may mix solid and clip/sky materials safely. It composes
+parent/child TRS or explicit node matrices from the active scene and transforms
+each accessor AABB once into world space. The transformed AABB is conservative
+for rotation and non-uniform scale; `collision.bounds_mode` records this contract.
+Source geometry bytes and PHYS coordinates are not modified. The separate
+collision loader still ignores node matrices, so summary bounds are a viewer
+analysis product, not a change to collision extraction.
 
 The browser viewer is a local ES-module application under
 `viewer3d/assets/`, with three.js `0.160.0` vendored under `vendor/`. It renders
@@ -149,7 +161,7 @@ iframe and the separate tab use the same page and assets.
 | `world_physics_physics.bin` | SRI `phys` | glTF sidecar validation |
 | `prepared_manifest.json` | `prepare_map.py` | provenance and job manifest |
 | viewer HTML | `prototype/dust2_viewer.py` | local browser / server |
-| `viewer3d/data.json` | `viewer3d/build.py` | 3DsVW |
+| `viewer3d/data.json` | `viewer3d/build.py` | 3DsVW (separate `collision`, `nav`, `scene` bounds) |
 | `viewer3d/scene.gltf` + `.bin` | `viewer3d/build.py` (normalized SRI output) | 3DsVW |
 
 The manual upload path accepts `.nav`, `.txt`, `.gltf` and `.bin` and does not

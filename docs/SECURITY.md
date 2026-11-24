@@ -127,7 +127,9 @@ entity text files from any source the user chooses.
 - SRI resolution is explicit path or `CS2MB_SRI`, then packaged locations; a
   stale override fails instead of falling back;
 - SRI path, version and SHA-256 are recorded in the preparation manifest;
-- prepared manifests omit personal absolute paths;
+- analysis manifests use `<INPUT>/...`, bundle-relative outputs and `<PYTHON>`;
+- preparation and analysis manifests omit personal absolute paths,
+  usernames and Python installation paths;
 - compiled resources are treated as untrusted input; SRI reports controlled
   errors, validates bounds and tessellates curved primitives with bounded ring
   counts;

@@ -1,5 +1,39 @@
 # Changelog
 
+## Unreleased — glTF summary correctness (Phase 2.2)
+
+- Added per-primitive material identity, collision metadata, triangle counts and
+  clip/sky classification to the 3DsVW collision summary.
+- Applied parent/child TRS and explicit node matrices exactly once when
+  computing world-space conservative bounds; documented `bounds_mode`.
+- Validated primitive modes, indexed/non-indexed triangle counts and malformed
+  node/accessor/buffer references with controlled errors.
+- Added synthetic tests for mixed materials, mixed clip/solid primitives, nested
+  transforms, rotation/scale, matrices, indexed/non-indexed geometry, invalid
+  references, unsupported modes and duplicate node names.
+
+## Unreleased — bounds correction (Phase 2.1)
+
+- Added independent collision and NAV bounds plus aggregate scene bounds to the
+  3DsVW payload.
+- Fit, Top, Iso and grid framing now use aggregate scene bounds; camera padding
+  remains presentation-only.
+- Added synthetic bounds tests, including missing representations and legacy
+  fallback.
+
+## Unreleased — engineering stabilization (Phase 1)
+
+- Separated SRI `InteractAs` (`m_InteractAsStrings`) from `PhysicsTags`
+  (`m_PhysicsTagStrings`) in PHYS summaries and collision grouping.
+- Made 3DsVW bundle replacement transactional with staging, validation, backup
+  and rollback; failures preserve the previous viewer.
+- Made `prepare_map.py --dry-run` a no-write preflight and aligned the game-mode
+  application dry-run.
+- Sanitized analysis manifests and summaries to remove absolute local paths,
+  usernames and Python installation paths while retaining hashes, sizes and
+  provenance.
+
+
 ## v1.1.0 — 2026-11-24
 
 ### Application UI

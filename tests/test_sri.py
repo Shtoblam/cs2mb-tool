@@ -127,5 +127,22 @@ class SriDependencyRemovalTests(unittest.TestCase):
         self.assertIn("cs2_game", data)
 
 
+class SriPhysMetadataContractTests(unittest.TestCase):
+    def test_interactas_and_physics_tags_are_not_conflated(self) -> None:
+        source = (ROOT / "sri" / "Cs2mb.Sri" / "Program.cs").read_text(encoding="utf-8")
+        self.assertNotIn(
+            '"m_InteractAsStrings", "m_PhysicsTagStrings"',
+            source,
+        )
+        self.assertEqual(
+            source.count('SafeArray(attribute, "m_InteractAsStrings")'),
+            2,
+        )
+        self.assertEqual(
+            source.count('SafeArray(attribute, "m_PhysicsTagStrings")'),
+            1,
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

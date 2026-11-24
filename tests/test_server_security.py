@@ -580,5 +580,25 @@ class ServerSecurityTests(unittest.TestCase):
                 self.assertEqual(status, 404, path)
 
 
+    def test_game_dry_run_creates_no_output_and_skips_generation(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            jobs = Path(directory) / "auto"
+            jobs.mkdir()
+            with mock.patch.object(server_module, "JOBS_DIR", jobs), mock.patch.object(
+                server_module.threading, "Thread"
+            ) as thread_class:
+                job_id = server_module.Handler._start_game_job(
+                    None, "de_dust2", Path("game"), Path("sri"), True, True
+                )
+                self.assertFalse((jobs / "de_dust2" / job_id).exists())
+                thread = thread_class.return_value
+                thread.start.assert_called_once()
+                command = thread_class.call_args.kwargs["args"][1]
+                self.assertNotIn("--generate-out", command)
+                self.assertIn("--dry-run", command)
+            with server_module.JOBS_LOCK:
+                server_module.JOBS.clear()
+
+
 if __name__ == "__main__":
     unittest.main()

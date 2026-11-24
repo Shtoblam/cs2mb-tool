@@ -770,7 +770,8 @@ class Handler(BaseHTTPRequestHandler):
         }
         try:
             register_job(job)
-            out_dir.mkdir(parents=True, exist_ok=True)
+            if not dry_run:
+                out_dir.mkdir(parents=True, exist_ok=True)
         except Exception:
             with JOBS_LOCK:
                 JOBS.pop(job_id, None)
@@ -785,11 +786,11 @@ class Handler(BaseHTTPRequestHandler):
             str(game),
             "--out-dir",
             str(out_dir),
-            "--generate-out",
-            str(out_dir),
             "--sri",
             str(sri),
         ]
+        if not dry_run:
+            command.extend(["--generate-out", str(out_dir)])
         if skip_clearance:
             command.append("--skip-clearance")
         if dry_run:

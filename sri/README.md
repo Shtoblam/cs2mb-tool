@@ -41,7 +41,8 @@ Hammer units and Source axes (`x`, `y`, `z-up`); the legacy VRF node matrix is
 not applied. This matches the accepted CS2MB coordinate decision and keeps the
 existing collision engine unchanged. Primitive grouping follows collision
 attribute × surface property, preserving `InteractAs` and `SurfaceProperty`
-metadata.
+metadata. `InteractAs` is read only from `m_InteractAsStrings`; `PhysicsTags`
+is a separate summary field read only from `m_PhysicsTagStrings`.
 
 ## Build
 

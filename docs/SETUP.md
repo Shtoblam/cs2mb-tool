@@ -61,6 +61,14 @@ sri\build.ps1
 
 Building requires the .NET SDK 10.0.x; normal execution does not.
 
+### Dry run
+
+`python tools\prepare_map.py ... --dry-run` validates the map, game paths and
+SRI, prints the planned extraction/conversion steps, and creates no output
+directory or files. It does not open the VPK, invoke SRI conversion or start
+`auto_generate.py`. The application's installed-CS2 dry run follows the same
+no-write behavior; upload/path mode still writes only a pending manifest.
+
 ## 4. SRI — Source Resource Inspector
 
 SRI is the first-party CS2MB component that reads compiled Source 2 resources.

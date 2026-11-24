@@ -359,7 +359,7 @@ py -3.13 tools\security_scan.py
 py -3.13 -m compileall -q app tools movement simulation prototype
 ```
 
-The current suite is **100 tests discovered / 99 executed / 1 real-map test
+The current suite is **128 tests discovered / 127 executed / 1 real-map test
 gated** by `CS2MB_TEST_GAME`. CI runs the Python suite, the SRI build and
 SRI-backed tests on Windows. Tests are synthetic and unit-level: passing them is
 not proof that geometry, collision, navigation or movement are correct in game.

@@ -1,3 +1,69 @@
+## glTF summary correctness (Phase 2.2) — 2026-11-24
+
+- `gltf_summary()` now keeps per-primitive material identity: each primitive
+  records its index, material index/name, collision extras, mode, triangle count,
+  world-space bounds and its own clip/sky classification. Node-level `clip` is
+  true only when every primitive is clip/sky; mixed nodes set `mixed_clip`.
+- Node transforms are composed along the scene hierarchy from TRS or explicit
+  `matrix` values, with matrix column-major conversion and one application per
+  node. Bounds are the transformed accessor AABB and are conservative for
+  rotation and non-uniform scale; this is recorded in `bounds_mode`.
+- Triangle accounting handles indexed and non-indexed primitives, defaults a
+  missing mode to TRIANGLES (4), and rejects unsupported modes, invalid mesh,
+  material, node-child, accessor, bufferView, buffer and POSITION references
+  with controlled `ValueError` messages.
+- Traversal covers only scene-reachable nodes and retains stable `node_index`
+  identity for duplicate node names.
+- Dust2 regression: collision bounds and 435,649 triangles are unchanged.
+- Test suite: **128 discovered / 127 executed / 1 real-map test gated**.
+
+---
+
+## Bounds correction (Phase 2.1) — 2026-11-24
+
+- 3DsVW bundles now store independent `bounds.collision`, `bounds.nav` and
+  aggregate `bounds.scene` values. Top-level `min`/`max`/`center`/`size` remain
+  aliases for scene bounds for compatibility.
+- Scene bounds are the exact union of available collision and NAV bounds.
+  Framing padding is applied only by the viewer, never stored in the analytical
+  payload.
+- Missing or empty collision/NAV representations are handled safely; a
+  deterministic `[0,0,0]`–`[1,1,1]` placeholder is used only when both are
+  unavailable.
+- Fit, Top, Iso and the grid now use aggregate scene bounds. Legacy viewer data
+  without `bounds.scene` falls back to the previous top-level bounds.
+- Added synthetic tests for collision beyond NAV, NAV beyond collision,
+  differing bounds, missing NAV, missing collision, aggregate center/size and
+  the viewer bounds helper.
+- Test suite: **120 discovered / 119 executed / 1 real-map test gated**.
+
+---
+
+## Engineering stabilization (Phase 1) — 2026-11-24
+
+- Fixed SRI PHYS metadata separation: `InteractAs` is read only from
+  `m_InteractAsStrings`; `PhysicsTags` is read only from
+  `m_PhysicsTagStrings`. Group naming and glTF extras no longer substitute one
+  field for the other.
+- Made 3DsVW bundle replacement transactional. The builder writes and validates
+  a sibling staging bundle, then swaps it into place; failures preserve the last
+  known-good `viewer3d` directory and leave no partial bundle reported as valid.
+- Made `tools/prepare_map.py --dry-run` a real preflight. It validates map,
+  game paths, SRI and output planning, prints the steps, and creates no output
+  directories, extracts no resources, performs no SRI conversion and starts no
+  downstream generation. The application's game-mode dry-run now follows the
+  same no-write behavior.
+- Sanitized `auto_generate.py` analysis manifests and summaries: input paths use
+  `<INPUT>/...`, outputs are bundle-relative, Python is `<PYTHON>`, sidecar URIs
+  drop private/absolute components, and command metadata contains no absolute
+  local paths.
+- Test suite: **113 discovered / 112 executed / 1 real-map test gated**.
+- SRI rebuilt locally; Dust2 PHYS summary preserves 1 part, 6 collision
+  attributes and 435,649 collision triangles, with `InteractAs` and
+  `PhysicsTags` as separate fields.
+
+---
+
 ## v1.1.0 — UI redesign, 3DsVW and focused security review — 2026-11-24
 
 - Redesigned the application shell into Overview, Process, Library, Viewer and

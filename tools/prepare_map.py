@@ -4,7 +4,8 @@
 Read-only with respect to the game.  Extracts nav, entity lump and
 world_physics.vmdl_c from the map VPK, decodes the compiled entity and PHYS
 resources with the internal CS2MB Source 2 engine, and can hand the four files
-to the normal auto-generation pipeline.
+to the normal auto-generation pipeline. --dry-run validates inputs and prints
+the plan without creating, extracting, converting or generating anything.
 
 The internal engine is the first-party ``cs2mb-sri`` executable built from
 ``sri/``.  No external converter binary is used.
@@ -82,7 +83,14 @@ def main() -> int:
     )
     parser.add_argument("--generate-out", type=Path)
     parser.add_argument("--skip-clearance", action="store_true")
-    parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help=(
+            "validate inputs and print the planned extraction/conversion steps; "
+            "does not create, extract, convert or generate anything"
+        ),
+    )
     args = parser.parse_args()
 
     if not MAP_RE.fullmatch(args.map):
@@ -107,7 +115,6 @@ def main() -> int:
 
     out_dir = args.out_dir.expanduser().resolve()
     prepared = out_dir / "prepared"
-    prepared.mkdir(parents=True, exist_ok=True)
     nav = prepared / f"{args.map}.nav"
     vents = prepared / "default_ents.vents_c"
     vmdl = prepared / "world_physics.vmdl_c"
@@ -115,6 +122,34 @@ def main() -> int:
     gltf = prepared / "world_physics_physics.gltf"
     gltf_bin = prepared / "world_physics_physics.bin"
 
+    if args.dry_run:
+        print(f"dry run: {args.map}")
+        print(f"game: {game}")
+        print(f"output: {prepared}")
+        print(f"sri: {converter}")
+        print(f"sri version: {converter_version}")
+        print("steps:")
+        print(f"  extract maps/{args.map}.nav -> {nav}")
+        print(
+            f"  extract maps/{args.map}/entities/default_ents.vents_c -> "
+            f"{prepared / 'default_ents.vents_c'}"
+        )
+        print(
+            f"  extract maps/{args.map}/world_physics.vmdl_c -> "
+            f"{prepared / 'world_physics.vmdl_c'}"
+        )
+        print(f"  convert EntityLump -> {prepared / 'entities.txt'}")
+        print(
+            f"  convert PHYS -> {prepared / 'world_physics_physics.gltf'} "
+            f"and {prepared / 'world_physics_physics.bin'}"
+        )
+        print(f"  write {out_dir / 'prepared_manifest.json'}")
+        if args.generate_out:
+            print(f"  generate -> {args.generate_out}")
+        print("no files were written")
+        return 0
+
+    prepared.mkdir(parents=True, exist_ok=True)
     package = Vpk(map_vpk)
     try:
         extract_entry(package, f"maps/{args.map}.nav", nav)
@@ -188,7 +223,6 @@ def main() -> int:
                     "--out-dir",
                     str(args.generate_out),
                     *(["--skip-clearance"] if args.skip_clearance else []),
-                    *(["--dry-run"] if args.dry_run else []),
                 ],
                 prepared / "auto_generate.log",
             )

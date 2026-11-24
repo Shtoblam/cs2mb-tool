@@ -84,7 +84,8 @@ Upload-режим по-прежнему принимает подготовле�
 - timeout 900 s; на Windows завершается дерево процессов, включая SRI;
 - SRI: explicit path или `CS2MB_SRI`, затем packaged locations;
 - путь, версия и SHA-256 SRI записываются в manifest;
-- manifest использует `<CS2_GAME>` и `prepared/...`, без личных абсолютных путей;
+- preparation и analysis manifests используют `<CS2_GAME>`, `<INPUT>/...`,
+  bundle-relative outputs и `<PYTHON>`, без личных абсолютных путей и username;
 - скомпилированные ресурсы считаются недоверенным вводом; SRI сообщает
   контролируемые ошибки и тесселирует кривые примитивы с ограничением;
 - viewer: `default-src 'none'`, `connect-src 'none'`,

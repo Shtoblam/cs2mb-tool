@@ -358,7 +358,7 @@ py -3.13 tools\security_scan.py
 py -3.13 -m compileall -q app tools movement simulation prototype
 ```
 
-Текущий набор: **100 tests discovered / 99 executed / 1 real-map test gated** через
+Текущий набор: **128 tests discovered / 127 executed / 1 real-map test gated** через
 `CS2MB_TEST_GAME`. CI запускает Python suite, сборку SRI и SRI-backed тесты на
 Windows. Тесты синтетические и unit-level: их прохождение не доказывает
 корректность геометрии, collision, навигации или движения в игре. См.

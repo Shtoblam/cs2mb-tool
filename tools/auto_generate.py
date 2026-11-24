@@ -52,6 +52,60 @@ def run(command: list[str]) -> None:
     subprocess.run([str(part) for part in command], cwd=ROOT, check=True)
 
 
+def safe_uri(uri: str) -> str:
+    """Keep a relative glTF sidecar name without private path components."""
+    if not uri or uri.startswith("data:") or "://" in uri:
+        return ""
+    path = Path(uri)
+    if path.is_absolute() or re.match(r"^[A-Za-z]:[\\/]", uri):
+        return path.name
+    parts = [part for part in path.parts if part not in (".", "..")]
+    return Path(*parts).as_posix() if parts else path.name
+
+
+def display_output(path: Path, out_dir: Path) -> str:
+    try:
+        return path.resolve().relative_to(out_dir.resolve()).as_posix()
+    except (OSError, ValueError):
+        return f"<OUTPUT>/{path.name}"
+
+
+def display_input(path: Path, group: str) -> str:
+    return f"<INPUT>/{group}/{path.name}"
+
+
+def display_viewer3d(info: dict, out_dir: Path) -> dict:
+    result = dict(info)
+    if result.get("ok"):
+        result["data"] = display_output(out_dir / "viewer3d" / "data.json", out_dir)
+        result["scene"] = display_output(out_dir / "viewer3d" / "scene.gltf", out_dir)
+    return result
+
+
+def display_command(command: list[str], input_paths: dict[str, str], out_dir: Path) -> list[str]:
+    displayed = []
+    for index, part in enumerate(command):
+        text = str(part)
+        if index == 0:
+            displayed.append("<PYTHON>")
+            continue
+        try:
+            resolved = str(Path(text).resolve())
+        except OSError:
+            resolved = ""
+        if resolved in input_paths:
+            displayed.append(input_paths[resolved])
+            continue
+        if not Path(text).is_absolute():
+            displayed.append(text)
+            continue
+        try:
+            displayed.append(display_output(Path(text), out_dir))
+        except (OSError, ValueError):
+            displayed.append(f"<PATH>/{Path(text).name}")
+    return displayed
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--map", required=True, help="map name, e.g. de_dust2")
@@ -86,9 +140,13 @@ def main() -> int:
     viewer_html = out_dir / "viewer.html"
     manifest_path = out_dir / "manifest.json"
 
-    def input_record(path: Path) -> dict:
+    input_paths: dict[str, str] = {}
+
+    def input_record(path: Path, group: str) -> dict:
+        display = display_input(path, group)
+        input_paths[str(path.resolve())] = display
         record = {
-            "path": str(path.resolve()),
+            "path": display,
             "size": path.stat().st_size,
             "sha256": None if args.no_hash else sha256(path),
         }
@@ -100,11 +158,15 @@ def main() -> int:
                 if not uri or uri.startswith("data:"):
                     continue
                 sidecar = (path.parent / uri).resolve()
+                if not sidecar.is_relative_to(path.parent.resolve()):
+                    continue
                 if sidecar.is_file():
+                    sidecar_display = display_input(sidecar, "collision")
+                    input_paths[str(sidecar)] = sidecar_display
                     sidecars.append(
                         {
-                            "uri": uri,
-                            "path": str(sidecar),
+                            "uri": safe_uri(uri),
+                            "path": sidecar_display,
                             "size": sidecar.stat().st_size,
                             "sha256": None if args.no_hash else sha256(sidecar),
                         }
@@ -117,7 +179,11 @@ def main() -> int:
         "map": args.map,
         "generated_utc": datetime.now(timezone.utc).isoformat(),
         "status": "running",
-        "inputs": {name: input_record(path) for name, path in inputs.items()},
+        "inputs": {
+            "nav": input_record(args.nav, "nav"),
+            "entities": input_record(args.entities, "entities"),
+            "collision_gltf": input_record(args.collision_gltf, "collision"),
+        },
         "outputs": {},
         "commands": [],
     }
@@ -182,7 +248,8 @@ def main() -> int:
     if args.dry_run:
         manifest["status"] = "dry-run"
         manifest["commands"] = [
-            {"command": command, "status": "pending"} for command in commands
+            {"command": display_command(command, input_paths, out_dir), "status": "pending"}
+            for command in commands
         ]
         write_manifest()
         print(f"wrote {manifest_path}")
@@ -191,12 +258,16 @@ def main() -> int:
     try:
         for command in commands:
             run(command)
-            manifest["commands"].append({"command": command, "status": "ok"})
+            manifest["commands"].append(
+                {"command": display_command(command, input_paths, out_dir), "status": "ok"}
+            )
     except subprocess.CalledProcessError as error:
         manifest["status"] = "failed"
         manifest["error"] = {
             "returncode": error.returncode,
-            "command": [str(part) for part in error.cmd],
+            "command": display_command(
+                [str(part) for part in error.cmd], input_paths, out_dir
+            ),
         }
         write_manifest()
         print(f"pipeline failed; manifest: {manifest_path}", file=sys.stderr)
@@ -315,9 +386,9 @@ def main() -> int:
         else report_summary(clearance_json),
         "routes": route_metrics,
         "balance": balance.as_dict() if balance else None,
-        "viewer_html": str(viewer_html),
-        "viewer3d": viewer3d_info,
-        "manifest": str(manifest_path),
+        "viewer_html": "viewer.html",
+        "viewer3d": display_viewer3d(viewer3d_info, out_dir),
+        "manifest": "manifest.json",
     }
     summary_path = out_dir / "summary.json"
     summary_path.write_text(
@@ -326,19 +397,21 @@ def main() -> int:
     )
     manifest["status"] = "ok"
     manifest["outputs"] = {
-        "viewer_html": str(viewer_html),
+        "viewer_html": display_output(viewer_html, out_dir),
         "viewer3d": {
-            "data_json": str(out_dir / "viewer3d" / "data.json")
+            "data_json": display_output(out_dir / "viewer3d" / "data.json", out_dir)
             if (out_dir / "viewer3d" / "data.json").is_file()
             else None,
-            "scene_gltf": str(out_dir / "viewer3d" / "scene.gltf")
+            "scene_gltf": display_output(out_dir / "viewer3d" / "scene.gltf", out_dir)
             if (out_dir / "viewer3d" / "scene.gltf").is_file()
             else None,
         },
-        "collision_floor_json": str(floor_json),
-        "connection_json": str(connection_json),
-        "clearance_json": None if args.skip_clearance else str(clearance_json),
-        "summary_json": str(summary_path),
+        "collision_floor_json": display_output(floor_json, out_dir),
+        "connection_json": display_output(connection_json, out_dir),
+        "clearance_json": None
+        if args.skip_clearance
+        else display_output(clearance_json, out_dir),
+        "summary_json": display_output(summary_path, out_dir),
     }
     write_manifest()
     print(f"wrote {viewer_html}")
