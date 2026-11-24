@@ -14,6 +14,8 @@ Start with the [project README](../README.md) or the
 |---|---|---|
 | [STATE.md](STATE.md) | Current | Evolving project state, verified results, active priorities and known gaps |
 | [SETUP.md](SETUP.md) / [SETUP.ru.md](SETUP.ru.md) | Current | Installation, SRI, portable package, map generation and troubleshooting |
+| [SRI.md](SRI.md) | Current | Standalone SRI guide: role, capabilities, CLI, examples and troubleshooting |
+| [3D_VIEWER.md](3D_VIEWER.md) | Current | Standalone 3DsVW guide: data flow, bundle format, bounds, usage and limits |
 | [USER_GUIDE.md](USER_GUIDE.md) / [USER_GUIDE.ru.md](USER_GUIDE.ru.md) | Current | Complete application guide: intake, SRI, 2D/3DsVW, settings, troubleshooting, privacy |
 | [../sri/README.md](../sri/README.md) | Current | SRI architecture, build, commands, license and validation |
 | [GETTING_FILES.md](GETTING_FILES.md) / [GETTING_FILES.ru.md](GETTING_FILES.ru.md) | Current | Manual extraction of `.nav`, entities and physics glTF |
