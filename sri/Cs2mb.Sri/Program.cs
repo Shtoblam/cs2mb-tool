@@ -17,7 +17,7 @@ using VrfResource = ValveResourceFormat.Resource;
 using VrfHull = ValveResourceFormat.ResourceTypes.RubikonPhysics.Shapes.Hull;
 using VrfMesh = ValveResourceFormat.ResourceTypes.RubikonPhysics.Shapes.Mesh;
 
-internal static class Program
+internal static partial class Program
 {
     private const string ToolVersion = "1.0.0";
     private const int MaxHullFaceEdges = 1024;
@@ -124,7 +124,7 @@ internal static class Program
         var phys = resource.GetBlockByType(BlockType.PHYS) as PhysAggregateData
             ?? throw new InvalidDataException("resource has no PHYS block");
         var summary = SummarizePhys(phys, input);
-        Console.WriteLine(JsonSerializer.Serialize(summary, JsonOptions));
+        Console.WriteLine(JsonSerializer.Serialize(summary, PhysJson.PhysSummary));
         return 0;
     }
 
@@ -162,7 +162,7 @@ internal static class Program
         Console.WriteLine(
             $"wrote {written.GltfPath} and {written.BinPath} "
             + $"({written.Primitives} primitives, {written.Vertices} vertices, {written.Triangles} triangles)");
-        Console.WriteLine(JsonSerializer.Serialize(summary, JsonOptions));
+        Console.WriteLine(JsonSerializer.Serialize(summary, PhysJson.PhysSummary));
         return 0;
     }
 
@@ -179,6 +179,18 @@ internal static class Program
         List<PartSummary> Parts,
         List<SurfaceSummary> Surfaces,
         List<CollisionAttributeSummary> CollisionAttributes);
+
+    [JsonSourceGenerationOptions(
+        WriteIndented = true,
+        PropertyNamingPolicy = JsonKnownNamingPolicy.SnakeCaseLower)]
+    [JsonSerializable(typeof(PhysSummary))]
+    [JsonSerializable(typeof(ShapeCounts))]
+    [JsonSerializable(typeof(PartSummary))]
+    [JsonSerializable(typeof(SurfaceSummary))]
+    [JsonSerializable(typeof(CollisionAttributeSummary))]
+    private partial class PhysJsonContext : JsonSerializerContext
+    {
+    }
 
     private static PhysSummary SummarizePhys(PhysAggregateData phys, string input)
     {
@@ -346,6 +358,8 @@ internal static class Program
         Converters = { new Vector3JsonConverter() },
     };
 
+    private static readonly PhysJsonContext PhysJson = new(JsonOptions);
+
     private sealed class Vector3JsonConverter : JsonConverter<Vector3>
     {
         public override Vector3 Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -365,7 +379,7 @@ internal static class Program
 /// Writes the collision geometry as a glTF 2.0 triangle mesh set.
 /// Positions are kept in Source/Hammer units and Source axes (x, y, z-up).
 /// </summary>
-internal sealed class PhysicsGltfWriter
+internal sealed partial class PhysicsGltfWriter
 {
     private const int MaxHullFaceEdges = 1024;
     private const int CurveSegments = 16;
@@ -512,7 +526,7 @@ internal sealed class PhysicsGltfWriter
             0);
 
         File.WriteAllBytes(binPath, bufferBytes);
-        var json = JsonSerializer.Serialize(gltf, GltfJsonOptions);
+        var json = JsonSerializer.Serialize(gltf, GltfJson.GltfDto);
         File.WriteAllText(gltfPath, json, new UTF8Encoding(false));
 
         return new WriteResult(gltfPath, binPath, used.Count,
@@ -817,6 +831,8 @@ internal sealed class PhysicsGltfWriter
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
     };
 
+    private static readonly GltfJsonContext GltfJson = new(GltfJsonOptions);
+
     private sealed record GltfDto(
         AssetDto Asset,
         BufferDto[] Buffers,
@@ -840,6 +856,25 @@ internal sealed class PhysicsGltfWriter
         [property: JsonPropertyName("CollisionGroup")] string CollisionGroup,
         [property: JsonPropertyName("InteractAs")] string[] InteractAs);
     private sealed record SceneDto(int[] Nodes);
+
+    [JsonSourceGenerationOptions(
+        WriteIndented = true,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
+    [JsonSerializable(typeof(GltfDto))]
+    [JsonSerializable(typeof(AssetDto))]
+    [JsonSerializable(typeof(BufferDto))]
+    [JsonSerializable(typeof(BufferView))]
+    [JsonSerializable(typeof(Accessor))]
+    [JsonSerializable(typeof(Material))]
+    [JsonSerializable(typeof(MeshDto))]
+    [JsonSerializable(typeof(PrimitiveDto))]
+    [JsonSerializable(typeof(NodeDto))]
+    [JsonSerializable(typeof(NodeExtras))]
+    [JsonSerializable(typeof(SceneDto))]
+    private partial class GltfJsonContext : JsonSerializerContext
+    {
+    }
 }
 
 internal static class EntityDumpWriter
