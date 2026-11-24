@@ -93,7 +93,9 @@ cs2mb-sri entities --input <default_ents.vents_c> --output <entities.txt>
 cs2mb-sri --version
 ```
 
-All commands take `--input`. `phys` and `entities` also require `--output`.
+The four resource commands (`inspect`, `phys-summary`, `phys`, `entities`)
+require `--input`; `phys` and `entities` also require `--output`. `--version`
+and `--help` do not require or accept an input resource.
 Successful commands return exit code `0`; usage, input and conversion errors
 return a non-zero code and print a short error message to standard error.
 

@@ -33,8 +33,13 @@ served from `viewer3d/assets/`; it is not copied into every map bundle.
 | File | Purpose |
 |---|---|
 | `data.json` | Viewer payload: NAV areas and edges, entity markers, routes, collision node/primitive metadata, bounds and statistics. Schema `cs2mb.viewer3d/1`. |
-| `scene.gltf` | Normalized SRI collision glTF. Textures/images and external buffer references are removed. |
-| `scene.bin` | Single binary buffer referenced by `scene.gltf`. |
+| `scene.gltf` | Normalized SRI collision glTF. The source must have exactly one valid local binary sidecar; the builder rewrites its URI to `scene.bin` and removes image/texture references. |
+| `scene.bin` | Binary sidecar referenced by `scene.gltf`. |
+
+The source glTF must contain one binary buffer with a valid local sidecar. The
+builder verifies the sidecar path and length, rewrites the buffer URI to
+`scene.bin`, and removes image and texture references. External buffer
+references are rejected; the binary buffer reference itself is retained.
 
 The bundle is written through a staging directory and validated before replacing
 the previous `viewer3d` directory. Incomplete bundles are not reported as valid.
@@ -59,13 +64,16 @@ representation, not proof that every link is traversable in game.
 
 Render geometry, materials and textures are **not** part of 3DsVW. The viewer
 does not read render meshes or VPK texture data, and it does not attempt to
-reproduce the in-game appearance of a map.
+reproduce the in-game appearance of a map. Collision glTF material names are
+retained as technical metadata and used for surface/clip classification; they
+are not rendered as game materials or textures.
 
 ### Entities and routes
 
-Spawn points, objectives/places, markers and representative CT/T routes are
-included in `data.json` with their available metadata. Route lines are analysis
-output, not recorded player movement.
+Spawn points, objectives/places, markers and representative NAV routes are
+included in `data.json` with their available metadata and distances. Route lines
+are generated analysis paths, not recorded player movement or travel-time
+measurements.
 
 ## Geometry, transforms, bounds and metadata
 
@@ -106,17 +114,38 @@ Controls include orbit, pan, zoom, Fit, Top, Isometric and Reset, plus layers fo
 collision surfaces, clip/sky volumes, NAV, entities and routes. Selecting
 geometry or a marker shows available metadata in the inspector.
 
-Direct CLI shape (verified against the scripts):
+### Direct CLI generation
+
+`prepare_map.py --out-dir X` writes prepared inputs under `X/prepared/`.
+`auto_generate.py --out-dir Y` writes the analysis results and viewer bundle
+under `Y/viewer3d/`.
+
+For the local server to serve a manually generated viewer, use
+`Y = artifacts/auto/<map>/<job-id>`, where `<map>` matches the map name and
+`<job-id>` is 6–64 characters from `A-Z`, `a-z`, `0–9`, `_` or `-`. Then:
 
 ```text
-python tools\prepare_map.py --map <map> --game <CS2 install> --out-dir <prepared>
-python tools\auto_generate.py --map <map> --nav <map.nav> \
-  --entities <entities.txt> --collision-gltf <world_physics_physics.gltf> \
-  --out-dir <job-output>
+viewer bundle: artifacts\auto\<map>\<job-id>\viewer3d\
+viewer URL:   http://127.0.0.1:8765/viewer3d/<map>/<job-id>/
 ```
 
-`prepare_map.py` also supports `--generate-out`; use its `--help` for the
-authoritative argument list.
+PowerShell example for `de_dust2` with job ID `manual01`:
+
+```powershell
+python tools\prepare_map.py --map de_dust2 --game "C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Global Offensive" --out-dir artifacts\manual\de_dust2
+python tools\auto_generate.py --map de_dust2 `
+  --nav artifacts\manual\de_dust2\prepared\de_dust2.nav `
+  --entities artifacts\manual\de_dust2\prepared\entities.txt `
+  --collision-gltf artifacts\manual\de_dust2\prepared\world_physics_physics.gltf `
+  --out-dir artifacts\auto\de_dust2\manual01
+```
+
+Start the server from the repository root with `python app\server.py` and open
+`http://127.0.0.1:8765/viewer3d/de_dust2/manual01/`. Direct CLI generation does
+not register a job in the application's job list, so it does not appear in the
+Library. The default `auto_generate.py` output directory
+`artifacts/auto/<map>` is not a job directory and does not automatically appear
+as an application job; pass an explicit `Y` under a valid job ID instead.
 
 ## Capabilities and limitations
 
@@ -136,7 +165,8 @@ Limitations:
 - no map editing, measurement tools or box selection;
 - conservative AABB bounds, not exact rotated mesh extents;
 - NAV links are displayed as generated; the viewer does not simulate traversal;
-- route timings remain estimates and are not a match-balance verdict;
+- routes show representative NAV paths and distances; the viewer does not
+  calculate or display travel times;
 - WebGL2-capable browser required;
 - a generated bundle is required; the viewer is not a standalone map-file
   opener.
