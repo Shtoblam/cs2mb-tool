@@ -1,6 +1,6 @@
 # Установка и устранение неполадок
 
-Это руководство устанавливает CS2 Map Balance `v1.1.0` на Windows и
+Это руководство устанавливает CS2 Map Balance `v1.1.1` на Windows и
 объясняет, как получить карту из установленной CS2 или из загруженных файлов.
 
 Приложение — локальный анализатор файлов только для чтения. Оно не запускает
@@ -10,7 +10,7 @@ CS2 или Steam, не читает память игры и не взаимод
 ## 1. Требования
 
 - Windows 10/11 **x64**.
-- Полный пакет CS2MB `CS2MB-v1.1.0-win-x64.zip`.
+- Полный пакет CS2MB `CS2MB-v1.1.1-win-x64.zip`.
 - Браузер с WebGL2 для 3DsVW (актуальные Chrome, Edge или Firefox).
 - Установленная CS2 для режима **Prepare + Generate from installed CS2**.
 - Отдельная установка Python, `pip install`, .NET runtime, Source2Viewer-CLI и
@@ -22,7 +22,7 @@ Inspector** в `tools/bin/sri/cs2mb-sri.exe`.
 ## 2. Установка и запуск
 
 1. Скачайте полный пакет со
-   <https://github.com/Shtoblam/cs2mb-tool/releases/tag/v1.1.0>.
+   <https://github.com/Shtoblam/cs2mb-tool/releases/tag/v1.1.1>.
 2. Сверьте архив с `SHA256SUMS.txt`.
 3. Распакуйте в обычную пользовательскую папку, например
    `%USERPROFILE%\Documents\CS2MB`.

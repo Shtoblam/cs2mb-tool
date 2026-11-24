@@ -18,7 +18,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Shtoblam/cs2mb-tool/releases/tag/v1.1.0"><img alt="Version v1.1.0" src="https://img.shields.io/badge/release-v1.1.0-e45468?style=flat-square"></a>
+  <a href="https://github.com/Shtoblam/cs2mb-tool/releases/tag/v1.1.1"><img alt="Version v1.1.1" src="https://img.shields.io/badge/release-v1.1.1-e45468?style=flat-square"></a>
   <img alt="Python 3.13" src="https://img.shields.io/badge/python-3.13-3776AB?style=flat-square&logo=python&logoColor=white">
   <a href="https://github.com/Shtoblam/cs2mb-tool/actions/workflows/tests.yml"><img alt="Tests, SRI build and security checks" src="https://github.com/Shtoblam/cs2mb-tool/actions/workflows/tests.yml/badge.svg?branch=main"></a>
   <img alt="SRI — Source Resource Inspector" src="https://img.shields.io/badge/SRI-Source%20Resource%20Inspector-79b6d1?style=flat-square">
@@ -26,7 +26,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Shtoblam/cs2mb-tool/releases/tag/v1.1.0"><strong>Complete Windows release ↗</strong></a> ·
+  <a href="https://github.com/Shtoblam/cs2mb-tool/releases/tag/v1.1.1"><strong>Complete Windows release ↗</strong></a> ·
   <a href="https://shtoblam.github.io/cs2mb-tool/"><strong>Project website ↗</strong></a> ·
   <a href="https://github.com/Shtoblam/cs2mb-tool">GitHub repository ↗</a> ·
   <a href="README.ru.md">Русская версия</a>
@@ -133,7 +133,7 @@ map. See [docs/USER_GUIDE.md](docs/USER_GUIDE.md) for controls and limitations.
 
 ## Current application
 
-These are actual screenshots of the current `v1.1.0` application.
+These are actual screenshots of the current `v1.1.1` application.
 
 <p align="center">
   <img src="docs/assets/screenshots/app-v1.1-overview.png" alt="CS2 Map Balance v1.1 overview with the original logo" width="100%">
@@ -194,10 +194,10 @@ results.
 ## Installation
 
 Download the complete Windows x64 package from
-**[the v1.1.0 release](https://github.com/Shtoblam/cs2mb-tool/releases/tag/v1.1.0)**:
+**[the v1.1.1 release](https://github.com/Shtoblam/cs2mb-tool/releases/tag/v1.1.1)**:
 
 ```text
-CS2MB-v1.1.0-win-x64.zip
+CS2MB-v1.1.1-win-x64.zip
 ```
 
 Extract it to a normal user folder and run:
@@ -367,6 +367,8 @@ See [docs/VALIDATION.md](docs/VALIDATION.md).
 
 ## Roadmap
 
+- **v1.1.1** — patch release: pipeline and viewer correctness, path
+  sanitization, SRI JSON source generation and CI maintenance.
 - **v1.1.0** — complete Windows package, SRI rename, security hardening,
   visual cleanup and consolidated release.
 - **2.2** — line of sight, detection and encounter timing.

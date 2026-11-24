@@ -1,38 +1,53 @@
 # Changelog
 
-## Unreleased — glTF summary correctness (Phase 2.2)
+## v1.1.1 — 2026-11-24
 
-- Added per-primitive material identity, collision metadata, triangle counts and
-  clip/sky classification to the 3DsVW collision summary.
-- Applied parent/child TRS and explicit node matrices exactly once when
-  computing world-space conservative bounds; documented `bounds_mode`.
-- Validated primitive modes, indexed/non-indexed triangle counts and malformed
-  node/accessor/buffer references with controlled errors.
-- Added synthetic tests for mixed materials, mixed clip/solid primitives, nested
-  transforms, rotation/scale, matrices, indexed/non-indexed geometry, invalid
-  references, unsupported modes and duplicate node names.
+Patch release: correctness, path-sanitization and build maintenance. No new
+features; existing data formats and component versions are preserved.
 
-## Unreleased — bounds correction (Phase 2.1)
-
-- Added independent collision and NAV bounds plus aggregate scene bounds to the
-  3DsVW payload.
-- Fit, Top, Iso and grid framing now use aggregate scene bounds; camera padding
-  remains presentation-only.
-- Added synthetic bounds tests, including missing representations and legacy
-  fallback.
-
-## Unreleased — engineering stabilization (Phase 1)
+### Pipeline and security
 
 - Separated SRI `InteractAs` (`m_InteractAsStrings`) from `PhysicsTags`
   (`m_PhysicsTagStrings`) in PHYS summaries and collision grouping.
 - Made 3DsVW bundle replacement transactional with staging, validation, backup
   and rollback; failures preserve the previous viewer.
-- Made `prepare_map.py --dry-run` a no-write preflight and aligned the game-mode
-  application dry-run.
+- Made `prepare_map.py --dry-run` a real no-write preflight and aligned the
+  game-mode application dry-run.
 - Sanitized analysis manifests and summaries to remove absolute local paths,
   usernames and Python installation paths while retaining hashes, sizes and
   provenance.
+- Made glTF sidecar URI sanitization host-independent: Windows drive and UNC
+  paths are reduced to file names on POSIX, while remote URLs and data URIs stay
+  excluded and sidecar traversal protections are unchanged.
 
+### 3DsVW correctness
+
+- Added independent collision, NAV and aggregate scene bounds; Fit, Top, Iso and
+  grid framing use scene bounds, with camera padding kept presentation-only.
+- Kept material identity, collision metadata, triangle counts and clip/sky state
+  per primitive instead of classifying a whole node by its last material.
+- Composed parent/child TRS and explicit node matrices exactly once for
+  conservative world-space bounds; documented `bounds_mode`.
+- Validated indexed/non-indexed triangle counts, default primitive mode,
+  unsupported modes and malformed node/accessor references with controlled
+  errors.
+- Preserved stable node identities for duplicate node names.
+
+### Build and CI
+
+- Replaced SRI reflection-based JSON serialization with `System.Text.Json`
+  source-generated metadata for `PhysSummary` and `GltfDto`, preserving settings
+  and the custom `Vector3JsonConverter`; the trimmed build has no IL2026
+  warnings.
+- Updated the CI .NET setup action to a Node.js 24 release.
+
+### Verification
+
+- Python suite: 132 tests discovered / 131 executed / 1 gated real-map test.
+- Security scan, compile checks, JavaScript syntax checks and repository asset
+  checks passed.
+- Dust2 PHYS regression preserved 435,649 collision triangles.
+- Trimmed SRI Release build completed; GitHub Actions test and SRI jobs passed.
 
 ## v1.1.0 — 2026-11-24
 

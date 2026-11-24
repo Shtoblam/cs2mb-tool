@@ -1,3 +1,17 @@
+## v1.1.1 patch release — 2026-11-24
+
+- Application target `v1.1.1`; SRI `1.0.0` and 3DsVW `1.0.0` are unchanged.
+- Consolidates Phase 1 pipeline/security fixes, Phase 2.1 bounds, Phase 2.2
+  glTF summary correctness, host-independent sidecar URI sanitization,
+  source-generated SRI JSON and CI action maintenance.
+- Validation: 132 Python tests discovered / 131 executed / 1 gated real-map
+  test, security scan, compile and JavaScript checks, trimmed SRI build with no
+  IL2026 warnings, and Dust2 PHYS regression at 435,649 triangles.
+- Release assets: `CS2MB-v1.1.1-win-x64.zip`, `SBOM.spdx.json` and
+  `SHA256SUMS.txt`.
+
+---
+
 ## glTF summary correctness (Phase 2.2) — 2026-11-24
 
 - `gltf_summary()` now keeps per-primitive material identity: each primitive

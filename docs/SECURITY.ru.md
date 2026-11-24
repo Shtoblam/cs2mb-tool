@@ -3,6 +3,10 @@
 **Область:** локальный `app/server.py`, auto-generation pipeline, SRI (`sri/`),
 `tools/sri.py`, пользовательские файлы и release packaging.
 
+**Примечание к patch-релизу:** приложение `v1.1.1` добавляет независимую от ОС
+санитизацию URI glTF sidecar для Windows drive/UNC-путей на POSIX. Это не
+ослабляет проверки traversal, размеров и endpoint-ов, описанные ниже.
+
 ## Что приложение не делает
 
 - не запускает CS2/Steam;

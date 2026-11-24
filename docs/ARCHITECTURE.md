@@ -1,6 +1,6 @@
 # Architecture — CS2 Map Balance
 
-**Status:** current `v1.1.0` architecture after the SRI rename, the v1.1
+**Status:** current `v1.1.1` architecture after the SRI rename, the v1.1
 application redesign and the 3DsVW integration.
 
 ## 1. Principles

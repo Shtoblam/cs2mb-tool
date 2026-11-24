@@ -356,7 +356,7 @@ def run_job(job_id: str, command: list[str], out_dir: Path) -> None:
 
 
 class Handler(BaseHTTPRequestHandler):
-    server_version = "CS2MapBalance/v1.1.0"
+    server_version = "CS2MapBalance/v1.1.1"
 
     def log_message(self, fmt: str, *args) -> None:
         print(f"[{self.log_date_time_string()}] {fmt % args}")

@@ -51,14 +51,14 @@ validation of the current CS2 build.
 |---|---|---|
 | [ROADMAP.md](ROADMAP.md) | Current | Staged plan, acceptance criteria, dependencies and deferred work |
 | [RISKS.md](RISKS.md) | Reference | Technical, methodological, legal and scope risks |
-| [RELEASE.md](RELEASE.md) / [RELEASE.ru.md](RELEASE.ru.md) | Current | Complete `v1.1.0` release notes and verification scope |
+| [RELEASE.md](RELEASE.md) / [RELEASE.ru.md](RELEASE.ru.md) | Current | Complete `v1.1.1` release notes and verification scope |
 | [releases/pre-alpha-v1.0.md](releases/pre-alpha-v1.0.md) / [RU](releases/pre-alpha-v1.0.ru.md) | Historical | Earlier clean `cs2mb-tool` baseline |
 | [releases/](releases/) | Historical | Earlier 2.x release notes, retained as project history |
 | [CHANGELOG.md](../CHANGELOG.md) | Current | Chronological change log |
 
 ### Release naming note
 
-- The application version in [`VERSION`](../VERSION) is `v1.1.0`.
+- The application version in [`VERSION`](../VERSION) is `v1.1.1`.
 - The `cs2mb-tool` repository is a fresh baseline. Earlier 2.x release notes are
   kept under [`releases/`](releases/) as historical project records.
 - The current release note is [RELEASE.md](RELEASE.md); the earlier baseline note is [releases/pre-alpha-v1.0.md](releases/pre-alpha-v1.0.md).

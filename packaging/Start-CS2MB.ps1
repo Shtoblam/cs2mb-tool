@@ -57,7 +57,7 @@ if (Test-Path -LiteralPath $runtime -PathType Leaf) {
 }
 
 Write-Host ""
-Write-Host "CS2 Map Balance v1.1.0" -ForegroundColor Red
+Write-Host "CS2 Map Balance v1.1.1" -ForegroundColor Red
 Write-Host "SRI - Source Resource Inspector" -ForegroundColor Cyan
 Write-Host "3DsVW - 3D Source Map Viewer" -ForegroundColor Cyan
 Write-Host "Local server: $url"

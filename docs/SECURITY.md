@@ -3,6 +3,10 @@
 **Scope:** local `app/server.py`, auto-generation pipeline, SRI (`sri/`),
 `tools/sri.py`, user-provided files.
 
+**Patch note:** application `v1.1.1` adds host-independent glTF sidecar
+URI sanitization for Windows drive/UNC paths on POSIX. It does not weaken
+the traversal, size or endpoint controls recorded below.
+
 ## Security management update
 
 This `v1.1.0` audit closes the first security-management backlog cycle:

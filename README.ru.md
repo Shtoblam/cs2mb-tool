@@ -18,7 +18,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Shtoblam/cs2mb-tool/releases/tag/v1.1.0"><img alt="Версия v1.1.0" src="https://img.shields.io/badge/release-v1.1.0-e45468?style=flat-square"></a>
+  <a href="https://github.com/Shtoblam/cs2mb-tool/releases/tag/v1.1.1"><img alt="Версия v1.1.1" src="https://img.shields.io/badge/release-v1.1.1-e45468?style=flat-square"></a>
   <img alt="Python 3.13" src="https://img.shields.io/badge/python-3.13-3776AB?style=flat-square&logo=python&logoColor=white">
   <a href="https://github.com/Shtoblam/cs2mb-tool/actions/workflows/tests.yml"><img alt="Тесты, сборка SRI и security checks" src="https://github.com/Shtoblam/cs2mb-tool/actions/workflows/tests.yml/badge.svg?branch=main"></a>
   <img alt="SRI — Source Resource Inspector" src="https://img.shields.io/badge/SRI-Source%20Resource%20Inspector-79b6d1?style=flat-square">
@@ -26,7 +26,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Shtoblam/cs2mb-tool/releases/tag/v1.1.0"><strong>Полный Windows-релиз ↗</strong></a> ·
+  <a href="https://github.com/Shtoblam/cs2mb-tool/releases/tag/v1.1.1"><strong>Полный Windows-релиз ↗</strong></a> ·
   <a href="https://shtoblam.github.io/cs2mb-tool/"><strong>Сайт проекта ↗</strong></a> ·
   <a href="https://github.com/Shtoblam/cs2mb-tool">GitHub репозиторий ↗</a> ·
   <a href="README.md">English version</a>
@@ -135,7 +135,7 @@ Viewer намеренно показывает **collision-геометрию**,
 
 ## Текущее приложение
 
-Это реальные скриншоты приложения `v1.1.0`.
+Это реальные скриншоты приложения `v1.1.1`.
 
 <p align="center">
   <img src="docs/assets/screenshots/app-v1.1-overview.png" alt="Обзор CS2 Map Balance v1.1 с оригинальным логотипом" width="100%">
@@ -194,10 +194,10 @@ Viewer намеренно показывает **collision-геометрию**,
 ## Установка
 
 Скачайте полный пакет Windows x64 со
-**[страницы релиза v1.1.0](https://github.com/Shtoblam/cs2mb-tool/releases/tag/v1.1.0)**:
+**[страницы релиза v1.1.1](https://github.com/Shtoblam/cs2mb-tool/releases/tag/v1.1.1)**:
 
 ```text
-CS2MB-v1.1.0-win-x64.zip
+CS2MB-v1.1.1-win-x64.zip
 ```
 
 Распакуйте в обычную пользовательскую папку и запустите:
@@ -366,6 +366,8 @@ Windows. Тесты синтетические и unit-level: их прохож�
 
 ## Roadmap
 
+- **v1.1.1** — patch-релиз: корректность pipeline и 3DsVW, санитизация
+  путей, source-generated JSON в SRI и обслуживание CI.
 - **v1.1.0** — редизайн UI, настройки, 3DsVW, focused security и performance
   review, руководства и полный Windows-пакет.
 - **2.2** — line of sight, detection и encounter timing.

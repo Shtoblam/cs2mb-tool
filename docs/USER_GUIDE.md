@@ -1,6 +1,6 @@
 # CS2 Map Balance — User Guide
 
-**Version:** `v1.1.0`
+**Version:** `v1.1.1`
 **Platform:** Windows 10/11 x64 (complete package)
 **Scope:** local, read-only map analysis and 3D visualization
 
@@ -25,7 +25,7 @@ SVG map. 3DsVW is an additional view; it does not replace the 2D viewer.
 ## 2. Requirements
 
 - Windows 10/11 x64.
-- The complete package `CS2MB-v1.1.0-win-x64.zip`.
+- The complete package `CS2MB-v1.1.1-win-x64.zip`.
 - A local CS2 installation only for automatic extraction. Upload mode works
   without CS2.
 - A browser with WebGL2 for 3DsVW: current Chrome, Edge or Firefox.
@@ -35,7 +35,7 @@ SVG map. 3DsVW is an additional view; it does not replace the 2D viewer.
 ## 3. Install and start
 
 1. Download the complete package from the
-   [v1.1.0 release](https://github.com/Shtoblam/cs2mb-tool/releases/tag/v1.1.0).
+   [v1.1.1 release](https://github.com/Shtoblam/cs2mb-tool/releases/tag/v1.1.1).
 2. Verify the archive against `SHA256SUMS.txt`.
 3. Extract it to a normal user folder, for example
    `%USERPROFILE%\Documents\CS2MB`.

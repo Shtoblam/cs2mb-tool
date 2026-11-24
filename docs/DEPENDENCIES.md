@@ -1,6 +1,6 @@
 # Dependencies and licenses
 
-**Status:** current for `v1.1.0`.
+**Status:** current for `v1.1.1`.
 
 SRI is built against the pinned NuGet packages below. 3DsVW uses the locally
 vendored three.js runtime. The table is

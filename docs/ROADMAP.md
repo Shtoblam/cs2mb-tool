@@ -3,8 +3,17 @@
 **Правило:** сроки не обещаются. Сложность указана относительно, а не в днях.
 Каждый этап заканчивается проверяемым артефактом и тестами.
 
-**Текущая версия приложения:** `v1.1.0`. Это чистый baseline
+**Текущая версия приложения:** `v1.1.1`. Это чистый baseline
 репозитория `cs2mb-tool`; исторические release notes сохранены как архив.
+
+## Patch: v1.1.1 correctness and release maintenance — 2026-11-24
+
+- Consolidated pipeline hardening, independent 3DsVW bounds and per-primitive
+  glTF summary correctness.
+- Made sidecar URI sanitization host-independent and replaced SRI reflection
+  JSON serialization with source-generated metadata.
+- Rebuilt and revalidated the Windows x64 package; SRI and 3DsVW versions remain
+  unchanged.
 
 ## Milestone: v1.1.0 UI and 3DsVW — current 2026-11-24
 
